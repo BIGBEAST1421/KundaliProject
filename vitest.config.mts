@@ -7,6 +7,6 @@ export default defineConfig({
     environment: "node",
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, ".") },
+    alias: { "@": new URL(".", import.meta.url).pathname },
   },
 });
