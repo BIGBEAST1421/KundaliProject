@@ -1,0 +1,1118 @@
+{
+ "delhi_1990": {
+  "input": {
+   "dob": "1990-05-15",
+   "time": "10:30",
+   "lat": 28.6139,
+   "lon": 77.209
+  },
+  "chart": {
+   "ayanamsa": 23.722539,
+   "julian_day": 2448026.708333,
+   "utc_time": "1990-05-15 05:00 UTC",
+   "lagna": "Cancer",
+   "lagna_degree": 9.8847,
+   "lagna_sign_index": 3,
+   "rashi": "Sagittarius",
+   "sun_sign": "Taurus",
+   "nakshatra": {
+    "name": "Uttara Ashadha",
+    "lord": "Sun",
+    "deity": "Vishvedevas",
+    "index": 20,
+    "pada": 1,
+    "degree": 3.1756
+   },
+   "sun_nakshatra": {
+    "name": "Krittika",
+    "lord": "Sun",
+    "deity": "Agni",
+    "index": 2,
+    "pada": 2,
+    "degree": 3.7224
+   },
+   "lagna_nakshatra": {
+    "name": "Pushya",
+    "lord": "Saturn",
+    "deity": "Brihaspati",
+    "index": 7,
+    "pada": 2,
+    "degree": 6.5513
+   },
+   "longitudes": {
+    "Sun": 30.389081,
+    "Moon": 269.842238,
+    "Mars": 324.391421,
+    "Mercury": 14.324953,
+    "Jupiter": 75.760772,
+    "Venus": 348.759907,
+    "Saturn": 271.528514,
+    "Rahu": 287.628795,
+    "Ketu": 107.62879500000003,
+    "Ascendant": 99.884658
+   },
+   "degrees_in_sign": {
+    "Sun": 0.3891,
+    "Moon": 29.8422,
+    "Mars": 24.3914,
+    "Mercury": 14.325,
+    "Jupiter": 15.7608,
+    "Venus": 18.7599,
+    "Saturn": 1.5285,
+    "Rahu": 17.6288,
+    "Ketu": 17.6288,
+    "Ascendant": 9.8847
+   },
+   "d1": {
+    "Sun": "Taurus",
+    "Moon": "Sagittarius",
+    "Mars": "Aquarius",
+    "Mercury": "Aries",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Capricorn",
+    "Rahu": "Capricorn",
+    "Ketu": "Cancer",
+    "Ascendant": "Cancer"
+   },
+   "d10": {
+    "Sun": "Capricorn",
+    "Moon": "Virgo",
+    "Mars": "Libra",
+    "Mercury": "Leo",
+    "Jupiter": "Scorpio",
+    "Venus": "Taurus",
+    "Saturn": "Virgo",
+    "Rahu": "Aquarius",
+    "Ketu": "Leo",
+    "Ascendant": "Gemini"
+   },
+   "house_of": {
+    "Sun": 11,
+    "Moon": 6,
+    "Mars": 8,
+    "Mercury": 10,
+    "Jupiter": 12,
+    "Venus": 9,
+    "Saturn": 7,
+    "Rahu": 7,
+    "Ketu": 1,
+    "Ascendant": 1
+   },
+   "d10_house_of": {
+    "Sun": 8,
+    "Moon": 4,
+    "Mars": 5,
+    "Mercury": 3,
+    "Jupiter": 6,
+    "Venus": 12,
+    "Saturn": 4,
+    "Rahu": 9,
+    "Ketu": 3,
+    "Ascendant": 1
+   },
+   "d10_lagna": "Gemini",
+   "dasha": {
+    "mahadasha": "Rahu",
+    "mahadasha_start": "Dec 2011",
+    "mahadasha_end": "Dec 2029",
+    "antardasha": "Sun",
+    "antardasha_start": "Jun 2026",
+    "antardasha_end": "May 2027",
+    "all_mahadashas": [
+     {
+      "lord": "Sun",
+      "start": "May 1990",
+      "end": "Dec 1994",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Dec 1994",
+      "end": "Dec 2004",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Dec 2004",
+      "end": "Dec 2011",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "Dec 2011",
+      "end": "Dec 2029",
+      "current": true
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Dec 2029",
+      "end": "Dec 2045",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Dec 2045",
+      "end": "Dec 2064",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Dec 2064",
+      "end": "Dec 2081",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Dec 2081",
+      "end": "Dec 2088",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Dec 2088",
+      "end": "Dec 2108",
+      "current": false
+     }
+    ],
+    "antardashas": [
+     {
+      "lord": "Rahu",
+      "start": "Dec 2011",
+      "end": "Aug 2014",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Aug 2014",
+      "end": "Jan 2017",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Jan 2017",
+      "end": "Nov 2019",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Nov 2019",
+      "end": "Jun 2022",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Jun 2022",
+      "end": "Jun 2023",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Jun 2023",
+      "end": "Jun 2026",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Jun 2026",
+      "end": "May 2027",
+      "current": true
+     },
+     {
+      "lord": "Moon",
+      "start": "May 2027",
+      "end": "Nov 2028",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Nov 2028",
+      "end": "Dec 2029",
+      "current": false
+     }
+    ]
+   },
+   "sign_lords": {
+    "Sun": "Venus",
+    "Moon": "Jupiter",
+    "Mars": "Saturn",
+    "Mercury": "Mars",
+    "Jupiter": "Mercury",
+    "Venus": "Jupiter",
+    "Saturn": "Saturn",
+    "Rahu": "Saturn",
+    "Ketu": "Moon",
+    "Ascendant": "Moon"
+   }
+  },
+  "mangal": {
+   "is_manglik": true,
+   "mars_house": 8
+  }
+ },
+ "mumbai_1985": {
+  "input": {
+   "dob": "1985-11-02",
+   "time": "04:15",
+   "lat": 19.076,
+   "lon": 72.8777
+  },
+  "chart": {
+   "ayanamsa": 23.659238,
+   "julian_day": 2446371.447917,
+   "utc_time": "1985-11-01 22:45 UTC",
+   "lagna": "Virgo",
+   "lagna_degree": 11.3543,
+   "lagna_sign_index": 5,
+   "rashi": "Gemini",
+   "sun_sign": "Libra",
+   "nakshatra": {
+    "name": "Mrigashira",
+    "lord": "Mars",
+    "deity": "Soma",
+    "index": 4,
+    "pada": 3,
+    "degree": 8.125
+   },
+   "sun_nakshatra": {
+    "name": "Swati",
+    "lord": "Rahu",
+    "deity": "Vayu",
+    "index": 14,
+    "pada": 3,
+    "degree": 9.1339
+   },
+   "lagna_nakshatra": {
+    "name": "Hasta",
+    "lord": "Moon",
+    "deity": "Savitar",
+    "index": 12,
+    "pada": 1,
+    "degree": 1.3543
+   },
+   "longitudes": {
+    "Sun": 195.800544,
+    "Moon": 61.458327,
+    "Mars": 159.673531,
+    "Mercury": 217.918543,
+    "Jupiter": 284.878401,
+    "Venus": 176.74232,
+    "Saturn": 214.570089,
+    "Rahu": 15.344394,
+    "Ketu": 195.344394,
+    "Ascendant": 161.354269
+   },
+   "degrees_in_sign": {
+    "Sun": 15.8005,
+    "Moon": 1.4583,
+    "Mars": 9.6735,
+    "Mercury": 7.9185,
+    "Jupiter": 14.8784,
+    "Venus": 26.7423,
+    "Saturn": 4.5701,
+    "Rahu": 15.3444,
+    "Ketu": 15.3444,
+    "Ascendant": 11.3543
+   },
+   "d1": {
+    "Sun": "Libra",
+    "Moon": "Gemini",
+    "Mars": "Virgo",
+    "Mercury": "Scorpio",
+    "Jupiter": "Capricorn",
+    "Venus": "Virgo",
+    "Saturn": "Scorpio",
+    "Rahu": "Aries",
+    "Ketu": "Libra",
+    "Ascendant": "Virgo"
+   },
+   "d10": {
+    "Sun": "Pisces",
+    "Moon": "Gemini",
+    "Mars": "Leo",
+    "Mercury": "Virgo",
+    "Jupiter": "Capricorn",
+    "Venus": "Capricorn",
+    "Saturn": "Leo",
+    "Rahu": "Virgo",
+    "Ketu": "Pisces",
+    "Ascendant": "Leo"
+   },
+   "house_of": {
+    "Sun": 2,
+    "Moon": 10,
+    "Mars": 1,
+    "Mercury": 3,
+    "Jupiter": 5,
+    "Venus": 1,
+    "Saturn": 3,
+    "Rahu": 8,
+    "Ketu": 2,
+    "Ascendant": 1
+   },
+   "d10_house_of": {
+    "Sun": 8,
+    "Moon": 11,
+    "Mars": 1,
+    "Mercury": 2,
+    "Jupiter": 6,
+    "Venus": 6,
+    "Saturn": 1,
+    "Rahu": 2,
+    "Ketu": 8,
+    "Ascendant": 1
+   },
+   "d10_lagna": "Leo",
+   "dasha": {
+    "mahadasha": "Saturn",
+    "mahadasha_start": "Jul 2022",
+    "mahadasha_end": "Jul 2041",
+    "antardasha": "Mercury",
+    "antardasha_start": "Jul 2025",
+    "antardasha_end": "Apr 2028",
+    "all_mahadashas": [
+     {
+      "lord": "Mars",
+      "start": "Nov 1985",
+      "end": "Jul 1988",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "Jul 1988",
+      "end": "Jul 2006",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Jul 2006",
+      "end": "Jul 2022",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Jul 2022",
+      "end": "Jul 2041",
+      "current": true
+     },
+     {
+      "lord": "Mercury",
+      "start": "Jul 2041",
+      "end": "Jul 2058",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Jul 2058",
+      "end": "Jul 2065",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Jul 2065",
+      "end": "Jul 2085",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Jul 2085",
+      "end": "Jul 2091",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Jul 2091",
+      "end": "Jul 2101",
+      "current": false
+     }
+    ],
+    "antardashas": [
+     {
+      "lord": "Saturn",
+      "start": "Jul 2022",
+      "end": "Jul 2025",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Jul 2025",
+      "end": "Apr 2028",
+      "current": true
+     },
+     {
+      "lord": "Ketu",
+      "start": "Apr 2028",
+      "end": "May 2029",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "May 2029",
+      "end": "Jul 2032",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Jul 2032",
+      "end": "Jun 2033",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Jun 2033",
+      "end": "Jan 2035",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Jan 2035",
+      "end": "Mar 2036",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "Mar 2036",
+      "end": "Jan 2039",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Jan 2039",
+      "end": "Jul 2041",
+      "current": false
+     }
+    ]
+   },
+   "sign_lords": {
+    "Sun": "Venus",
+    "Moon": "Mercury",
+    "Mars": "Mercury",
+    "Mercury": "Mars",
+    "Jupiter": "Saturn",
+    "Venus": "Mercury",
+    "Saturn": "Mars",
+    "Rahu": "Mars",
+    "Ketu": "Venus",
+    "Ascendant": "Mercury"
+   }
+  },
+  "mangal": {
+   "is_manglik": true,
+   "mars_house": 1
+  }
+ },
+ "london_2000": {
+  "input": {
+   "dob": "2000-02-29",
+   "time": "23:45",
+   "lat": 51.5074,
+   "lon": -0.1278
+  },
+  "chart": {
+   "ayanamsa": 23.859368,
+   "julian_day": 2451604.489583,
+   "utc_time": "2000-02-29 23:45 UTC",
+   "lagna": "Libra",
+   "lagna_degree": 21.8821,
+   "lagna_sign_index": 6,
+   "rashi": "Sagittarius",
+   "sun_sign": "Aquarius",
+   "nakshatra": {
+    "name": "Purva Ashadha",
+    "lord": "Venus",
+    "deity": "Apas",
+    "index": 19,
+    "pada": 2,
+    "degree": 4.142
+   },
+   "sun_nakshatra": {
+    "name": "Shatabhisha",
+    "lord": "Rahu",
+    "deity": "Varuna",
+    "index": 23,
+    "pada": 4,
+    "degree": 10.1752
+   },
+   "lagna_nakshatra": {
+    "name": "Vishakha",
+    "lord": "Jupiter",
+    "deity": "Indra-Agni",
+    "index": 15,
+    "pada": 1,
+    "degree": 1.8821
+   },
+   "longitudes": {
+    "Sun": 316.841841,
+    "Moon": 257.475361,
+    "Mars": 349.734065,
+    "Mercury": 318.152954,
+    "Jupiter": 8.814336,
+    "Venus": 290.705937,
+    "Saturn": 18.55031,
+    "Rahu": 98.034951,
+    "Ketu": 278.034951,
+    "Ascendant": 201.882129
+   },
+   "degrees_in_sign": {
+    "Sun": 16.8418,
+    "Moon": 17.4754,
+    "Mars": 19.7341,
+    "Mercury": 18.153,
+    "Jupiter": 8.8143,
+    "Venus": 20.7059,
+    "Saturn": 18.5503,
+    "Rahu": 8.035,
+    "Ketu": 8.035,
+    "Ascendant": 21.8821
+   },
+   "d1": {
+    "Sun": "Aquarius",
+    "Moon": "Sagittarius",
+    "Mars": "Pisces",
+    "Mercury": "Aquarius",
+    "Jupiter": "Aries",
+    "Venus": "Capricorn",
+    "Saturn": "Aries",
+    "Rahu": "Cancer",
+    "Ketu": "Capricorn",
+    "Ascendant": "Libra"
+   },
+   "d10": {
+    "Sun": "Cancer",
+    "Moon": "Taurus",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Gemini",
+    "Venus": "Pisces",
+    "Saturn": "Libra",
+    "Rahu": "Taurus",
+    "Ketu": "Scorpio",
+    "Ascendant": "Taurus"
+   },
+   "house_of": {
+    "Sun": 5,
+    "Moon": 3,
+    "Mars": 6,
+    "Mercury": 5,
+    "Jupiter": 7,
+    "Venus": 4,
+    "Saturn": 7,
+    "Rahu": 10,
+    "Ketu": 4,
+    "Ascendant": 1
+   },
+   "d10_house_of": {
+    "Sun": 3,
+    "Moon": 1,
+    "Mars": 1,
+    "Mercury": 4,
+    "Jupiter": 2,
+    "Venus": 11,
+    "Saturn": 6,
+    "Rahu": 1,
+    "Ketu": 7,
+    "Ascendant": 1
+   },
+   "d10_lagna": "Taurus",
+   "dasha": {
+    "mahadasha": "Moon",
+    "mahadasha_start": "Dec 2019",
+    "mahadasha_end": "Dec 2029",
+    "antardasha": "Mercury",
+    "antardasha_start": "Oct 2025",
+    "antardasha_end": "Mar 2027",
+    "all_mahadashas": [
+     {
+      "lord": "Venus",
+      "start": "Feb 2000",
+      "end": "Dec 2013",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Dec 2013",
+      "end": "Dec 2019",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Dec 2019",
+      "end": "Dec 2029",
+      "current": true
+     },
+     {
+      "lord": "Mars",
+      "start": "Dec 2029",
+      "end": "Dec 2036",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "Dec 2036",
+      "end": "Dec 2054",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Dec 2054",
+      "end": "Dec 2070",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Dec 2070",
+      "end": "Dec 2089",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Dec 2089",
+      "end": "Dec 2106",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Dec 2106",
+      "end": "Dec 2113",
+      "current": false
+     }
+    ],
+    "antardashas": [
+     {
+      "lord": "Moon",
+      "start": "Dec 2019",
+      "end": "Oct 2020",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Oct 2020",
+      "end": "May 2021",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "May 2021",
+      "end": "Nov 2022",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Nov 2022",
+      "end": "Mar 2024",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Mar 2024",
+      "end": "Oct 2025",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Oct 2025",
+      "end": "Mar 2027",
+      "current": true
+     },
+     {
+      "lord": "Ketu",
+      "start": "Mar 2027",
+      "end": "Oct 2027",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Oct 2027",
+      "end": "Jun 2029",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Jun 2029",
+      "end": "Dec 2029",
+      "current": false
+     }
+    ]
+   },
+   "sign_lords": {
+    "Sun": "Saturn",
+    "Moon": "Jupiter",
+    "Mars": "Jupiter",
+    "Mercury": "Saturn",
+    "Jupiter": "Mars",
+    "Venus": "Saturn",
+    "Saturn": "Mars",
+    "Rahu": "Moon",
+    "Ketu": "Saturn",
+    "Ascendant": "Venus"
+   }
+  },
+  "mangal": {
+   "is_manglik": false,
+   "mars_house": 6
+  }
+ },
+ "noon_fallback": {
+  "input": {
+   "dob": "1975-08-10",
+   "time": "",
+   "lat": 26.8467,
+   "lon": 80.9462
+  },
+  "chart": {
+   "ayanamsa": 23.516342,
+   "julian_day": 2442634.770833,
+   "utc_time": "1975-08-10 06:30 UTC",
+   "lagna": "Libra",
+   "lagna_degree": 17.59,
+   "lagna_sign_index": 6,
+   "rashi": "Virgo",
+   "sun_sign": "Cancer",
+   "nakshatra": {
+    "name": "Uttara Phalguni",
+    "lord": "Sun",
+    "deity": "Aryaman",
+    "index": 11,
+    "pada": 2,
+    "degree": 5.8813
+   },
+   "sun_nakshatra": {
+    "name": "Ashlesha",
+    "lord": "Mercury",
+    "deity": "Nagas",
+    "index": 8,
+    "pada": 3,
+    "degree": 6.8407
+   },
+   "lagna_nakshatra": {
+    "name": "Swati",
+    "lord": "Rahu",
+    "deity": "Vayu",
+    "index": 14,
+    "pada": 4,
+    "degree": 10.9233
+   },
+   "longitudes": {
+    "Sun": 113.507343,
+    "Moon": 152.547996,
+    "Mars": 33.608408,
+    "Mercury": 122.75759,
+    "Jupiter": 1.149013,
+    "Venus": 137.872817,
+    "Saturn": 92.262413,
+    "Rahu": 213.358502,
+    "Ketu": 33.35850199999999,
+    "Ascendant": 197.590001
+   },
+   "degrees_in_sign": {
+    "Sun": 23.5073,
+    "Moon": 2.548,
+    "Mars": 3.6084,
+    "Mercury": 2.7576,
+    "Jupiter": 1.149,
+    "Venus": 17.8728,
+    "Saturn": 2.2624,
+    "Rahu": 3.3585,
+    "Ketu": 3.3585,
+    "Ascendant": 17.59
+   },
+   "d1": {
+    "Sun": "Cancer",
+    "Moon": "Virgo",
+    "Mars": "Taurus",
+    "Mercury": "Leo",
+    "Jupiter": "Aries",
+    "Venus": "Leo",
+    "Saturn": "Cancer",
+    "Rahu": "Scorpio",
+    "Ketu": "Taurus",
+    "Ascendant": "Libra"
+   },
+   "d10": {
+    "Sun": "Libra",
+    "Moon": "Taurus",
+    "Mars": "Aquarius",
+    "Mercury": "Leo",
+    "Jupiter": "Aries",
+    "Venus": "Capricorn",
+    "Saturn": "Pisces",
+    "Rahu": "Leo",
+    "Ketu": "Aquarius",
+    "Ascendant": "Pisces"
+   },
+   "house_of": {
+    "Sun": 10,
+    "Moon": 12,
+    "Mars": 8,
+    "Mercury": 11,
+    "Jupiter": 7,
+    "Venus": 11,
+    "Saturn": 10,
+    "Rahu": 2,
+    "Ketu": 8,
+    "Ascendant": 1
+   },
+   "d10_house_of": {
+    "Sun": 8,
+    "Moon": 3,
+    "Mars": 12,
+    "Mercury": 6,
+    "Jupiter": 2,
+    "Venus": 11,
+    "Saturn": 1,
+    "Rahu": 6,
+    "Ketu": 12,
+    "Ascendant": 1
+   },
+   "d10_lagna": "Pisces",
+   "dasha": {
+    "mahadasha": "Jupiter",
+    "mahadasha_start": "Dec 2013",
+    "mahadasha_end": "Dec 2029",
+    "antardasha": "Mars",
+    "antardasha_start": "Aug 2026",
+    "antardasha_end": "Jul 2027",
+    "all_mahadashas": [
+     {
+      "lord": "Sun",
+      "start": "Aug 1975",
+      "end": "Dec 1978",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Dec 1978",
+      "end": "Dec 1988",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Dec 1988",
+      "end": "Dec 1995",
+      "current": false
+     },
+     {
+      "lord": "Rahu",
+      "start": "Dec 1995",
+      "end": "Dec 2013",
+      "current": false
+     },
+     {
+      "lord": "Jupiter",
+      "start": "Dec 2013",
+      "end": "Dec 2029",
+      "current": true
+     },
+     {
+      "lord": "Saturn",
+      "start": "Dec 2029",
+      "end": "Dec 2048",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Dec 2048",
+      "end": "Dec 2065",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Dec 2065",
+      "end": "Dec 2072",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Dec 2072",
+      "end": "Dec 2092",
+      "current": false
+     }
+    ],
+    "antardashas": [
+     {
+      "lord": "Jupiter",
+      "start": "Dec 2013",
+      "end": "Feb 2016",
+      "current": false
+     },
+     {
+      "lord": "Saturn",
+      "start": "Feb 2016",
+      "end": "Aug 2018",
+      "current": false
+     },
+     {
+      "lord": "Mercury",
+      "start": "Aug 2018",
+      "end": "Nov 2020",
+      "current": false
+     },
+     {
+      "lord": "Ketu",
+      "start": "Nov 2020",
+      "end": "Oct 2021",
+      "current": false
+     },
+     {
+      "lord": "Venus",
+      "start": "Oct 2021",
+      "end": "Jun 2024",
+      "current": false
+     },
+     {
+      "lord": "Sun",
+      "start": "Jun 2024",
+      "end": "Apr 2025",
+      "current": false
+     },
+     {
+      "lord": "Moon",
+      "start": "Apr 2025",
+      "end": "Aug 2026",
+      "current": false
+     },
+     {
+      "lord": "Mars",
+      "start": "Aug 2026",
+      "end": "Jul 2027",
+      "current": true
+     },
+     {
+      "lord": "Rahu",
+      "start": "Jul 2027",
+      "end": "Dec 2029",
+      "current": false
+     }
+    ]
+   },
+   "sign_lords": {
+    "Sun": "Moon",
+    "Moon": "Mercury",
+    "Mars": "Venus",
+    "Mercury": "Sun",
+    "Jupiter": "Mars",
+    "Venus": "Sun",
+    "Saturn": "Moon",
+    "Rahu": "Mars",
+    "Ketu": "Venus",
+    "Ascendant": "Venus"
+   }
+  },
+  "mangal": {
+   "is_manglik": true,
+   "mars_house": 8
+  }
+ },
+ "guna_delhi_mumbai": {
+  "total": 24.5,
+  "max": 36,
+  "verdict": "Good match \u2014 compatible, minor points to keep in mind.",
+  "kootas": [
+   {
+    "name": "Varna",
+    "max": 1,
+    "points": 1,
+    "note": "Groom: Kshatriya \u00b7 Bride: Shudra"
+   },
+   {
+    "name": "Vashya",
+    "max": 2,
+    "points": 1,
+    "note": "Groom: Chatushpada \u00b7 Bride: Manava"
+   },
+   {
+    "name": "Tara",
+    "max": 3,
+    "points": 1.5,
+    "note": "Birth-star counting cycle both ways"
+   },
+   {
+    "name": "Yoni",
+    "max": 4,
+    "points": 0,
+    "note": "Groom: Mongoose \u00b7 Bride: Serpent"
+   },
+   {
+    "name": "Graha Maitri",
+    "max": 5,
+    "points": 1,
+    "note": "Groom's Moon lord: Jupiter \u00b7 Bride's Moon lord: Mercury"
+   },
+   {
+    "name": "Gana",
+    "max": 6,
+    "points": 5,
+    "note": "Groom: Manushya \u00b7 Bride: Deva"
+   },
+   {
+    "name": "Bhakoot",
+    "max": 7,
+    "points": 7,
+    "note": "Rashi distance is favourable"
+   },
+   {
+    "name": "Nadi",
+    "max": 8,
+    "points": 8,
+    "note": "Groom: Antya \u00b7 Bride: Madhya"
+   }
+  ],
+  "doshas": []
+ },
+ "guna_london_delhi": {
+  "total": 34.0,
+  "max": 36,
+  "verdict": "Excellent match \u2014 highly compatible on classical Ashta Koota grounds.",
+  "kootas": [
+   {
+    "name": "Varna",
+    "max": 1,
+    "points": 1,
+    "note": "Groom: Kshatriya \u00b7 Bride: Kshatriya"
+   },
+   {
+    "name": "Vashya",
+    "max": 2,
+    "points": 2,
+    "note": "Groom: Chatushpada \u00b7 Bride: Chatushpada"
+   },
+   {
+    "name": "Tara",
+    "max": 3,
+    "points": 3.0,
+    "note": "Birth-star counting cycle both ways"
+   },
+   {
+    "name": "Yoni",
+    "max": 4,
+    "points": 2,
+    "note": "Groom: Monkey \u00b7 Bride: Mongoose"
+   },
+   {
+    "name": "Graha Maitri",
+    "max": 5,
+    "points": 5,
+    "note": "Groom's Moon lord: Jupiter \u00b7 Bride's Moon lord: Jupiter"
+   },
+   {
+    "name": "Gana",
+    "max": 6,
+    "points": 6,
+    "note": "Groom: Manushya \u00b7 Bride: Manushya"
+   },
+   {
+    "name": "Bhakoot",
+    "max": 7,
+    "points": 7,
+    "note": "Rashi distance is favourable"
+   },
+   {
+    "name": "Nadi",
+    "max": 8,
+    "points": 8,
+    "note": "Groom: Madhya \u00b7 Bride: Antya"
+   }
+  ],
+  "doshas": []
+ }
+}

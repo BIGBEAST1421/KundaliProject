@@ -2,7 +2,7 @@
 main.py
 Vedic Kundali App — Flask backend
 Run: python main.py
-Open: http://localhost:5000
+Open: http://localhost:5001
 """
 
 import os
@@ -620,5 +620,5 @@ if __name__ == "__main__":
         print(f"\n✓ API key loaded ({api_key[:12]}...)")
 
     print("🔭 Starting Vedic Kundali App...")
-    print("📡 Open your browser at: http://localhost:5000\n")
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    print("📡 Open your browser at: http://localhost:5001\n")
+    app.run(debug=True, port=5001, host="0.0.0.0")
