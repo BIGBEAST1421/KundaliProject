@@ -1,3 +1,5 @@
-export default function Home() {
-  return <main>Kundali</main>;
+import { Landing } from "@/components/landing/Landing";
+
+export default function HomePage() {
+  return <Landing />;
 }
