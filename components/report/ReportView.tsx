@@ -1,4 +1,4 @@
-import { dict } from "@/src/i18n";
+import { dict } from "@/src/i18n/dict";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
 import type { PersonReport } from "@/src/reports/types";
 import { Badge } from "@/components/ui/Badge";

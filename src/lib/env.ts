@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const EnvSchema = z.object({
   GEMINI_API_KEY: z.string().min(1, "GEMINI_API_KEY is required"),
-  GEMINI_MODEL: z.string().default("gemini-2.5-flash"),
+  GEMINI_MODEL: z.string().default("gemini-3.5-flash-lite"),
   SUPABASE_URL: z.string().url("SUPABASE_URL must be a URL"),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
   NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),

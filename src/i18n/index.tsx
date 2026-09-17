@@ -1,11 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { en, type Dict } from "./en";
-import { hi } from "./hi";
+import type { Dict } from "./en";
 import type { Language } from "@/src/reports/types";
-
-const DICTS: Record<Language, Dict> = { en, hi };
+import { DICTS } from "./dict";
 const STORAGE_KEY = "lang";
 
 type StringKey = { [K in keyof Dict]: Dict[K] extends string ? K : never }[keyof Dict];
@@ -63,7 +61,3 @@ export function useI18n(): I18n {
   return ctx;
 }
 
-/** Server-side lookup for a fixed language (used by server components rendering stored reports). */
-export function dict(lang: Language): Dict {
-  return DICTS[lang];
-}
