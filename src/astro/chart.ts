@@ -36,6 +36,8 @@ export interface Chart {
   sunNakshatra: Nakshatra;
   lagnaNakshatra: Nakshatra;
   longitudes: BodyMap<number>;
+  /** Daily motion in degrees; negative = retrograde. Nodes are 0 (always retrograde by convention). */
+  speeds: BodyMap<number>;
   degreesInSign: BodyMap<number>;
   d1: BodyMap<Sign>;
   d10: BodyMap<Sign>;
@@ -61,14 +63,18 @@ export function computeChart(dob: string, time: string, lat: number, lon: number
   const ascLon = houses.data.points[0];
 
   const longitudes = {} as BodyMap<number>;
+  const speeds = {} as BodyMap<number>;
   for (const p of PLANETS) {
     if (p === "Ketu") continue;
-    const res = sweph.calc_ut(jd, PLANET_IDS[p], FLAG);
+    const res = sweph.calc_ut(jd, PLANET_IDS[p] , FLAG | C.SEFLG_SPEED);
     if (res.flag < 0) throw new Error(`Ephemeris error for ${p}: ${res.error}`);
     longitudes[p] = round(res.data[0], 6);
+    speeds[p] = p === "Rahu" ? 0 : round(res.data[3], 6);
   }
   longitudes.Ketu = (longitudes.Rahu + 180) % 360;
+  speeds.Ketu = 0;
   longitudes.Ascendant = round(ascLon, 6);
+  speeds.Ascendant = 0;
 
   const d1 = {} as BodyMap<Sign>;
   const d10 = {} as BodyMap<Sign>;
@@ -105,6 +111,7 @@ export function computeChart(dob: string, time: string, lat: number, lon: number
     sunNakshatra: getNakshatra(longitudes.Sun),
     lagnaNakshatra: getNakshatra(ascLon),
     longitudes,
+    speeds,
     degreesInSign,
     d1,
     d10,
