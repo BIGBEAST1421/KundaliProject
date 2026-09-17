@@ -22,7 +22,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "kundali-dev-secret-2024")
 
 # Gemini client
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
-gemini_model = genai.GenerativeModel("gemini-3.6-flash")
+gemini_model = genai.GenerativeModel("gemini-3.5-flash-lite")
 
 
 # ── Routes ──────────────────────────────────────────────────────────
