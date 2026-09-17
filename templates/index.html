@@ -45,6 +45,14 @@
     .theme-toggle:hover{border-color:var(--bdrH);transform:scale(1.06)}
     @media(max-width:600px){.theme-toggle{top:10px;right:10px;width:34px;height:34px;font-size:14px}}
 
+    /* LANGUAGE TOGGLE */
+    .lang-toggle{position:fixed;top:16px;right:62px;z-index:50;height:38px;padding:0 12px;border-radius:19px;
+      background:var(--sur);border:0.5px solid var(--bdr);color:var(--gold);font-size:12px;font-weight:600;
+      cursor:pointer;font-family:inherit;letter-spacing:.03em;display:flex;align-items:center;justify-content:center;
+      transition:border-color .18s,transform .18s;box-shadow:0 4px 14px var(--shadow)}
+    .lang-toggle:hover{border-color:var(--bdrH);transform:scale(1.06)}
+    @media(max-width:600px){.lang-toggle{top:10px;right:52px;height:34px;padding:0 10px;font-size:11px}}
+
     /* MODE SWITCHER */
     .mode-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--sur);border:0.5px solid var(--bdr);
       border-radius:12px;padding:5px}
@@ -257,6 +265,7 @@
 <canvas id="stars"></canvas>
 
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+<button class="lang-toggle" id="lang-toggle" onclick="toggleUILang()" title="Switch language / भाषा बदलें">EN</button>
 
 <div class="wrap">
   <!-- HEADER -->
@@ -285,8 +294,8 @@
 
   <!-- MODE SWITCHER -->
   <div class="mode-tabs">
-    <button class="mode-tab on" id="mode-tab-kundali" onclick="switchMode('kundali')">🔮 Kundali Reading</button>
-    <button class="mode-tab" id="mode-tab-match" onclick="switchMode('match')">💞 Kundali Matching</button>
+    <button class="mode-tab on" id="mode-tab-kundali" onclick="switchMode('kundali')">🔮 <span data-i18n="mode_kundali">Kundali Reading</span></button>
+    <button class="mode-tab" id="mode-tab-match" onclick="switchMode('match')">💞 <span data-i18n="mode_match">Kundali Matching</span></button>
   </div>
 
   <!-- ═══════════════════ MODE: SINGLE KUNDALI ═══════════════════ -->
@@ -295,81 +304,83 @@
   <!-- FORM -->
   <div id="form-section">
     <div class="form-card">
-      <div class="form-title">✦ Your birth details</div>
+      <div class="form-title">✦ <span data-i18n="form_title">Your birth details</span></div>
 
       <div class="grid2">
         <div class="field">
-          <label>Full name</label>
-          <input id="f-name" type="text" placeholder="e.g. Priya Verma"/>
+          <label data-i18n="lbl_fullname">Full name</label>
+          <input id="f-name" type="text" placeholder="e.g. Priya Verma" data-i18n-ph="ph_fullname"/>
         </div>
         <div class="field">
-          <label>Date of birth</label>
+          <label data-i18n="lbl_dob">Date of birth</label>
           <input id="f-dob" type="date"/>
         </div>
       </div>
 
       <div class="grid2">
         <div class="field">
-          <label>Exact birth time <span>Optional but crucial</span></label>
+          <label data-i18n-prefix="lbl_time">Exact birth time <span data-i18n="lbl_time_opt">Optional but crucial</span></label>
           <input id="f-time" type="time"/>
           <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
-            <input type="checkbox" id="f-time-unknown" style="width:auto"/> I don't know my exact time
+            <input type="checkbox" id="f-time-unknown" style="width:auto"/> <span data-i18n="lbl_time_unknown">I don't know my exact time</span>
           </label>
           <select id="f-time-period" style="display:none;margin-top:4px">
-            <option value="03:00">Late night (12–4 AM)</option>
-            <option value="06:00">Early morning (4–8 AM)</option>
-            <option value="10:00">Morning (8 AM–12 PM)</option>
-            <option value="14:00">Afternoon (12–4 PM)</option>
-            <option value="18:00">Evening (4–8 PM)</option>
-            <option value="21:00">Night (8 PM–12 AM)</option>
-            <option value="12:00">Truly no idea — use best estimate</option>
+            <option value="03:00" data-i18n="opt_late_night">Late night (12–4 AM)</option>
+            <option value="06:00" data-i18n="opt_early_morning">Early morning (4–8 AM)</option>
+            <option value="10:00" data-i18n="opt_morning">Morning (8 AM–12 PM)</option>
+            <option value="14:00" data-i18n="opt_afternoon">Afternoon (12–4 PM)</option>
+            <option value="18:00" data-i18n="opt_evening">Evening (4–8 PM)</option>
+            <option value="21:00" data-i18n="opt_night">Night (8 PM–12 AM)</option>
+            <option value="12:00" data-i18n="opt_no_idea">Truly no idea — use best estimate</option>
           </select>
         </div>
         <div class="field">
-          <label>Gender</label>
+          <label data-i18n="lbl_gender">Gender</label>
           <select id="f-gender">
-            <option value="">Select gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Non-binary</option>
+            <option value="" data-i18n="opt_select_gender">Select gender</option>
+            <option value="Male" data-i18n="opt_male">Male</option>
+            <option value="Female" data-i18n="opt_female">Female</option>
+            <option value="Non-binary" data-i18n="opt_nonbinary">Non-binary</option>
           </select>
         </div>
       </div>
 
       <div class="grid2">
         <div class="field">
-          <label>Occupation / life stage</label>
+          <label data-i18n="lbl_occupation">Occupation / life stage</label>
           <select id="f-occupation">
-            <option value="">Select occupation</option>
-            <option>Student</option>
-            <option>Employed</option>
-            <option>Unemployed</option>
-            <option>Business Owner</option>
-            <option>Army / Defence Personnel</option>
-            <option>Government Employee</option>
-            <option>Homemaker</option>
-            <option>Retired</option>
-            <option>Other</option>
+            <option value="" data-i18n="opt_select_occupation">Select occupation</option>
+            <option value="Student" data-i18n="opt_student">Student</option>
+            <option value="Employed" data-i18n="opt_employed">Employed</option>
+            <option value="Unemployed" data-i18n="opt_unemployed">Unemployed</option>
+            <option value="Business Owner" data-i18n="opt_business">Business Owner</option>
+            <option value="Army / Defence Personnel" data-i18n="opt_army">Army / Defence Personnel</option>
+            <option value="Government Employee" data-i18n="opt_govt">Government Employee</option>
+            <option value="Homemaker" data-i18n="opt_homemaker">Homemaker</option>
+            <option value="Retired" data-i18n="opt_retired">Retired</option>
+            <option value="Other" data-i18n="opt_other">Other</option>
           </select>
         </div>
         <div class="field">
-          <label>Marital status</label>
+          <label data-i18n="lbl_marital">Marital status</label>
           <select id="f-marital">
-            <option>Unmarried</option>
-            <option>Married</option>
+            <option value="Unmarried" data-i18n="opt_unmarried">Unmarried</option>
+            <option value="Married" data-i18n="opt_married">Married</option>
+            <option value="Separated/Divorced" data-i18n="opt_separated">Separated / Divorced</option>
+            <option value="Widowed" data-i18n="opt_widowed">Widowed</option>
           </select>
         </div>
       </div>
 
       <!-- PLACE OF BIRTH -->
       <div class="loc-box">
-        <div class="loc-title">📍 Place of birth</div>
+        <div class="loc-title">📍 <span data-i18n="loc_title">Place of birth</span></div>
         <div class="field">
-          <label>Search birth city <span>Type 2+ letters</span></label>
+          <label data-i18n-prefix="lbl_city">Search birth city <span data-i18n="lbl_type2">Type 2+ letters</span></label>
           <div class="city-wrap">
             <div class="city-input-wrap">
               <input id="f-city" type="text" placeholder="e.g. Bareilly, Mumbai, Jaipur…"
-                autocomplete="off" spellcheck="false"/>
+                autocomplete="off" spellcheck="false" data-i18n-ph="ph_city"/>
               <span class="city-icon" id="f-city-icon">🔍</span>
             </div>
             <div class="city-drop" id="f-city-drop"></div>
@@ -378,7 +389,7 @@
             </div>
           </div>
         </div>
-        <div class="loc-hint">
+        <div class="loc-hint" data-i18n-html="loc_hint">
           Type <strong>"barei"</strong> → see <strong>Bareilly, UP</strong> and
           <strong>Rae Bareli, UP</strong> as separate suggestions with exact coordinates.
         </div>
@@ -386,17 +397,17 @@
 
       <div class="grid2">
         <div class="field">
-          <label>Current city <span>Optional</span></label>
-          <input id="f-curcity" type="text" placeholder="e.g. Noida"/>
+          <label data-i18n-prefix="lbl_curcity">Current city <span data-i18n="lbl_optional">Optional</span></label>
+          <input id="f-curcity" type="text" placeholder="e.g. Noida" data-i18n-ph="ph_curcity"/>
         </div>
         <div class="field">
-          <label>Focus area</label>
+          <label data-i18n="lbl_focus">Focus area</label>
           <select id="f-focus">
-            <option value="">All pillars</option>
-            <option>Career & Karma</option>
-            <option>Love & Union</option>
-            <option>Health & Vitality</option>
-            <option>Wealth / Artha</option>
+            <option value="" data-i18n="opt_all_pillars">All pillars</option>
+            <option value="Career & Karma" data-i18n="opt_career_karma">Career & Karma</option>
+            <option value="Love & Union" data-i18n="opt_love_union">Love & Union</option>
+            <option value="Health & Vitality" data-i18n="opt_health_vitality">Health & Vitality</option>
+            <option value="Wealth / Artha" data-i18n="opt_wealth_artha">Wealth / Artha</option>
           </select>
         </div>
       </div>
@@ -407,11 +418,11 @@
       </div>
 
       <button class="btn" id="submit-btn" onclick="submitForm()">
-        Generate my Kundali reading ↗
+        <span data-i18n="btn_generate">Generate my Kundali reading ↗</span>
       </button>
       <div class="form-note">
-        Exact birth time determines Lagna precision.<br>
-        Even morning / afternoon / night is better than nothing.
+        <span data-i18n="note_time1">Exact birth time determines Lagna precision.</span><br>
+        <span data-i18n="note_time2">Even morning / afternoon / night is better than nothing.</span>
       </div>
     </div>
   </div>
@@ -419,7 +430,7 @@
   <!-- LOADING -->
   <div id="loading">
     <div class="loader"></div>
-    <div class="load-title">Reading your chart</div>
+    <div class="load-title" data-i18n="load_title">Reading your chart</div>
     <div class="load-msg" id="load-msg">Computing planetary positions…</div>
     <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
   </div>
@@ -432,7 +443,7 @@
         <div class="res-name" id="res-name">—</div>
         <div class="res-sub" id="res-sub">—</div>
       </div>
-      <button class="new-btn" onclick="resetForm()">New chart</button>
+      <button class="new-btn" onclick="resetForm()" data-i18n="btn_new_chart">New chart</button>
     </div>
 
     <!-- Chart + Core Info -->
@@ -461,33 +472,33 @@
 
       <div class="match-cols">
         <div class="match-col">
-          <div class="match-col-lbl groom">♂ Groom</div>
+          <div class="match-col-lbl groom">♂ <span data-i18n="lbl_groom">Groom</span></div>
           <div class="field" style="margin-bottom:10px">
-            <label>Full name</label>
-            <input id="m-boy-name" type="text" placeholder="e.g. Rahul Mehta"/>
+            <label data-i18n="lbl_fullname">Full name</label>
+            <input id="m-boy-name" type="text" placeholder="e.g. Rahul Mehta" data-i18n-ph="ph_boy_name"/>
           </div>
           <div class="field" style="margin-bottom:10px">
-            <label>Date of birth</label>
+            <label data-i18n="lbl_dob">Date of birth</label>
             <input id="m-boy-dob" type="date"/>
           </div>
           <div class="field" style="margin-bottom:10px">
-            <label>Exact birth time <span>Optional</span></label>
+            <label data-i18n-prefix="lbl_time">Exact birth time <span data-i18n="lbl_optional">Optional</span></label>
             <input id="m-boy-time" type="time"/>
             <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
-              <input type="checkbox" id="m-boy-time-unknown" style="width:auto"/> Don't know exact time
+              <input type="checkbox" id="m-boy-time-unknown" style="width:auto"/> <span data-i18n="lbl_time_unknown_short">Don't know exact time</span>
             </label>
             <select id="m-boy-time-period" style="display:none;margin-top:4px">
-              <option value="03:00">Late night (12–4 AM)</option>
-              <option value="06:00">Early morning (4–8 AM)</option>
-              <option value="10:00">Morning (8 AM–12 PM)</option>
-              <option value="14:00">Afternoon (12–4 PM)</option>
-              <option value="18:00">Evening (4–8 PM)</option>
-              <option value="21:00">Night (8 PM–12 AM)</option>
-              <option value="12:00">No idea — best estimate</option>
+              <option value="03:00" data-i18n="opt_late_night">Late night (12–4 AM)</option>
+              <option value="06:00" data-i18n="opt_early_morning">Early morning (4–8 AM)</option>
+              <option value="10:00" data-i18n="opt_morning">Morning (8 AM–12 PM)</option>
+              <option value="14:00" data-i18n="opt_afternoon">Afternoon (12–4 PM)</option>
+              <option value="18:00" data-i18n="opt_evening">Evening (4–8 PM)</option>
+              <option value="21:00" data-i18n="opt_night">Night (8 PM–12 AM)</option>
+              <option value="12:00" data-i18n="opt_no_idea_short">No idea — best estimate</option>
             </select>
           </div>
           <div class="field">
-            <label>Birth city</label>
+            <label data-i18n="lbl_birth_city">Birth city</label>
             <div class="city-wrap">
               <div class="city-input-wrap">
                 <input id="m-boy-city" type="text" placeholder="e.g. Bareilly…" autocomplete="off" spellcheck="false"/>
@@ -500,33 +511,33 @@
         </div>
 
         <div class="match-col">
-          <div class="match-col-lbl bride">♀ Bride</div>
+          <div class="match-col-lbl bride">♀ <span data-i18n="lbl_bride">Bride</span></div>
           <div class="field" style="margin-bottom:10px">
-            <label>Full name</label>
-            <input id="m-girl-name" type="text" placeholder="e.g. Priya Sharma"/>
+            <label data-i18n="lbl_fullname">Full name</label>
+            <input id="m-girl-name" type="text" placeholder="e.g. Priya Sharma" data-i18n-ph="ph_girl_name"/>
           </div>
           <div class="field" style="margin-bottom:10px">
-            <label>Date of birth</label>
+            <label data-i18n="lbl_dob">Date of birth</label>
             <input id="m-girl-dob" type="date"/>
           </div>
           <div class="field" style="margin-bottom:10px">
-            <label>Exact birth time <span>Optional</span></label>
+            <label data-i18n-prefix="lbl_time">Exact birth time <span data-i18n="lbl_optional">Optional</span></label>
             <input id="m-girl-time" type="time"/>
             <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
-              <input type="checkbox" id="m-girl-time-unknown" style="width:auto"/> Don't know exact time
+              <input type="checkbox" id="m-girl-time-unknown" style="width:auto"/> <span data-i18n="lbl_time_unknown_short">Don't know exact time</span>
             </label>
             <select id="m-girl-time-period" style="display:none;margin-top:4px">
-              <option value="03:00">Late night (12–4 AM)</option>
-              <option value="06:00">Early morning (4–8 AM)</option>
-              <option value="10:00">Morning (8 AM–12 PM)</option>
-              <option value="14:00">Afternoon (12–4 PM)</option>
-              <option value="18:00">Evening (4–8 PM)</option>
-              <option value="21:00">Night (8 PM–12 AM)</option>
-              <option value="12:00">No idea — best estimate</option>
+              <option value="03:00" data-i18n="opt_late_night">Late night (12–4 AM)</option>
+              <option value="06:00" data-i18n="opt_early_morning">Early morning (4–8 AM)</option>
+              <option value="10:00" data-i18n="opt_morning">Morning (8 AM–12 PM)</option>
+              <option value="14:00" data-i18n="opt_afternoon">Afternoon (12–4 PM)</option>
+              <option value="18:00" data-i18n="opt_evening">Evening (4–8 PM)</option>
+              <option value="21:00" data-i18n="opt_night">Night (8 PM–12 AM)</option>
+              <option value="12:00" data-i18n="opt_no_idea_short">No idea — best estimate</option>
             </select>
           </div>
           <div class="field">
-            <label>Birth city</label>
+            <label data-i18n="lbl_birth_city">Birth city</label>
             <div class="city-wrap">
               <div class="city-input-wrap">
                 <input id="m-girl-city" type="text" placeholder="e.g. Delhi…" autocomplete="off" spellcheck="false"/>
@@ -545,10 +556,10 @@
       </div>
 
       <button class="btn" id="match-submit-btn" onclick="submitMatch()">
-        Check compatibility ↗
+        <span data-i18n="btn_check_compat">Check compatibility ↗</span>
       </button>
       <div class="form-note">
-        Ashta Koota (36-guna) scoring plus Mangal Dosha check and an AI synastry reading.
+        <span data-i18n="match_note">Ashta Koota (36-guna) scoring plus Mangal Dosha check and an AI synastry reading.</span>
       </div>
     </div>
   </div>
@@ -556,7 +567,7 @@
   <!-- MATCH LOADING -->
   <div id="match-loading">
     <div class="loader"></div>
-    <div class="load-title">Matching charts</div>
+    <div class="load-title" data-i18n="match_load_title">Matching charts</div>
     <div class="load-msg" id="match-load-msg">Computing both births…</div>
     <div class="prog-track"><div class="prog-fill" id="match-prog-fill"></div></div>
   </div>
@@ -569,18 +580,18 @@
         <div class="res-name" id="match-res-name">—</div>
         <div class="res-sub" id="match-res-sub">—</div>
       </div>
-      <button class="new-btn" onclick="resetMatch()">New match</button>
+      <button class="new-btn" onclick="resetMatch()" data-i18n="btn_new_match">New match</button>
     </div>
 
     <div class="guna-score-box">
       <div class="guna-score-num" id="guna-score-num">—</div>
-      <div class="guna-score-max">/ 36 Guna</div>
+      <div class="guna-score-max" data-i18n="guna_max_label">/ 36 Guna</div>
       <div class="guna-verdict" id="guna-verdict">—</div>
     </div>
 
     <div class="hbox" id="mangal-box"></div>
 
-    <div class="sec">Ashta Koota breakdown</div>
+    <div class="sec" data-i18n="sec_ashta_koota">Ashta Koota breakdown</div>
     <div id="koota-list"></div>
 
     <div id="dosha-list"></div>
@@ -618,6 +629,207 @@ window.toggleTheme=function(){
   let saved=null;
   try{saved=localStorage.getItem('kundali-theme');}catch(e){}
   applyTheme(saved==='light'?'light':'dark');
+})();
+
+// ─── UI language (interface chrome — separate from the AI reading's own
+//     language, which is always set to match this) ──────────────────
+const I18N_EN={
+  mode_kundali:"Kundali Reading",mode_match:"Kundali Matching",
+  form_title:"Your birth details",
+  lbl_fullname:"Full name",ph_fullname:"e.g. Priya Verma",
+  lbl_dob:"Date of birth",
+  lbl_time:"Exact birth time",lbl_time_opt:"Optional but crucial",
+  lbl_time_unknown:"I don't know my exact time",
+  opt_late_night:"Late night (12–4 AM)",opt_early_morning:"Early morning (4–8 AM)",
+  opt_morning:"Morning (8 AM–12 PM)",opt_afternoon:"Afternoon (12–4 PM)",
+  opt_evening:"Evening (4–8 PM)",opt_night:"Night (8 PM–12 AM)",
+  opt_no_idea:"Truly no idea — use best estimate",opt_no_idea_short:"No idea — best estimate",
+  lbl_gender:"Gender",opt_select_gender:"Select gender",opt_male:"Male",opt_female:"Female",opt_nonbinary:"Non-binary",
+  lbl_occupation:"Occupation / life stage",opt_select_occupation:"Select occupation",
+  opt_student:"Student",opt_employed:"Employed",opt_unemployed:"Unemployed",opt_business:"Business Owner",
+  opt_army:"Army / Defence Personnel",opt_govt:"Government Employee",opt_homemaker:"Homemaker",
+  opt_retired:"Retired",opt_other:"Other",
+  lbl_marital:"Marital status",opt_unmarried:"Unmarried",opt_married:"Married",
+  opt_separated:"Separated / Divorced",opt_widowed:"Widowed",
+  loc_title:"Place of birth",lbl_city:"Search birth city",lbl_type2:"Type 2+ letters",
+  ph_city:"e.g. Bareilly, Mumbai, Jaipur…",
+  loc_hint:'Type <strong>"barei"</strong> → see <strong>Bareilly, UP</strong> and <strong>Rae Bareli, UP</strong> as separate suggestions with exact coordinates.',
+  lbl_curcity:"Current city",lbl_optional:"Optional",ph_curcity:"e.g. Noida",
+  lbl_focus:"Focus area",opt_all_pillars:"All pillars",opt_career_karma:"Career & Karma",
+  opt_love_union:"Love & Union",opt_health_vitality:"Health & Vitality",opt_wealth_artha:"Wealth / Artha",
+  btn_generate:"Generate my Kundali reading ↗",
+  note_time1:"Exact birth time determines Lagna precision.",
+  note_time2:"Even morning / afternoon / night is better than nothing.",
+  load_title:"Reading your chart",btn_new_chart:"New chart",
+  lbl_groom:"Groom",lbl_bride:"Bride",lbl_birth_city:"Birth city",
+  lbl_time_unknown_short:"Don't know exact time",
+  ph_boy_name:"e.g. Rahul Mehta",ph_girl_name:"e.g. Priya Sharma",
+  btn_check_compat:"Check compatibility ↗",
+  match_note:"Ashta Koota (36-guna) scoring plus Mangal Dosha check and an AI synastry reading.",
+  match_load_title:"Matching charts",btn_new_match:"New match",
+  guna_max_label:"/ 36 Guna",sec_ashta_koota:"Ashta Koota breakdown",
+  time_unknown_note:"time unknown (approx.)",
+  err_kundali_required:"Name, date of birth and place of birth are required.",
+  err_groom_required:"Groom's name, date of birth and place of birth are required.",
+  err_bride_required:"Bride's name, date of birth and place of birth are required.",
+  err_server:"Server error",err_request_failed:"Request failed: ",
+  // dynamic result content
+  lbl_lagna:"Lagna",sub_ascendant:"Ascendant",lbl_moonsign:"Moon Sign",sub_rashi:"Rashi",
+  lbl_nakshatra:"Nakshatra",lbl_sunsign:"Sun sign",lbl_mahadasha:"Mahadasha",lbl_antardasha:"Antardasha",
+  lbl_soulpurpose:"Soul purpose",pada_word:"Pada",
+  tab_overview:"Overview",tab_career:"Career",tab_love:"Love & Union",tab_health:"Health",
+  tab_wealth:"Wealth",tab_dasha:"Dasha Timeline",tab_remedies:"Remedies",
+  sec_overview:"Overview",sec_d10:"D10 Dashamsha",lbl_d10lagna:"D10 Lagna",sub_dashamsha_asc:"Dashamsha ascendant",
+  lbl_10th_d1:"10th house D1",sub_karma_bhava:"Karma bhava",
+  sec_career_dharma:"Career dharma",lbl_10th_house:"10th house",sub_dashamsha:"Dashamsha",
+  sec_blueprint:"Blueprint",sec_strengths:"Strengths",sec_switch_timing:"Switch timing",
+  sec_high_growth:"High-growth sectors",sec_career_timeline:"Career timeline",
+  sec_love_union:"Love & union",lbl_7th_house:"7th house",sub_union_bhava:"Union bhava",
+  lbl_venus_sign:"Venus sign",sub_shukra:"Shukra",sec_reading:"Reading",
+  sec_marital_outlook:"Marital outlook — current dasha",sec_marriage_windows:"Marriage windows",
+  sec_past_relationship:"What this chapter taught you",sec_moving_forward:"Moving forward",
+  sec_grief_healing:"Healing and remembrance",sec_companionship_outlook:"If and when you're open again",
+  sec_hard_truths:"Hard truths",sec_partner_archetype:"Partner archetype",sec_mangal_dosha:"Mangal Dosha",
+  mangal_dosha_note:"Mars falls in a Manglik house in this chart — worth checking against a prospective partner's chart via Kundali Matching.",
+  prem_title:"Compatibility & Synastry Report",
+  prem_desc:"Full Ashta Koota matching, 7th house overlay, and Venus-Mars synastry with your partner.",
+  prem_btn:"Try Kundali Matching ✦",
+  sec_health_vitality:"Health & vitality",lbl_constitution:"Constitution",sub_prakriti:"Prakriti",
+  lbl_current_risk:"Current risk",val_moderate:"Moderate",sub_rahu_dasha_period:"Rahu dasha period",
+  sec_vulnerabilities:"Vulnerabilities",sec_watch_dasha:"Watch during current dasha",
+  sec_wealth_artha:"Wealth & artha",lbl_2nd_house:"2nd house",sub_dhana_bhava:"Dhana bhava",
+  lbl_11th_house:"11th house",sub_labha_bhava:"Labha bhava",lbl_pattern:"Pattern",
+  sec_wealth_architecture:"Wealth architecture",sec_timeline:"Timeline",
+  sec_muhurta:"💰 Financial Muhurta — auspicious windows",
+  sec_vimshottari:"Vimshottari Mahadasha timeline",th_mahadasha:"Mahadasha",th_start:"Start",th_end:"End",
+  sec_antardashas_within:"Antardashas within {m} Mahadasha",th_antardasha:"Antardasha",
+  sec_personalized_upayas:"Personalized upayas",
+  sec_dasha_period_meaning:"what this period means",
+  kundali_center:"KUNDALI",
+  match_tab_overview:"Overview",match_tab_emotional:"Emotional",match_tab_romantic:"Romantic",
+  match_tab_values:"Values",match_tab_guidance:"Guidance",match_tab_remedies:"Remedies",
+  sec_headline:"Headline",sec_overall_read:"Overall read",sec_challenges:"Challenges",
+  sec_emotional_compat:"Emotional compatibility",sec_romantic_chem:"Romantic chemistry",
+  sec_comm_values:"Communication & values",sec_practical_guidance:"Practical guidance",
+  sec_suggested_remedies:"Suggested remedies",mangal_check_lbl:"Mangal Dosha check",
+  groom_short:"Groom",bride_short:"Bride",manglik:"Manglik",not_manglik:"Not Manglik",
+};
+const I18N_HI={
+  mode_kundali:"कुंडली रीडिंग",mode_match:"कुंडली मिलान",
+  form_title:"आपकी जन्म जानकारी",
+  lbl_fullname:"पूरा नाम",ph_fullname:"उदा. प्रिया वर्मा",
+  lbl_dob:"जन्म तिथि",
+  lbl_time:"जन्म का सही समय",lbl_time_opt:"वैकल्पिक लेकिन महत्वपूर्ण",
+  lbl_time_unknown:"मुझे अपना सही समय नहीं पता",
+  opt_late_night:"देर रात (12–4 बजे)",opt_early_morning:"सुबह जल्दी (4–8 बजे)",
+  opt_morning:"सुबह (8–12 बजे)",opt_afternoon:"दोपहर (12–4 बजे)",
+  opt_evening:"शाम (4–8 बजे)",opt_night:"रात (8–12 बजे)",
+  opt_no_idea:"बिल्कुल पता नहीं — अनुमान लगाएं",opt_no_idea_short:"पता नहीं — अनुमान लगाएं",
+  lbl_gender:"लिंग",opt_select_gender:"लिंग चुनें",opt_male:"पुरुष",opt_female:"महिला",opt_nonbinary:"नॉन-बाइनरी",
+  lbl_occupation:"व्यवसाय / जीवन चरण",opt_select_occupation:"व्यवसाय चुनें",
+  opt_student:"छात्र",opt_employed:"नौकरीपेशा",opt_unemployed:"बेरोजगार",opt_business:"व्यवसायी",
+  opt_army:"सेना / रक्षा कर्मी",opt_govt:"सरकारी कर्मचारी",opt_homemaker:"गृहिणी",
+  opt_retired:"सेवानिवृत्त",opt_other:"अन्य",
+  lbl_marital:"वैवाहिक स्थिति",opt_unmarried:"अविवाहित",opt_married:"विवाहित",
+  opt_separated:"अलग / तलाकशुदा",opt_widowed:"विधवा / विधुर",
+  loc_title:"जन्म स्थान",lbl_city:"जन्म शहर खोजें",lbl_type2:"2+ अक्षर टाइप करें",
+  ph_city:"उदा. Bareilly, Mumbai, Jaipur…",
+  loc_hint:'<strong>"barei"</strong> टाइप करें → <strong>Bareilly, UP</strong> और <strong>Rae Bareli, UP</strong> सटीक निर्देशांक के साथ अलग-अलग सुझावों में दिखेंगे।',
+  lbl_curcity:"वर्तमान शहर",lbl_optional:"वैकल्पिक",ph_curcity:"उदा. नोएडा",
+  lbl_focus:"मुख्य विषय",opt_all_pillars:"सभी पहलू",opt_career_karma:"करियर और कर्म",
+  opt_love_union:"प्रेम और विवाह",opt_health_vitality:"स्वास्थ्य और ऊर्जा",opt_wealth_artha:"धन / अर्थ",
+  btn_generate:"मेरी कुंडली रीडिंग बनाएं ↗",
+  note_time1:"सही जन्म समय लग्न की सटीकता तय करता है।",
+  note_time2:"सुबह/दोपहर/रात जैसा अनुमान भी न होने से बेहतर है।",
+  load_title:"आपकी कुंडली पढ़ी जा रही है",btn_new_chart:"नई कुंडली",
+  lbl_groom:"वर",lbl_bride:"वधू",lbl_birth_city:"जन्म शहर",
+  lbl_time_unknown_short:"सही समय नहीं पता",
+  ph_boy_name:"उदा. राहुल मेहता",ph_girl_name:"उदा. प्रिया शर्मा",
+  btn_check_compat:"अनुकूलता जांचें ↗",
+  match_note:"अष्टकूट (36-गुण) स्कोरिंग, मंगल दोष जांच और एआई द्वारा अनुकूलता विश्लेषण।",
+  match_load_title:"कुंडलियां मिलाई जा रही हैं",btn_new_match:"नया मिलान",
+  guna_max_label:"/ 36 गुण",sec_ashta_koota:"अष्टकूट विवरण",
+  time_unknown_note:"समय अज्ञात (अनुमानित)",
+  err_kundali_required:"नाम, जन्म तिथि और जन्म स्थान आवश्यक हैं।",
+  err_groom_required:"वर का नाम, जन्म तिथि और जन्म स्थान आवश्यक हैं।",
+  err_bride_required:"वधू का नाम, जन्म तिथि और जन्म स्थान आवश्यक हैं।",
+  err_server:"सर्वर त्रुटि",err_request_failed:"अनुरोध विफल: ",
+  lbl_lagna:"लग्न",sub_ascendant:"उदय बिंदु",lbl_moonsign:"चंद्र राशि",sub_rashi:"राशि",
+  lbl_nakshatra:"नक्षत्र",lbl_sunsign:"सूर्य राशि",lbl_mahadasha:"महादशा",lbl_antardasha:"अंतर्दशा",
+  lbl_soulpurpose:"आत्मा का उद्देश्य",pada_word:"पद",
+  tab_overview:"सारांश",tab_career:"करियर",tab_love:"प्रेम और विवाह",tab_health:"स्वास्थ्य",
+  tab_wealth:"धन",tab_dasha:"दशा समयरेखा",tab_remedies:"उपाय",
+  sec_overview:"सारांश",sec_d10:"डी-10 दशमांश",lbl_d10lagna:"डी-10 लग्न",sub_dashamsha_asc:"दशमांश लग्न",
+  lbl_10th_d1:"दशम भाव (डी-1)",sub_karma_bhava:"कर्म भाव",
+  sec_career_dharma:"करियर धर्म",lbl_10th_house:"दशम भाव",sub_dashamsha:"दशमांश",
+  sec_blueprint:"मूल रूपरेखा",sec_strengths:"शक्तियां",sec_switch_timing:"बदलाव का सही समय",
+  sec_high_growth:"तेज़ी से बढ़ने वाले क्षेत्र",sec_career_timeline:"करियर समयरेखा",
+  sec_love_union:"प्रेम और विवाह",lbl_7th_house:"सप्तम भाव",sub_union_bhava:"विवाह भाव",
+  lbl_venus_sign:"शुक्र राशि",sub_shukra:"शुक्र",sec_reading:"विश्लेषण",
+  sec_marital_outlook:"वैवाहिक स्थिति — वर्तमान दशा",sec_marriage_windows:"विवाह के संभावित समय",
+  sec_past_relationship:"इस अध्याय से मिली सीख",sec_moving_forward:"आगे की राह",
+  sec_grief_healing:"उपचार और स्मृति",sec_companionship_outlook:"जब और अगर आप फिर से तैयार हों",
+  sec_hard_truths:"कड़वे सच",sec_partner_archetype:"जीवनसाथी का स्वरूप",sec_mangal_dosha:"मंगल दोष",
+  mangal_dosha_note:"इस कुंडली में मंगल एक मांगलिक भाव में स्थित है — कुंडली मिलान के ज़रिए संभावित जीवनसाथी की कुंडली से इसकी जांच जरूर करें।",
+  prem_title:"अनुकूलता एवं मिलान रिपोर्ट",
+  prem_desc:"अपने साथी के साथ पूर्ण अष्टकूट मिलान, सप्तम भाव विश्लेषण और शुक्र-मंगल की अनुकूलता जानें।",
+  prem_btn:"कुंडली मिलान आज़माएं ✦",
+  sec_health_vitality:"स्वास्थ्य और ऊर्जा",lbl_constitution:"प्रकृति",sub_prakriti:"आयुर्वेदिक प्रकृति",
+  lbl_current_risk:"वर्तमान जोखिम",val_moderate:"मध्यम",sub_rahu_dasha_period:"राहु दशा अवधि",
+  sec_vulnerabilities:"कमजोरियां",sec_watch_dasha:"वर्तमान दशा में ध्यान रखें",
+  sec_wealth_artha:"धन और अर्थ",lbl_2nd_house:"द्वितीय भाव",sub_dhana_bhava:"धन भाव",
+  lbl_11th_house:"एकादश भाव",sub_labha_bhava:"लाभ भाव",lbl_pattern:"प्रवृत्ति",
+  sec_wealth_architecture:"धन की संरचना",sec_timeline:"समयरेखा",
+  sec_muhurta:"💰 वित्तीय मुहूर्त — शुभ समय",
+  sec_vimshottari:"विंशोत्तरी महादशा समयरेखा",th_mahadasha:"महादशा",th_start:"शुरुआत",th_end:"समाप्ति",
+  sec_antardashas_within:"{m} महादशा के भीतर अंतर्दशाएं",th_antardasha:"अंतर्दशा",
+  sec_personalized_upayas:"व्यक्तिगत उपाय",
+  sec_dasha_period_meaning:"यह अवधि क्या दर्शाती है",
+  kundali_center:"कुंडली",
+  match_tab_overview:"सारांश",match_tab_emotional:"भावनात्मक",match_tab_romantic:"रोमांटिक",
+  match_tab_values:"मूल्य",match_tab_guidance:"मार्गदर्शन",match_tab_remedies:"उपाय",
+  sec_headline:"मुख्य निष्कर्ष",sec_overall_read:"समग्र विश्लेषण",sec_challenges:"चुनौतियां",
+  sec_emotional_compat:"भावनात्मक अनुकूलता",sec_romantic_chem:"रोमांटिक केमिस्ट्री",
+  sec_comm_values:"संवाद और मूल्य",sec_practical_guidance:"व्यावहारिक मार्गदर्शन",
+  sec_suggested_remedies:"सुझाए गए उपाय",mangal_check_lbl:"मंगल दोष जांच",
+  groom_short:"वर",bride_short:"वधू",manglik:"मांगलिक",not_manglik:"गैर-मांगलिक",
+};
+const LOAD_MSGS_I18N={
+  en:['Computing planetary positions…','Applying Lahiri ayanamsa…','Calculating Lagna degree…','Mapping Vimshottari dasha…','Analysing D10 Dashamsha…','Consulting Brihat Parashara…','Requesting AI analysis…','Finalising your reading…'],
+  hi:['ग्रहों की स्थिति की गणना हो रही है…','लाहिड़ी अयनांश लागू किया जा रहा है…','लग्न अंश की गणना हो रही है…','विंशोत्तरी दशा तैयार की जा रही है…','डी-10 दशमांश का विश्लेषण हो रहा है…','बृहत् पराशर से परामर्श लिया जा रहा है…','एआई विश्लेषण का अनुरोध किया जा रहा है…','आपकी रीडिंग को अंतिम रूप दिया जा रहा है…'],
+};
+const MATCH_LOAD_MSGS_I18N={
+  en:['Computing both births…','Locating Moon nakshatras…','Running Ashta Koota (36-guna) scoring…','Checking Mangal Dosha…','Reading Venus-Mars synastry…','Requesting AI compatibility analysis…','Finalising your match report…'],
+  hi:['दोनों जन्म विवरणों की गणना हो रही है…','चंद्र नक्षत्रों का पता लगाया जा रहा है…','अष्टकूट (36-गुण) स्कोरिंग की जा रही है…','मंगल दोष की जांच हो रही है…','शुक्र-मंगल अनुकूलता पढ़ी जा रही है…','एआई अनुकूलता विश्लेषण का अनुरोध किया जा रहा है…','आपकी मिलान रिपोर्ट को अंतिम रूप दिया जा रहा है…'],
+};
+
+let uiLang='en';
+function tr(key){
+  const dict=uiLang==='hi'?I18N_HI:I18N_EN;
+  return (dict && dict[key]!==undefined) ? dict[key] : (I18N_EN[key]!==undefined ? I18N_EN[key] : key);
+}
+function applyUILang(lang){
+  uiLang=lang;
+  document.documentElement.lang=lang==='hi'?'hi':'en';
+  const btn=document.getElementById('lang-toggle');
+  if(btn)btn.textContent=lang==='hi'?'हिं':'EN';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=tr(el.getAttribute('data-i18n'));});
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=tr(el.getAttribute('data-i18n-ph'));});
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{el.innerHTML=tr(el.getAttribute('data-i18n-html'));});
+  document.querySelectorAll('[data-i18n-prefix]').forEach(el=>{
+    if(el.firstChild && el.firstChild.nodeType===3){el.firstChild.textContent=tr(el.getAttribute('data-i18n-prefix'))+' ';}
+  });
+  try{localStorage.setItem('kundali-ui-lang',lang);}catch(e){}
+  if(window.__rerenderKundali)window.__rerenderKundali();
+  if(window.__rerenderMatch)window.__rerenderMatch();
+}
+window.toggleUILang=function(){
+  applyUILang(uiLang==='hi'?'en':'hi');
+};
+(function initUILang(){
+  let saved=null;
+  try{saved=localStorage.getItem('kundali-ui-lang');}catch(e){}
+  applyUILang(saved==='hi'?'hi':'en');
 })();
 
 // ─── Star field ────────────────────────────────────────────────────
@@ -852,7 +1064,6 @@ window.switchMode=function(mode){
 };
 
 // ─── Form submit ───────────────────────────────────────────────────
-const LOAD_MSGS=['Computing planetary positions…','Applying Lahiri ayanamsa…','Calculating Lagna degree…','Mapping Vimshottari dasha…','Analysing D10 Dashamsha…','Consulting Brihat Parashara…','Requesting AI analysis…','Finalising your reading…'];
 let loadTimer;
 
 window.submitForm=async function(){
@@ -860,7 +1071,7 @@ window.submitForm=async function(){
   const dob=document.getElementById('f-dob').value;
   const picked=cityAC.getPicked();
   const city=picked?picked.c:cityAC.getTyped();
-  if(!name||!dob||!city){showErr('Name, date of birth and place of birth are required.');return;}
+  if(!name||!dob||!city){showErr(tr('err_kundali_required'));return;}
   hideErr();
   document.getElementById('form-section').style.display='none';
   document.getElementById('loading').classList.add('show');
@@ -869,8 +1080,9 @@ window.submitForm=async function(){
   const pf=document.getElementById('prog-fill');
   pf.style.animation='none';pf.offsetHeight;pf.style.animation='bar 8s linear forwards';
   let li=0;
-  document.getElementById('load-msg').textContent=LOAD_MSGS[0];
-  loadTimer=setInterval(()=>{li=(li+1)%LOAD_MSGS.length;document.getElementById('load-msg').textContent=LOAD_MSGS[li];},1800);
+  const loadMsgs=LOAD_MSGS_I18N[uiLang]||LOAD_MSGS_I18N.en;
+  document.getElementById('load-msg').textContent=loadMsgs[0];
+  loadTimer=setInterval(()=>{li=(li+1)%loadMsgs.length;document.getElementById('load-msg').textContent=loadMsgs[li];},1800);
 
   const payload={
     name, dob,
@@ -886,6 +1098,7 @@ window.submitForm=async function(){
     marital_status: document.getElementById('f-marital').value,
     curcity: document.getElementById('f-curcity').value,
     focus: document.getElementById('f-focus').value,
+    language: uiLang==='hi'?'Hindi':'English',
   };
 
   try{
@@ -893,12 +1106,12 @@ window.submitForm=async function(){
     const data=await res.json();
     clearInterval(loadTimer);
     document.getElementById('loading').classList.remove('show');
-    if(!res.ok||data.error){showErr(data.error||'Server error');document.getElementById('form-section').style.display='block';return;}
+    if(!res.ok||data.error){showErr(data.error||tr('err_server'));document.getElementById('form-section').style.display='block';return;}
     renderResult(data,name,payload);
   }catch(e){
     clearInterval(loadTimer);
     document.getElementById('loading').classList.remove('show');
-    showErr('Request failed: '+e.message);
+    showErr(tr('err_request_failed')+e.message);
     document.getElementById('form-section').style.display='block';
   }
 };
@@ -952,7 +1165,7 @@ function buildNorthChart(lagnaSign,d1){
   <polygon points="2,2 80,2 2,80" fill="rgba(157,121,214,0.14)"/>
   <polygon points="120,80 160,120 120,160 80,120" fill="rgba(16,9,31,0.85)" stroke="${bdr}" stroke-width="0.5"/>
   <text x="120" y="116" text-anchor="middle" font-family="Cinzel,Georgia,serif" font-size="10" fill="${gold}">✦</text>
-  <text x="120" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" fill="${muted}">KUNDALI</text>
+  <text x="120" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" fill="${muted}">${tr('kundali_center')}</text>
   ${cell(1,29,29)}${cell(2,120,37)}${cell(3,211,29)}
   ${cell(4,211,120)}${cell(5,211,211)}${cell(6,120,223)}
   ${cell(7,29,211)}${cell(8,29,120)}`;
@@ -970,8 +1183,8 @@ function renderResult(data,name,form){
   // Header
   const init=name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
   document.getElementById('res-avatar').textContent=init;
-  document.getElementById('res-name').textContent=`${name} · ${ch.lagna} Lagna`;
-  const timeNote=form.time_known?(form.time?' · '+form.time:''):' · time unknown (approx.)';
+  document.getElementById('res-name').textContent=`${name} · ${ch.lagna} ${tr('lbl_lagna')}`;
+  const timeNote=form.time_known?(form.time?' · '+form.time:''):' · '+tr('time_unknown_note');
   const statusNote=`${form.marital_status||'Unmarried'}${form.occupation?' · '+form.occupation:''}`;
   document.getElementById('res-sub').textContent=`${form.dob}${timeNote} · ${form.city}, ${form.state||''}, ${form.country||'India'} · ${statusNote} · Ayanamsa: ${ch.ayanamsa}°`;
 
@@ -980,84 +1193,90 @@ function renderResult(data,name,form){
 
   // Core cards
   document.getElementById('core-cards').innerHTML=
-    kc('Lagna',ch.lagna,'Ascendant')+
-    kc('Moon Sign',ch.rashi,'Rashi')+
-    kc('Nakshatra',ch.nakshatra,`Pada ${ch.nakshatra_pada} · ${ch.nakshatra_lord}`);
+    kc(tr('lbl_lagna'),ch.lagna,tr('sub_ascendant'))+
+    kc(tr('lbl_moonsign'),ch.rashi,tr('sub_rashi'))+
+    kc(tr('lbl_nakshatra'),ch.nakshatra,`${tr('pada_word')} ${ch.nakshatra_pada} · ${ch.nakshatra_lord}`);
   document.getElementById('dasha-cards').innerHTML=
-    kc('Sun sign',ch.sun_sign,'')+
-    kc('Mahadasha',dasha.mahadasha,dasha.mahadasha_start+' – '+dasha.mahadasha_end)+
-    kc('Antardasha',dasha.antardasha,dasha.antardasha_start+' – '+dasha.antardasha_end);
+    kc(tr('lbl_sunsign'),ch.sun_sign,'')+
+    kc(tr('lbl_mahadasha'),dasha.mahadasha,dasha.mahadasha_start+' – '+dasha.mahadasha_end)+
+    kc(tr('lbl_antardasha'),dasha.antardasha,dasha.antardasha_start+' – '+dasha.antardasha_end);
 
   // Soul purpose
-  document.getElementById('soul-box').innerHTML=`<div class="box-lbl gold-lbl">Soul purpose · ${ch.nakshatra}</div><div class="ins-txt">${an.soul_purpose||'—'}</div>`;
+  document.getElementById('soul-box').innerHTML=`<div class="box-lbl gold-lbl">${tr('lbl_soulpurpose')} · ${ch.nakshatra}</div><div class="ins-txt">${an.soul_purpose||'—'}</div>`;
 
   // Tabs
-  const TABS=[{id:'ov',l:'Overview'},{id:'ca',l:'Career'},{id:'lo',l:'Love & Union'},{id:'he',l:'Health'},{id:'we',l:'Wealth'},{id:'da',l:'Dasha Timeline'},{id:'re',l:'Remedies'}];
+  const TABS=[{id:'ov',l:tr('tab_overview')},{id:'ca',l:tr('tab_career')},{id:'lo',l:tr('tab_love')},{id:'he',l:tr('tab_health')},{id:'we',l:tr('tab_wealth')},{id:'da',l:tr('tab_dasha')},{id:'re',l:tr('tab_remedies')}];
   document.getElementById('tab-bar').innerHTML=TABS.map((t,i)=>`<button class="tab-btn${i===0?' on':''}" onclick="switchTab('${t.id}',this)">${t.l}</button>`).join('');
 
   const career=an.career||{}, love=an.love||{}, health=an.health||{}, wealth=an.wealth||{};
 
   document.getElementById('tab-panes').innerHTML=`
   <div class="tab-pane on" id="pane-ov">
-    <div class="sec">Overview</div>
+    <div class="sec">${tr('sec_overview')}</div>
     ${ins(an.overview)}
-    <div class="sec" style="margin-top:14px">D10 Dashamsha</div>
-    <div class="cards2">${kc('D10 Lagna',ch.d10_lagna,'Dashamsha ascendant')}${kc('10th house D1',ch.d1['Sun']?ch.d1['Saturn']:'—','Karma bhava')}</div>
+    <div class="sec" style="margin-top:14px">${tr('sec_d10')}</div>
+    <div class="cards2">${kc(tr('lbl_d10lagna'),ch.d10_lagna,tr('sub_dashamsha_asc'))}${kc(tr('lbl_10th_d1'),ch.d1['Sun']?ch.d1['Saturn']:'—',tr('sub_karma_bhava'))}</div>
   </div>
   <div class="tab-pane" id="pane-ca">
-    <div class="sec">Career dharma</div>
-    <div class="cards2">${kc('10th house',ch.d1?.Saturn||'—','Karma bhava')}${kc('D10 Lagna',ch.d10_lagna,'Dashamsha')}</div>
-    <div class="hbox"><div class="box-lbl gold-lbl">Blueprint</div>${ins([career.summary])}</div>
-    <div class="sbox"><div class="box-lbl teal-lbl">Strengths</div>${ins(career.strengths,teal)}</div>
-    <div class="sec">Switch timing</div>
+    <div class="sec">${tr('sec_career_dharma')}</div>
+    <div class="cards2">${kc(tr('lbl_10th_house'),ch.d1?.Saturn||'—',tr('sub_karma_bhava'))}${kc(tr('lbl_d10lagna'),ch.d10_lagna,tr('sub_dashamsha'))}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_blueprint')}</div>${ins([career.summary])}</div>
+    <div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_strengths')}</div>${ins(career.strengths,teal)}</div>
+    <div class="sec">${tr('sec_switch_timing')}</div>
     <div class="hbox">${ins([career.switch_timing||career.switch])}</div>
-    <div class="sec">High-growth sectors</div>
+    <div class="sec">${tr('sec_high_growth')}</div>
     ${(career.sectors||[]).map(s=>`<div class="hbox" style="margin-bottom:6px"><div class="box-lbl gold-lbl">${s.sector||s}</div>${s.reason?`<div class="ins-txt">${s.reason}</div>`:''}</div>`).join('')}
-    <div class="sec">Career timeline</div>${tl(career.timeline||[])}
+    <div class="sec">${tr('sec_career_timeline')}</div>${tl(career.timeline||[])}
   </div>
   <div class="tab-pane" id="pane-lo">
-    <div class="sec">Love & union</div>
-    <div class="cards2">${kc('7th house',ch.d1?.Venus||'—','Union bhava')}${kc('Venus sign',ch.d1?.Venus||'—','Shukra')}</div>
-    <div class="hbox"><div class="box-lbl gold-lbl">Reading</div>${ins([love.summary])}</div>
+    <div class="sec">${tr('sec_love_union')}</div>
+    <div class="cards2">${kc(tr('lbl_7th_house'),ch.d1?.Venus||'—',tr('sub_union_bhava'))}${kc(tr('lbl_venus_sign'),ch.d1?.Venus||'—',tr('sub_shukra'))}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_reading')}</div>${ins([love.summary])}</div>
     ${form.marital_status==='Married'
-      ? `<div class="sbox"><div class="box-lbl teal-lbl">Marital outlook — current dasha</div>${ins([love.marital_outlook],teal)}</div>`
-      : `<div class="sbox"><div class="box-lbl teal-lbl">Marriage windows</div>${(love.marriage_windows||[]).map(w=>`<div class="ins" style="margin-bottom:8px"><div class="ins-dot" style="background:${teal}"></div><div class="ins-txt"><strong style="color:var(--goldL)">${w.period}</strong> — ${w.reason}</div></div>`).join('')}</div>`}
-    <div class="tbox"><div class="box-lbl coral-lbl">Hard truths</div>${ins(love.truths,coral)}</div>
-    <div class="hbox"><div class="box-lbl gold-lbl">Partner archetype</div>${ins([love.partner])}</div>
-    ${ch.mangal_dosha?`<div class="tbox"><div class="box-lbl coral-lbl">Mangal Dosha</div><div class="ins-txt">Mars falls in a Manglik house in this chart — worth checking against a prospective partner's chart via Kundali Matching.</div></div>`:''}
-    <div class="prem"><div class="prem-icon">🔮</div><div class="prem-title">Compatibility & Synastry Report</div><p class="prem-desc">Full Ashta Koota matching, 7th house overlay, and Venus-Mars synastry with your partner.</p><button class="prem-btn" onclick="switchMode('match')">Try Kundali Matching ✦</button></div>
+      ? `<div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_marital_outlook')}</div>${ins([love.marital_outlook],teal)}</div>`
+      : form.marital_status==='Separated/Divorced'
+      ? `<div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_past_relationship')}</div>${ins([love.past_relationship_lessons])}</div>
+         <div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_moving_forward')}</div>${ins([love.moving_forward],teal)}</div>`
+      : form.marital_status==='Widowed'
+      ? `<div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_grief_healing')}</div>${ins([love.grief_and_healing])}</div>
+         <div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_companionship_outlook')}</div>${ins([love.companionship_outlook],teal)}</div>`
+      : `<div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_marriage_windows')}</div>${(love.marriage_windows||[]).map(w=>`<div class="ins" style="margin-bottom:8px"><div class="ins-dot" style="background:${teal}"></div><div class="ins-txt"><strong style="color:var(--goldL)">${w.period}</strong> — ${w.reason}</div></div>`).join('')}</div>`}
+    <div class="tbox"><div class="box-lbl coral-lbl">${tr('sec_hard_truths')}</div>${ins(love.truths,coral)}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_partner_archetype')}</div>${ins([love.partner])}</div>
+    ${ch.mangal_dosha?`<div class="tbox"><div class="box-lbl coral-lbl">${tr('sec_mangal_dosha')}</div><div class="ins-txt">${tr('mangal_dosha_note')}</div></div>`:''}
+    <div class="prem"><div class="prem-icon">🔮</div><div class="prem-title">${tr('prem_title')}</div><p class="prem-desc">${tr('prem_desc')}</p><button class="prem-btn" onclick="switchMode('match')">${tr('prem_btn')}</button></div>
   </div>
   <div class="tab-pane" id="pane-he">
-    <div class="sec">Health & vitality</div>
-    <div class="cards2">${kc('Constitution',health.constitution,'Prakriti')}${kc('Current risk','Moderate','Rahu dasha period')}</div>
-    <div class="sbox"><div class="box-lbl teal-lbl">Strengths</div>${ins(health.strengths,teal)}</div>
-    <div class="tbox"><div class="box-lbl coral-lbl">Vulnerabilities</div>${ins(health.vulnerabilities,coral)}</div>
-    <div class="hbox"><div class="box-lbl gold-lbl">Watch during current dasha</div>${ins(health.watch)}</div>
+    <div class="sec">${tr('sec_health_vitality')}</div>
+    <div class="cards2">${kc(tr('lbl_constitution'),health.constitution,tr('sub_prakriti'))}${kc(tr('lbl_current_risk'),tr('val_moderate'),tr('sub_rahu_dasha_period'))}</div>
+    <div class="sbox"><div class="box-lbl teal-lbl">${tr('sec_strengths')}</div>${ins(health.strengths,teal)}</div>
+    <div class="tbox"><div class="box-lbl coral-lbl">${tr('sec_vulnerabilities')}</div>${ins(health.vulnerabilities,coral)}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_watch_dasha')}</div>${ins(health.watch)}</div>
   </div>
   <div class="tab-pane" id="pane-we">
-    <div class="sec">Wealth & artha</div>
-    <div class="cards3">${kc('2nd house',ch.d1?.Moon||'—','Dhana bhava')}${kc('11th house',ch.d1?.Mars||'—','Labha bhava')}${kc('Pattern',wealth.pattern||'—')}</div>
-    <div class="hbox"><div class="box-lbl gold-lbl">Wealth architecture</div>${ins(wealth.insights)}</div>
-    <div class="sec">Timeline</div>${tl(wealth.timeline||[])}
-    <div class="sec">💰 Financial Muhurta — auspicious windows</div>
+    <div class="sec">${tr('sec_wealth_artha')}</div>
+    <div class="cards3">${kc(tr('lbl_2nd_house'),ch.d1?.Moon||'—',tr('sub_dhana_bhava'))}${kc(tr('lbl_11th_house'),ch.d1?.Mars||'—',tr('sub_labha_bhava'))}${kc(tr('lbl_pattern'),wealth.pattern||'—')}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">${tr('sec_wealth_architecture')}</div>${ins(wealth.insights)}</div>
+    <div class="sec">${tr('sec_timeline')}</div>${tl(wealth.timeline||[])}
+    <div class="sec">${tr('sec_muhurta')}</div>
     ${(wealth.muhurta||[]).map(m=>`<div class="rcard"><div class="ricon">📅</div><div><div class="rtitle">${m.type} — <span style="color:var(--teal)">${m.window}</span></div><div class="rdesc">${m.reason}</div></div></div>`).join('')}
   </div>
   <div class="tab-pane" id="pane-da">
-    <div class="sec">${dasha.mahadasha} – ${dasha.antardasha} — what this period means</div>
+    <div class="sec">${dasha.mahadasha} – ${dasha.antardasha} — ${tr('sec_dasha_period_meaning')}</div>
     <div class="hbox">${ins([an.dasha_analysis])}</div>
-    <div class="sec">Vimshottari Mahadasha timeline</div>
+    <div class="sec">${tr('sec_vimshottari')}</div>
     <table class="dasha-table">
-      <thead><tr><th>Mahadasha</th><th>Start</th><th>End</th></tr></thead>
+      <thead><tr><th>${tr('th_mahadasha')}</th><th>${tr('th_start')}</th><th>${tr('th_end')}</th></tr></thead>
       <tbody>${(dasha.all_mahadashas||[]).map(m=>`<tr class="${m.current?'cur':''}"><td>${m.lord}</td><td>${m.start}</td><td>${m.end}</td></tr>`).join('')}</tbody>
     </table>
-    <div class="sec">Antardashas within ${dasha.mahadasha} Mahadasha</div>
+    <div class="sec">${tr('sec_antardashas_within').replace('{m}',dasha.mahadasha)}</div>
     <table class="dasha-table">
-      <thead><tr><th>Antardasha</th><th>Start</th><th>End</th></tr></thead>
+      <thead><tr><th>${tr('th_antardasha')}</th><th>${tr('th_start')}</th><th>${tr('th_end')}</th></tr></thead>
       <tbody>${(dasha.antardashas||[]).map(a=>`<tr class="${a.current?'cur':''}"><td>${a.lord}</td><td>${a.start}</td><td>${a.end}</td></tr>`).join('')}</tbody>
     </table>
   </div>
   <div class="tab-pane" id="pane-re">
-    <div class="sec">Personalized upayas</div>
+    <div class="sec">${tr('sec_personalized_upayas')}</div>
     ${(an.remedies||[]).map(r=>`<div class="rcard"><div class="ricon">${r.icon}</div><div><div class="rtitle">${r.title}</div><div class="rdesc">${r.desc}</div></div></div>`).join('')}
   </div>`;
 
@@ -1079,7 +1298,6 @@ window.switchTab=function(id,btn){
 };
 
 // ─── Kundali Matching ───────────────────────────────────────────────
-const MATCH_LOAD_MSGS=['Computing both births…','Locating Moon nakshatras…','Running Ashta Koota (36-guna) scoring…','Checking Mangal Dosha…','Reading Venus-Mars synastry…','Requesting AI compatibility analysis…','Finalising your match report…'];
 let matchLoadTimer;
 
 function personPayload(namePrefix, cityAC, timeAC){
@@ -1098,8 +1316,8 @@ function personPayload(namePrefix, cityAC, timeAC){
 window.submitMatch=async function(){
   const boy=personPayload('m-boy',boyCityAC,boyTimeAC);
   const girl=personPayload('m-girl',girlCityAC,girlTimeAC);
-  if(!boy.name||!boy.dob||!boy.city){showMatchErr("Groom's name, date of birth and place of birth are required.");return;}
-  if(!girl.name||!girl.dob||!girl.city){showMatchErr("Bride's name, date of birth and place of birth are required.");return;}
+  if(!boy.name||!boy.dob||!boy.city){showMatchErr(tr('err_groom_required'));return;}
+  if(!girl.name||!girl.dob||!girl.city){showMatchErr(tr('err_bride_required'));return;}
   hideMatchErr();
   document.getElementById('match-form-section').style.display='none';
   document.getElementById('match-loading').classList.add('show');
@@ -1107,20 +1325,23 @@ window.submitMatch=async function(){
   const pf=document.getElementById('match-prog-fill');
   pf.style.animation='none';pf.offsetHeight;pf.style.animation='bar 8s linear forwards';
   let li=0;
-  document.getElementById('match-load-msg').textContent=MATCH_LOAD_MSGS[0];
-  matchLoadTimer=setInterval(()=>{li=(li+1)%MATCH_LOAD_MSGS.length;document.getElementById('match-load-msg').textContent=MATCH_LOAD_MSGS[li];},1800);
+  const matchLoadMsgs=MATCH_LOAD_MSGS_I18N[uiLang]||MATCH_LOAD_MSGS_I18N.en;
+  document.getElementById('match-load-msg').textContent=matchLoadMsgs[0];
+  matchLoadTimer=setInterval(()=>{li=(li+1)%matchLoadMsgs.length;document.getElementById('match-load-msg').textContent=matchLoadMsgs[li];},1800);
+
+  const language=uiLang==='hi'?'Hindi':'English';
 
   try{
-    const res=await fetch('/api/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({boy,girl})});
+    const res=await fetch('/api/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({boy,girl,language})});
     const data=await res.json();
     clearInterval(matchLoadTimer);
     document.getElementById('match-loading').classList.remove('show');
-    if(!res.ok||data.error){showMatchErr(data.error||'Server error');document.getElementById('match-form-section').style.display='block';return;}
+    if(!res.ok||data.error){showMatchErr(data.error||tr('err_server'));document.getElementById('match-form-section').style.display='block';return;}
     renderMatchResult(data);
   }catch(e){
     clearInterval(matchLoadTimer);
     document.getElementById('match-loading').classList.remove('show');
-    showMatchErr('Request failed: '+e.message);
+    showMatchErr(tr('err_request_failed')+e.message);
     document.getElementById('match-form-section').style.display='block';
   }
 };
@@ -1142,8 +1363,8 @@ function renderMatchResult(data){
   document.getElementById('guna-verdict').textContent=guna.verdict;
 
   document.getElementById('mangal-box').innerHTML=
-    `<div class="box-lbl ${(boy.mangal_dosha||girl.mangal_dosha)?'coral-lbl':'gold-lbl'}">Mangal Dosha check</div>
-     <div class="ins-txt">Groom: ${boy.mangal_dosha?'Manglik':'Not Manglik'} · Bride: ${girl.mangal_dosha?'Manglik':'Not Manglik'}<br>${data.mangal_note}</div>`;
+    `<div class="box-lbl ${(boy.mangal_dosha||girl.mangal_dosha)?'coral-lbl':'gold-lbl'}">${tr('mangal_check_lbl')}</div>
+     <div class="ins-txt">${tr('groom_short')}: ${boy.mangal_dosha?tr('manglik'):tr('not_manglik')} · ${tr('bride_short')}: ${girl.mangal_dosha?tr('manglik'):tr('not_manglik')}<br>${data.mangal_note}</div>`;
 
   document.getElementById('koota-list').innerHTML=guna.kootas.map(k=>`
     <div class="koota-item">
@@ -1154,38 +1375,38 @@ function renderMatchResult(data){
 
   document.getElementById('dosha-list').innerHTML=(guna.doshas||[]).map(d=>`<div class="dosha-item">⚠ ${d}</div>`).join('');
 
-  const TABS=[{id:'ov',l:'Overview'},{id:'em',l:'Emotional'},{id:'ro',l:'Romantic'},{id:'co',l:'Values'},{id:'gu',l:'Guidance'},{id:'re',l:'Remedies'}];
+  const TABS=[{id:'ov',l:tr('match_tab_overview')},{id:'em',l:tr('match_tab_emotional')},{id:'ro',l:tr('match_tab_romantic')},{id:'co',l:tr('match_tab_values')},{id:'gu',l:tr('match_tab_guidance')},{id:'re',l:tr('match_tab_remedies')}];
   document.getElementById('match-tab-bar').innerHTML=TABS.map((t,i)=>`<button class="tab-btn${i===0?' on':''}" onclick="switchMatchTab('${t.id}',this)">${t.l}</button>`).join('');
 
   document.getElementById('match-tab-panes').innerHTML=`
   <div class="tab-pane on" id="mpane-ov">
-    <div class="sec">Headline</div>
+    <div class="sec">${tr('sec_headline')}</div>
     <div class="hbox">${ins([an.headline])}</div>
-    <div class="sec">Overall read</div>
+    <div class="sec">${tr('sec_overall_read')}</div>
     <div class="hbox">${ins([an.overall])}</div>
-    <div class="sec">Strengths</div>
+    <div class="sec">${tr('sec_strengths')}</div>
     <div class="sbox">${ins(an.strengths,teal)}</div>
-    <div class="sec">Challenges</div>
+    <div class="sec">${tr('sec_challenges')}</div>
     <div class="tbox">${ins(an.challenges,coral)}</div>
   </div>
   <div class="tab-pane" id="mpane-em">
-    <div class="sec">Emotional compatibility</div>
+    <div class="sec">${tr('sec_emotional_compat')}</div>
     <div class="hbox">${ins([an.emotional_compatibility])}</div>
   </div>
   <div class="tab-pane" id="mpane-ro">
-    <div class="sec">Romantic chemistry</div>
+    <div class="sec">${tr('sec_romantic_chem')}</div>
     <div class="hbox">${ins([an.romantic_chemistry])}</div>
   </div>
   <div class="tab-pane" id="mpane-co">
-    <div class="sec">Communication & values</div>
+    <div class="sec">${tr('sec_comm_values')}</div>
     <div class="hbox">${ins([an.communication_values])}</div>
   </div>
   <div class="tab-pane" id="mpane-gu">
-    <div class="sec">Practical guidance</div>
+    <div class="sec">${tr('sec_practical_guidance')}</div>
     ${ins(an.guidance)}
   </div>
   <div class="tab-pane" id="mpane-re">
-    <div class="sec">Suggested remedies</div>
+    <div class="sec">${tr('sec_suggested_remedies')}</div>
     ${(an.remedies||[]).map(r=>`<div class="rcard"><div class="ricon">${r.icon}</div><div><div class="rtitle">${r.title}</div><div class="rdesc">${r.desc}</div></div></div>`).join('')}
   </div>`;
 
