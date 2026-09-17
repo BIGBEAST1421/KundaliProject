@@ -40,6 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# python (legacy, removed in Task 12)
-.venv/
-__pycache__/
