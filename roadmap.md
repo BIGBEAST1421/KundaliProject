@@ -20,7 +20,7 @@ Layer 1 (the chart math: planetary positions, ayanamsa, houses, nakshatra, dasha
 
 ### 4. Yoga Detection Library
 - Build as boolean-check functions, one yoga per function, e.g.: `is_gajakesari_yoga(chart)`, `is_kemadruma_yoga(chart)`, `is_raja_yoga(chart)`, `is_dhana_yoga(chart)`, `is_manglik(chart)`
-- IMPORTANT: every dosha function must also check its own cancellation conditions (e.g. manglik cancellation if Mars is in own/exalted sign, or aspected by Jupiter, etc.) and return `cancelled=True/False`, not just `triggered=True/False`.
+- IMPORTANT: every dosha function must also check its own cancellation conditions (e.g. manglik cancellation if Mars is in own/exalted sign, or aspected by Jupiter, etc.) and return `cancelled=true/false`, not just `triggered=true/false`.
 
 ### 5. Divisional Chart (Varga) Calculators
 - You likely already compute D1. Add at minimum:
@@ -89,10 +89,10 @@ Raj Yoga = combinations that grant power, status, success. Classical (Parashari/
 ### 1. 
 For every planet AND the lagna, output degree-minute-second within its sign, not just the sign name.
 Example: not "Mars in Scorpio" but `Mars: Scorpio 14°27'53"`
-- pyswisseph gives you longitude as a float in degrees (0-360).
-  ```python
-  sign = int(longitude / 30)
-  degree_in_sign = longitude % 30
+- an ephemeris library like swisseph gives you longitude as a float in degrees (0-360).
+  ```typescript
+  const sign = Math.floor(longitude / 30);
+  const degree_in_sign = longitude % 30;
   ```
   Convert `degree_in_sign` to D° M' S" format for display.
 
