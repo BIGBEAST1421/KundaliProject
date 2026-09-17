@@ -37,3 +37,8 @@ create index if not exists match_reports_created_at_idx on public.match_reports 
 
 alter table public.person_reports enable row level security;
 alter table public.match_reports  enable row level security;
+
+-- The server uses the service_role key; make sure it can read/write regardless of who ran this file.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on public.person_reports to service_role;
+grant select, insert, update, delete on public.match_reports  to service_role;
