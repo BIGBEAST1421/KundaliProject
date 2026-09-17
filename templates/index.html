@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Architect of Cosmic Destiny — Vedic Kundali</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#080714; --sur:#10091F; --sur2:#1A1235;
+      --gold:#D4B978; --goldL:#EDD99A; --goldD:#7A6535;
+      --bdr:rgba(212,185,120,0.18); --bdrH:rgba(212,185,120,0.45);
+      --txt:#E8E0CC; --txtD:#9A95B5; --muted:#5E5A7A;
+      --teal:#5EC4BA; --coral:#E07865; --coral-txt:#E0B0A5; --lagna:#9D79D6;
+      --purple:#5C35B5; --btn1:#3D2080;
+      --shadow:rgba(0,0,0,.7); --field-bg:rgba(255,255,255,0.04);
+    }
+    :root[data-theme="light"] {
+      --bg:#F7F1E3; --sur:#FFFFFF; --sur2:#FBF5E8;
+      --gold:#9C7A1E; --goldL:#7A5C12; --goldD:#B8912E;
+      --bdr:rgba(120,90,20,0.16); --bdrH:rgba(120,90,20,0.4);
+      --txt:#2A2415; --txtD:#5C5340; --muted:#8C8370;
+      --teal:#1E8F86; --coral:#C1503B; --coral-txt:#8A3D2A; --lagna:#6B48A8;
+      --purple:#5C35B5; --btn1:#6B46C1;
+      --shadow:rgba(120,100,60,.18); --field-bg:rgba(0,0,0,0.035);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--txt);font-family:'Inter',system-ui,sans-serif;min-height:100vh;transition:background .25s,color .25s}
+    canvas#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:20px 16px 60px}
+
+    /* HEADER */
+    header{text-align:center;padding:32px 0 28px;border-bottom:0.5px solid var(--bdr);margin-bottom:28px}
+    .logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px}
+    .logo svg{animation:spin 22s linear infinite}
+    h1{font-family:'Cinzel',serif;font-size:clamp(18px,4vw,26px);color:var(--goldL);font-weight:400;letter-spacing:1px}
+    .tagline{font-size:11px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:4px}
+
+    /* THEME TOGGLE */
+    .theme-toggle{position:fixed;top:16px;right:16px;z-index:50;width:38px;height:38px;border-radius:50%;
+      background:var(--sur);border:0.5px solid var(--bdr);color:var(--gold);font-size:16px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;transition:border-color .18s,transform .18s;
+      box-shadow:0 4px 14px var(--shadow)}
+    .theme-toggle:hover{border-color:var(--bdrH);transform:scale(1.06)}
+    @media(max-width:600px){.theme-toggle{top:10px;right:10px;width:34px;height:34px;font-size:14px}}
+
+    /* MODE SWITCHER */
+    .mode-tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--sur);border:0.5px solid var(--bdr);
+      border-radius:12px;padding:5px}
+    .mode-tab{flex:1;background:none;border:none;border-radius:9px;padding:11px 8px;font-size:13px;
+      color:var(--muted);cursor:pointer;font-family:inherit;font-weight:500;transition:all .18s}
+    .mode-tab.on{background:linear-gradient(90deg,var(--btn1),var(--purple));color:var(--goldL)}
+    .mode-tab:not(.on):hover{color:var(--txt)}
+
+    /* FORM */
+    .form-card{background:var(--sur);border:0.5px solid var(--bdr);border-radius:14px;padding:24px}
+    .form-title{font-family:'Cinzel',serif;font-size:15px;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+    .field{display:flex;flex-direction:column;gap:5px}
+    .field label{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+    .field label span{color:var(--goldD);font-size:9px;float:right}
+    input,select{background:var(--field-bg);border:0.5px solid var(--bdr);border-radius:8px;
+      padding:10px 12px;font-size:13px;color:var(--txt);font-family:inherit;width:100%;
+      transition:border-color .18s;outline:none}
+    input:focus,select:focus{border-color:var(--bdrH)}
+    select{background:var(--sur);cursor:pointer}
+    select option{background:var(--sur);color:var(--txt)}
+
+    /* City autocomplete */
+    .city-wrap{position:relative}
+    .city-input-wrap{position:relative}
+    .city-icon{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.4;pointer-events:none}
+    .city-drop{position:absolute;z-index:999;width:100%;background:var(--sur2);
+      border:0.5px solid var(--bdrH);border-top:none;border-radius:0 0 10px 10px;
+      max-height:220px;overflow-y:auto;box-shadow:0 12px 32px var(--shadow);
+      animation:drop .14s ease;display:none}
+    .city-drop.open{display:block}
+    .city-item{padding:9px 12px;cursor:pointer;border-bottom:0.5px solid rgba(212,185,120,0.07)}
+    .city-item:hover,.city-item.active{background:rgba(212,185,120,0.1)}
+    .city-item:last-child{border-bottom:none}
+    .city-name{font-size:13px;color:var(--txt);font-weight:500}
+    .city-name em{color:var(--goldL);font-style:normal;font-weight:700}
+    .city-meta{font-size:10.5px;color:var(--muted);margin-top:2px}
+    .city-coords{font-size:9px;opacity:.6}
+    .city-confirm{font-size:10.5px;color:var(--teal);margin-top:6px;display:none}
+    .city-confirm.show{display:flex;gap:5px;align-items:center}
+
+    /* Matching form */
+    .match-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+    .match-col{background:rgba(255,255,255,.02);border:0.5px solid var(--bdr);border-radius:10px;padding:14px}
+    .match-col-lbl{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--bdr)}
+    .match-col-lbl.groom{color:var(--teal)}
+    .match-col-lbl.bride{color:var(--coral)}
+    @media(max-width:600px){.match-cols{grid-template-columns:1fr}}
+
+    /* Guna score */
+    .guna-score-box{background:var(--sur);border:0.5px solid var(--bdr);border-radius:14px;
+      padding:22px;text-align:center;margin-bottom:14px}
+    .guna-score-num{font-family:'Cinzel',serif;font-size:40px;color:var(--gold);line-height:1}
+    .guna-score-max{font-size:12px;color:var(--muted);margin-top:2px}
+    .guna-verdict{font-size:12.5px;color:var(--txt);margin-top:10px;line-height:1.6}
+
+    .koota-item{margin-bottom:10px}
+    .koota-head{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px}
+    .koota-head .kn{color:var(--txt);font-weight:500}
+    .koota-head .kv{color:var(--gold)}
+    .koota-track{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+    .koota-fill{height:100%;background:linear-gradient(90deg,var(--lagna),var(--gold));border-radius:3px}
+    .koota-note{font-size:10.5px;color:var(--muted);margin-top:3px}
+
+    .dosha-item{background:rgba(224,120,101,.07);border:0.5px solid rgba(224,120,101,.28);
+      border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:11.5px;color:var(--coral-txt);line-height:1.6}
+
+    /* Location box */
+    .loc-box{background:rgba(212,185,120,0.04);border:0.5px solid rgba(212,185,120,0.2);
+      border-radius:9px;padding:12px;margin-bottom:12px}
+    .loc-title{font-size:9.5px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:9px}
+    .loc-hint{font-size:9.5px;color:var(--muted);margin-top:7px;line-height:1.6}
+    .loc-hint strong{color:var(--txt)}
+
+    /* Submit */
+    .btn{width:100%;padding:13px;background:linear-gradient(90deg,var(--btn1),var(--purple));
+      border:0.5px solid var(--bdrH);border-radius:10px;color:var(--goldL);font-size:14px;
+      font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:.3px;
+      margin-top:6px;transition:opacity .2s}
+    .btn:hover{opacity:.88}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .form-note{font-size:10.5px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.6}
+
+    /* Error */
+    .err-box{background:rgba(224,120,101,.07);border:0.5px solid rgba(224,120,101,.3);
+      border-radius:8px;padding:10px 12px;margin-bottom:10px;display:none}
+    .err-box.show{display:block}
+    .err-msg{font-size:12px;color:var(--coral);line-height:1.6}
+    .err-raw{font-size:9.5px;color:var(--muted);font-family:monospace;margin-top:5px;word-break:break-all;line-height:1.5}
+
+    /* Loading */
+    #loading,#match-loading{display:none;text-align:center;padding:48px 20px}
+    #loading.show,#match-loading.show{display:block}
+    .loader{width:44px;height:44px;border:2px solid rgba(212,185,120,.15);border-top-color:var(--gold);
+      border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 16px}
+    .load-title{font-family:'Cinzel',serif;font-size:14px;color:var(--gold);margin-bottom:6px}
+    .load-msg{font-size:11.5px;color:var(--muted);letter-spacing:.07em}
+    .prog-track{width:140px;height:2px;background:rgba(212,185,120,.1);border-radius:1px;margin:16px auto 0;overflow:hidden}
+    .prog-fill{height:100%;border-radius:1px;background:linear-gradient(90deg,var(--lagna),var(--gold));
+      width:0;animation:bar 8s linear forwards}
+
+    /* RESULT */
+    #result,#match-result{display:none}
+    #result.show,#match-result.show{display:block}
+
+    .result-header{background:var(--sur);border:0.5px solid var(--bdr);border-radius:14px;
+      padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+    .avatar{width:44px;height:44px;border-radius:50%;background:rgba(157,121,214,.15);
+      border:1px solid rgba(157,121,214,.4);display:flex;align-items:center;justify-content:center;
+      font-size:16px;color:var(--lagna);font-weight:600;flex-shrink:0}
+    .res-name{font-family:'Cinzel',serif;font-size:15px;color:var(--gold)}
+    .res-sub{font-size:11px;color:var(--muted);margin-top:3px}
+    .new-btn{margin-left:auto;background:none;border:0.5px solid var(--bdr);border-radius:7px;
+      padding:6px 12px;font-size:11px;color:var(--muted);cursor:pointer;font-family:inherit}
+
+    /* Core cards */
+    .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+    .cards2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+    .kcard{background:rgba(255,255,255,.03);border:0.5px solid var(--bdr);border-radius:8px;padding:10px}
+    .kcard-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+    .kcard-val{font-size:13px;color:var(--txt);font-weight:500}
+    .kcard-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+    /* Tabs */
+    .tab-bar{display:flex;gap:0;border-bottom:0.5px solid var(--bdr);margin-bottom:16px;overflow-x:auto}
+    .tab-btn{background:none;border:none;border-bottom:2px solid transparent;
+      padding:9px 14px;font-size:12px;color:var(--muted);cursor:pointer;
+      font-family:inherit;white-space:nowrap;transition:color .18s}
+    .tab-btn.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+    .tab-pane{display:none;animation:fade .22s ease}
+    .tab-pane.on{display:block}
+
+    /* North Indian chart */
+    .chart-wrap{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-bottom:14px}
+    #kundali-svg{max-width:200px;width:100%;display:block}
+
+    /* Boxes */
+    .hbox{background:rgba(212,185,120,.05);border:0.5px solid rgba(212,185,120,.22);
+      border-radius:8px;padding:12px;margin-bottom:10px}
+    .tbox{background:rgba(224,120,101,.05);border:0.5px solid rgba(224,120,101,.22);
+      border-radius:8px;padding:12px;margin-bottom:10px}
+    .sbox{background:rgba(94,196,186,.05);border:0.5px solid rgba(94,196,186,.2);
+      border-radius:8px;padding:12px;margin-bottom:10px}
+    .box-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:7px}
+    .gold-lbl{color:var(--gold)} .teal-lbl{color:var(--teal)} .coral-lbl{color:var(--coral)}
+    .sec{font-size:9.5px;color:var(--goldD);letter-spacing:.14em;text-transform:uppercase;
+      margin-bottom:8px;padding-bottom:4px;border-bottom:0.5px solid rgba(212,185,120,.12);margin-top:8px}
+
+    /* Insight rows */
+    .ins{display:flex;gap:7px;margin-bottom:7px;align-items:flex-start}
+    .ins-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);margin-top:6px;flex-shrink:0}
+    .ins-txt{font-size:12px;color:var(--txtD);line-height:1.7}
+
+    /* Timeline */
+    .tl{display:flex;gap:9px;margin-bottom:11px}
+    .tl-line{display:flex;flex-direction:column;align-items:center}
+    .tl-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:2px}
+    .tl-dot.first{background:var(--teal)}
+    .tl-conn{width:1px;flex:1;background:rgba(212,185,120,.2);margin-top:2px}
+    .tl-period{font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px}
+    .tl-desc{font-size:11.5px;color:var(--txtD);line-height:1.65}
+
+    /* Remedy cards */
+    .rcard{background:rgba(100,70,170,.1);border:0.5px solid rgba(100,70,170,.3);
+      border-radius:8px;padding:11px;margin-bottom:8px;display:flex;gap:11px}
+    .ricon{font-size:20px;flex-shrink:0}
+    .rtitle{font-size:12px;color:var(--goldL);font-weight:500;margin-bottom:3px}
+    .rdesc{font-size:11.5px;color:var(--txtD);line-height:1.65}
+
+    /* Dasha table */
+    .dasha-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:12px}
+    .dasha-table th{text-align:left;padding:5px 8px;font-size:9px;color:var(--muted);
+      letter-spacing:.1em;text-transform:uppercase;border-bottom:0.5px solid var(--bdr)}
+    .dasha-table td{padding:6px 8px;border-bottom:0.5px solid rgba(212,185,120,.07)}
+    .dasha-table tr.cur td{background:rgba(212,185,120,.08);color:var(--goldL)}
+    .dasha-table tr.cur td:first-child::before{content:"▸ ";color:var(--gold)}
+
+    /* Premium gate */
+    .prem{background:rgba(212,185,120,.04);border:1px solid rgba(212,185,120,.2);
+      border-radius:10px;padding:16px;text-align:center;margin-top:10px}
+    .prem-icon{font-size:22px;margin-bottom:6px}
+    .prem-title{font-family:'Cinzel',serif;font-size:13px;color:var(--gold);margin-bottom:5px}
+    .prem-desc{font-size:11.5px;color:var(--muted);line-height:1.65;margin-bottom:11px}
+    .prem-btn{background:linear-gradient(90deg,#8A6C00,var(--gold));border:none;border-radius:7px;
+      padding:8px 18px;color:#080714;font-size:13px;font-weight:600;cursor:pointer}
+
+    /* Animations */
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes bar{from{width:0}to{width:92%}}
+    @keyframes drop{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:600px){
+      .grid2,.grid3{grid-template-columns:1fr}
+      .cards3{grid-template-columns:1fr 1fr}
+      .chart-wrap{grid-template-columns:1fr}
+      #kundali-svg{max-width:180px;margin:0 auto}
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(212,185,120,.2);border-radius:2px}
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark theme">🌙</button>
+
+<div class="wrap">
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="color:var(--gold)">
+        <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="0.5" opacity="0.65"/>
+        <circle cx="22" cy="22" r="8"  stroke="currentColor" stroke-width="0.8" opacity="0.85"/>
+        <circle cx="22" cy="22" r="3"  fill="currentColor"/>
+        <line x1="22" y1="2"  x2="22" y2="42" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+        <line x1="2"  y1="22" x2="42" y2="22" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+        <line x1="6.4" y1="6.4" x2="37.6" y2="37.6" stroke="currentColor" stroke-width="0.4" opacity="0.2"/>
+        <line x1="37.6" y1="6.4" x2="6.4" y2="37.6" stroke="currentColor" stroke-width="0.4" opacity="0.2"/>
+        <polygon points="22,3 23.2,9 22,7.5 20.8,9" fill="currentColor" opacity="0.7"/>
+        <polygon points="22,41 23.2,35 22,36.5 20.8,35" fill="currentColor" opacity="0.7"/>
+        <polygon points="3,22 9,20.8 7.5,22 9,23.2" fill="currentColor" opacity="0.7"/>
+        <polygon points="41,22 35,20.8 36.5,22 35,23.2" fill="currentColor" opacity="0.7"/>
+      </svg>
+      <div>
+        <h1>Architect of Cosmic Destiny</h1>
+        <div class="tagline">Vedic Kundali Analysis · Lahiri Ayanamsa · Swiss Ephemeris</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MODE SWITCHER -->
+  <div class="mode-tabs">
+    <button class="mode-tab on" id="mode-tab-kundali" onclick="switchMode('kundali')">🔮 Kundali Reading</button>
+    <button class="mode-tab" id="mode-tab-match" onclick="switchMode('match')">💞 Kundali Matching</button>
+  </div>
+
+  <!-- ═══════════════════ MODE: SINGLE KUNDALI ═══════════════════ -->
+  <div id="mode-kundali">
+
+  <!-- FORM -->
+  <div id="form-section">
+    <div class="form-card">
+      <div class="form-title">✦ Your birth details</div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Full name</label>
+          <input id="f-name" type="text" placeholder="e.g. Priya Verma"/>
+        </div>
+        <div class="field">
+          <label>Date of birth</label>
+          <input id="f-dob" type="date"/>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Exact birth time <span>Optional but crucial</span></label>
+          <input id="f-time" type="time"/>
+          <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
+            <input type="checkbox" id="f-time-unknown" style="width:auto"/> I don't know my exact time
+          </label>
+          <select id="f-time-period" style="display:none;margin-top:4px">
+            <option value="03:00">Late night (12–4 AM)</option>
+            <option value="06:00">Early morning (4–8 AM)</option>
+            <option value="10:00">Morning (8 AM–12 PM)</option>
+            <option value="14:00">Afternoon (12–4 PM)</option>
+            <option value="18:00">Evening (4–8 PM)</option>
+            <option value="21:00">Night (8 PM–12 AM)</option>
+            <option value="12:00">Truly no idea — use best estimate</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select id="f-gender">
+            <option value="">Select gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Non-binary</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Occupation / life stage</label>
+          <select id="f-occupation">
+            <option value="">Select occupation</option>
+            <option>Student</option>
+            <option>Employed</option>
+            <option>Unemployed</option>
+            <option>Business Owner</option>
+            <option>Army / Defence Personnel</option>
+            <option>Government Employee</option>
+            <option>Homemaker</option>
+            <option>Retired</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Marital status</label>
+          <select id="f-marital">
+            <option>Unmarried</option>
+            <option>Married</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PLACE OF BIRTH -->
+      <div class="loc-box">
+        <div class="loc-title">📍 Place of birth</div>
+        <div class="field">
+          <label>Search birth city <span>Type 2+ letters</span></label>
+          <div class="city-wrap">
+            <div class="city-input-wrap">
+              <input id="f-city" type="text" placeholder="e.g. Bareilly, Mumbai, Jaipur…"
+                autocomplete="off" spellcheck="false"/>
+              <span class="city-icon" id="f-city-icon">🔍</span>
+            </div>
+            <div class="city-drop" id="f-city-drop"></div>
+            <div class="city-confirm" id="f-city-confirm">
+              <span>✓</span><span id="f-city-confirm-text"></span>
+            </div>
+          </div>
+        </div>
+        <div class="loc-hint">
+          Type <strong>"barei"</strong> → see <strong>Bareilly, UP</strong> and
+          <strong>Rae Bareli, UP</strong> as separate suggestions with exact coordinates.
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Current city <span>Optional</span></label>
+          <input id="f-curcity" type="text" placeholder="e.g. Noida"/>
+        </div>
+        <div class="field">
+          <label>Focus area</label>
+          <select id="f-focus">
+            <option value="">All pillars</option>
+            <option>Career & Karma</option>
+            <option>Love & Union</option>
+            <option>Health & Vitality</option>
+            <option>Wealth / Artha</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="err-box" id="err-box">
+        <div class="err-msg" id="err-msg"></div>
+        <div class="err-raw" id="err-raw"></div>
+      </div>
+
+      <button class="btn" id="submit-btn" onclick="submitForm()">
+        Generate my Kundali reading ↗
+      </button>
+      <div class="form-note">
+        Exact birth time determines Lagna precision.<br>
+        Even morning / afternoon / night is better than nothing.
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading">
+    <div class="loader"></div>
+    <div class="load-title">Reading your chart</div>
+    <div class="load-msg" id="load-msg">Computing planetary positions…</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result">
+    <div class="result-header">
+      <div class="avatar" id="res-avatar">✦</div>
+      <div>
+        <div class="res-name" id="res-name">—</div>
+        <div class="res-sub" id="res-sub">—</div>
+      </div>
+      <button class="new-btn" onclick="resetForm()">New chart</button>
+    </div>
+
+    <!-- Chart + Core Info -->
+    <div class="chart-wrap">
+      <svg id="kundali-svg" viewBox="0 0 240 240"><!-- filled by JS --></svg>
+      <div>
+        <div class="cards3" id="core-cards"></div>
+        <div class="cards3" id="dasha-cards"></div>
+        <div class="hbox" id="soul-box"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="tab-bar"></div>
+    <div id="tab-panes"></div>
+  </div>
+  </div> <!-- /mode-kundali -->
+
+  <!-- ═══════════════════ MODE: KUNDALI MATCHING ═══════════════════ -->
+  <div id="mode-match" style="display:none">
+
+  <!-- MATCH FORM -->
+  <div id="match-form-section">
+    <div class="form-card">
+      <div class="form-title">💞 Groom &amp; Bride birth details</div>
+
+      <div class="match-cols">
+        <div class="match-col">
+          <div class="match-col-lbl groom">♂ Groom</div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Full name</label>
+            <input id="m-boy-name" type="text" placeholder="e.g. Rahul Mehta"/>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Date of birth</label>
+            <input id="m-boy-dob" type="date"/>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Exact birth time <span>Optional</span></label>
+            <input id="m-boy-time" type="time"/>
+            <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
+              <input type="checkbox" id="m-boy-time-unknown" style="width:auto"/> Don't know exact time
+            </label>
+            <select id="m-boy-time-period" style="display:none;margin-top:4px">
+              <option value="03:00">Late night (12–4 AM)</option>
+              <option value="06:00">Early morning (4–8 AM)</option>
+              <option value="10:00">Morning (8 AM–12 PM)</option>
+              <option value="14:00">Afternoon (12–4 PM)</option>
+              <option value="18:00">Evening (4–8 PM)</option>
+              <option value="21:00">Night (8 PM–12 AM)</option>
+              <option value="12:00">No idea — best estimate</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Birth city</label>
+            <div class="city-wrap">
+              <div class="city-input-wrap">
+                <input id="m-boy-city" type="text" placeholder="e.g. Bareilly…" autocomplete="off" spellcheck="false"/>
+                <span class="city-icon" id="m-boy-city-icon">🔍</span>
+              </div>
+              <div class="city-drop" id="m-boy-city-drop"></div>
+              <div class="city-confirm" id="m-boy-city-confirm"><span>✓</span><span id="m-boy-city-confirm-text"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-col">
+          <div class="match-col-lbl bride">♀ Bride</div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Full name</label>
+            <input id="m-girl-name" type="text" placeholder="e.g. Priya Sharma"/>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Date of birth</label>
+            <input id="m-girl-dob" type="date"/>
+          </div>
+          <div class="field" style="margin-bottom:10px">
+            <label>Exact birth time <span>Optional</span></label>
+            <input id="m-girl-time" type="time"/>
+            <label style="flex-direction:row;align-items:center;gap:6px;margin-top:4px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:11px;color:var(--txtD)">
+              <input type="checkbox" id="m-girl-time-unknown" style="width:auto"/> Don't know exact time
+            </label>
+            <select id="m-girl-time-period" style="display:none;margin-top:4px">
+              <option value="03:00">Late night (12–4 AM)</option>
+              <option value="06:00">Early morning (4–8 AM)</option>
+              <option value="10:00">Morning (8 AM–12 PM)</option>
+              <option value="14:00">Afternoon (12–4 PM)</option>
+              <option value="18:00">Evening (4–8 PM)</option>
+              <option value="21:00">Night (8 PM–12 AM)</option>
+              <option value="12:00">No idea — best estimate</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Birth city</label>
+            <div class="city-wrap">
+              <div class="city-input-wrap">
+                <input id="m-girl-city" type="text" placeholder="e.g. Delhi…" autocomplete="off" spellcheck="false"/>
+                <span class="city-icon" id="m-girl-city-icon">🔍</span>
+              </div>
+              <div class="city-drop" id="m-girl-city-drop"></div>
+              <div class="city-confirm" id="m-girl-city-confirm"><span>✓</span><span id="m-girl-city-confirm-text"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="err-box" id="match-err-box">
+        <div class="err-msg" id="match-err-msg"></div>
+        <div class="err-raw" id="match-err-raw"></div>
+      </div>
+
+      <button class="btn" id="match-submit-btn" onclick="submitMatch()">
+        Check compatibility ↗
+      </button>
+      <div class="form-note">
+        Ashta Koota (36-guna) scoring plus Mangal Dosha check and an AI synastry reading.
+      </div>
+    </div>
+  </div>
+
+  <!-- MATCH LOADING -->
+  <div id="match-loading">
+    <div class="loader"></div>
+    <div class="load-title">Matching charts</div>
+    <div class="load-msg" id="match-load-msg">Computing both births…</div>
+    <div class="prog-track"><div class="prog-fill" id="match-prog-fill"></div></div>
+  </div>
+
+  <!-- MATCH RESULT -->
+  <div id="match-result">
+    <div class="result-header">
+      <div class="avatar" id="match-avatar">💞</div>
+      <div>
+        <div class="res-name" id="match-res-name">—</div>
+        <div class="res-sub" id="match-res-sub">—</div>
+      </div>
+      <button class="new-btn" onclick="resetMatch()">New match</button>
+    </div>
+
+    <div class="guna-score-box">
+      <div class="guna-score-num" id="guna-score-num">—</div>
+      <div class="guna-score-max">/ 36 Guna</div>
+      <div class="guna-verdict" id="guna-verdict">—</div>
+    </div>
+
+    <div class="hbox" id="mangal-box"></div>
+
+    <div class="sec">Ashta Koota breakdown</div>
+    <div id="koota-list"></div>
+
+    <div id="dosha-list"></div>
+
+    <div class="tab-bar" id="match-tab-bar"></div>
+    <div id="match-tab-panes"></div>
+  </div>
+  </div> <!-- /mode-match -->
+
+</div>
+
+<script>
+// ─── Theme (dark/light) ─────────────────────────────────────────────
+let gold,goldL,goldD,teal,coral,sur,bdr,lagna,muted;
+function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+function syncThemeColors(){
+  gold=cssVar('--gold');goldL=cssVar('--goldL');goldD=cssVar('--goldD');
+  teal=cssVar('--teal');coral=cssVar('--coral');
+  sur=cssVar('--sur');bdr=cssVar('--bdr');lagna=cssVar('--lagna');muted=cssVar('--muted');
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme',theme);
+  const btn=document.getElementById('theme-toggle');
+  if(btn)btn.textContent=theme==='light'?'☀️':'🌙';
+  try{localStorage.setItem('kundali-theme',theme);}catch(e){}
+  syncThemeColors();
+  if(window.__rerenderKundali)window.__rerenderKundali();
+  if(window.__rerenderMatch)window.__rerenderMatch();
+}
+window.toggleTheme=function(){
+  const cur=document.documentElement.getAttribute('data-theme')||'dark';
+  applyTheme(cur==='dark'?'light':'dark');
+};
+(function initTheme(){
+  let saved=null;
+  try{saved=localStorage.getItem('kundali-theme');}catch(e){}
+  applyTheme(saved==='light'?'light':'dark');
+})();
+
+// ─── Star field ────────────────────────────────────────────────────
+(function(){
+  const cv=document.getElementById('stars');
+  const ctx=cv.getContext('2d');
+  const S=Array.from({length:90},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.1+0.3,o:Math.random()*0.4+0.1,ph:Math.random()*6.28,sp:Math.random()*0.005+0.002}));
+  let t=0;
+  function draw(){
+    cv.width=window.innerWidth;cv.height=window.innerHeight;
+    ctx.clearRect(0,0,cv.width,cv.height);t+=0.01;
+    S.forEach(s=>{ctx.beginPath();ctx.arc(s.x*cv.width,s.y*cv.height,s.r,0,6.28);ctx.fillStyle=`rgba(255,250,235,${s.o*(0.5+0.5*Math.sin(t*s.sp*60+s.ph))})`;ctx.fill();});
+    requestAnimationFrame(draw);
+  }
+  draw();window.addEventListener('resize',()=>{cv.width=window.innerWidth;cv.height=window.innerHeight;});
+})();
+
+// ─── City database (bundled — no network needed) ──────────────────
+const CITIES=[
+  {c:"Bareilly",s:"Uttar Pradesh",co:"India",lat:28.3670,lon:79.4304},
+  {c:"Rae Bareli",s:"Uttar Pradesh",co:"India",lat:26.2309,lon:81.2325},
+  {c:"Lucknow",s:"Uttar Pradesh",co:"India",lat:26.8467,lon:80.9462},
+  {c:"Kanpur",s:"Uttar Pradesh",co:"India",lat:26.4499,lon:80.3319},
+  {c:"Agra",s:"Uttar Pradesh",co:"India",lat:27.1767,lon:78.0081},
+  {c:"Varanasi",s:"Uttar Pradesh",co:"India",lat:25.3176,lon:82.9739},
+  {c:"Prayagraj",s:"Uttar Pradesh",co:"India",lat:25.4358,lon:81.8463},
+  {c:"Meerut",s:"Uttar Pradesh",co:"India",lat:28.9845,lon:77.7064},
+  {c:"Noida",s:"Uttar Pradesh",co:"India",lat:28.5355,lon:77.3910},
+  {c:"Ghaziabad",s:"Uttar Pradesh",co:"India",lat:28.6692,lon:77.4538},
+  {c:"Gorakhpur",s:"Uttar Pradesh",co:"India",lat:26.7606,lon:83.3732},
+  {c:"Aligarh",s:"Uttar Pradesh",co:"India",lat:27.8974,lon:78.0880},
+  {c:"Moradabad",s:"Uttar Pradesh",co:"India",lat:28.8386,lon:78.7733},
+  {c:"Mathura",s:"Uttar Pradesh",co:"India",lat:27.4924,lon:77.6737},
+  {c:"Shahjahanpur",s:"Uttar Pradesh",co:"India",lat:27.8832,lon:79.9053},
+  {c:"Rampur",s:"Uttar Pradesh",co:"India",lat:28.8159,lon:79.0254},
+  {c:"Jhansi",s:"Uttar Pradesh",co:"India",lat:25.4484,lon:78.5685},
+  {c:"Ayodhya",s:"Uttar Pradesh",co:"India",lat:26.7922,lon:82.1998},
+  {c:"Hapur",s:"Uttar Pradesh",co:"India",lat:28.7293,lon:77.7756},
+  {c:"Firozabad",s:"Uttar Pradesh",co:"India",lat:27.1592,lon:78.3957},
+  {c:"Muzaffarnagar",s:"Uttar Pradesh",co:"India",lat:29.4726,lon:77.7085},
+  {c:"Saharanpur",s:"Uttar Pradesh",co:"India",lat:29.9640,lon:77.5460},
+  {c:"Bulandshahr",s:"Uttar Pradesh",co:"India",lat:28.4072,lon:77.8497},
+  {c:"Etawah",s:"Uttar Pradesh",co:"India",lat:26.7892,lon:79.0220},
+  {c:"Lakhimpur",s:"Uttar Pradesh",co:"India",lat:27.9484,lon:80.7812},
+  {c:"Delhi",s:"Delhi",co:"India",lat:28.7041,lon:77.1025},
+  {c:"New Delhi",s:"Delhi",co:"India",lat:28.6139,lon:77.2090},
+  {c:"Mumbai",s:"Maharashtra",co:"India",lat:19.0760,lon:72.8777},
+  {c:"Pune",s:"Maharashtra",co:"India",lat:18.5204,lon:73.8567},
+  {c:"Nagpur",s:"Maharashtra",co:"India",lat:21.1458,lon:79.0882},
+  {c:"Nashik",s:"Maharashtra",co:"India",lat:19.9975,lon:73.7898},
+  {c:"Thane",s:"Maharashtra",co:"India",lat:19.2183,lon:72.9781},
+  {c:"Bengaluru",s:"Karnataka",co:"India",lat:12.9716,lon:77.5946},
+  {c:"Bangalore",s:"Karnataka",co:"India",lat:12.9716,lon:77.5946},
+  {c:"Mysuru",s:"Karnataka",co:"India",lat:12.2958,lon:76.6394},
+  {c:"Hubli",s:"Karnataka",co:"India",lat:15.3647,lon:75.1240},
+  {c:"Mangaluru",s:"Karnataka",co:"India",lat:12.9141,lon:74.8560},
+  {c:"Chennai",s:"Tamil Nadu",co:"India",lat:13.0827,lon:80.2707},
+  {c:"Coimbatore",s:"Tamil Nadu",co:"India",lat:11.0168,lon:76.9558},
+  {c:"Madurai",s:"Tamil Nadu",co:"India",lat:9.9252,lon:78.1198},
+  {c:"Salem",s:"Tamil Nadu",co:"India",lat:11.6643,lon:78.1460},
+  {c:"Jaipur",s:"Rajasthan",co:"India",lat:26.9124,lon:75.7873},
+  {c:"Jodhpur",s:"Rajasthan",co:"India",lat:26.2389,lon:73.0243},
+  {c:"Udaipur",s:"Rajasthan",co:"India",lat:24.5854,lon:73.7125},
+  {c:"Kota",s:"Rajasthan",co:"India",lat:25.2138,lon:75.8648},
+  {c:"Ajmer",s:"Rajasthan",co:"India",lat:26.4499,lon:74.6399},
+  {c:"Bikaner",s:"Rajasthan",co:"India",lat:28.0229,lon:73.3119},
+  {c:"Ahmedabad",s:"Gujarat",co:"India",lat:23.0225,lon:72.5714},
+  {c:"Surat",s:"Gujarat",co:"India",lat:21.1702,lon:72.8311},
+  {c:"Vadodara",s:"Gujarat",co:"India",lat:22.3072,lon:73.1812},
+  {c:"Rajkot",s:"Gujarat",co:"India",lat:22.3039,lon:70.8022},
+  {c:"Bhopal",s:"Madhya Pradesh",co:"India",lat:23.2599,lon:77.4126},
+  {c:"Indore",s:"Madhya Pradesh",co:"India",lat:22.7196,lon:75.8577},
+  {c:"Gwalior",s:"Madhya Pradesh",co:"India",lat:26.2183,lon:78.1828},
+  {c:"Jabalpur",s:"Madhya Pradesh",co:"India",lat:23.1815,lon:79.9864},
+  {c:"Kolkata",s:"West Bengal",co:"India",lat:22.5726,lon:88.3639},
+  {c:"Siliguri",s:"West Bengal",co:"India",lat:26.7271,lon:88.3953},
+  {c:"Patna",s:"Bihar",co:"India",lat:25.5941,lon:85.1376},
+  {c:"Gaya",s:"Bihar",co:"India",lat:24.7955,lon:85.0002},
+  {c:"Muzaffarpur",s:"Bihar",co:"India",lat:26.1197,lon:85.3910},
+  {c:"Hyderabad",s:"Telangana",co:"India",lat:17.3850,lon:78.4867},
+  {c:"Warangal",s:"Telangana",co:"India",lat:17.9689,lon:79.5941},
+  {c:"Visakhapatnam",s:"Andhra Pradesh",co:"India",lat:17.6868,lon:83.2185},
+  {c:"Vijayawada",s:"Andhra Pradesh",co:"India",lat:16.5062,lon:80.6480},
+  {c:"Tirupati",s:"Andhra Pradesh",co:"India",lat:13.6288,lon:79.4192},
+  {c:"Thiruvananthapuram",s:"Kerala",co:"India",lat:8.5241,lon:76.9366},
+  {c:"Kochi",s:"Kerala",co:"India",lat:9.9312,lon:76.2673},
+  {c:"Kozhikode",s:"Kerala",co:"India",lat:11.2588,lon:75.7804},
+  {c:"Ludhiana",s:"Punjab",co:"India",lat:30.9010,lon:75.8573},
+  {c:"Amritsar",s:"Punjab",co:"India",lat:31.6340,lon:74.8723},
+  {c:"Jalandhar",s:"Punjab",co:"India",lat:31.3260,lon:75.5762},
+  {c:"Gurugram",s:"Haryana",co:"India",lat:28.4595,lon:77.0266},
+  {c:"Faridabad",s:"Haryana",co:"India",lat:28.4089,lon:77.3178},
+  {c:"Panipat",s:"Haryana",co:"India",lat:29.3909,lon:76.9635},
+  {c:"Rohtak",s:"Haryana",co:"India",lat:28.8955,lon:76.6066},
+  {c:"Hisar",s:"Haryana",co:"India",lat:29.1492,lon:75.7217},
+  {c:"Dehradun",s:"Uttarakhand",co:"India",lat:30.3165,lon:78.0322},
+  {c:"Haridwar",s:"Uttarakhand",co:"India",lat:29.9457,lon:78.1642},
+  {c:"Rishikesh",s:"Uttarakhand",co:"India",lat:30.0869,lon:78.2676},
+  {c:"Ranchi",s:"Jharkhand",co:"India",lat:23.3441,lon:85.3096},
+  {c:"Jamshedpur",s:"Jharkhand",co:"India",lat:22.8046,lon:86.2029},
+  {c:"Bhubaneswar",s:"Odisha",co:"India",lat:20.2961,lon:85.8245},
+  {c:"Raipur",s:"Chhattisgarh",co:"India",lat:21.2514,lon:81.6296},
+  {c:"Guwahati",s:"Assam",co:"India",lat:26.1445,lon:91.7362},
+  {c:"Srinagar",s:"Jammu & Kashmir",co:"India",lat:34.0837,lon:74.7973},
+  {c:"Jammu",s:"Jammu & Kashmir",co:"India",lat:32.7266,lon:74.8570},
+  {c:"Shimla",s:"Himachal Pradesh",co:"India",lat:31.1048,lon:77.1734},
+  {c:"Panaji",s:"Goa",co:"India",lat:15.4909,lon:73.8278},
+  {c:"London",s:"England",co:"United Kingdom",lat:51.5074,lon:-0.1278},
+  {c:"New York",s:"New York",co:"United States",lat:40.7128,lon:-74.0060},
+  {c:"Dubai",s:"Dubai",co:"UAE",lat:25.2048,lon:55.2708},
+  {c:"Singapore",s:"Singapore",co:"Singapore",lat:1.3521,lon:103.8198},
+  {c:"Toronto",s:"Ontario",co:"Canada",lat:43.6532,lon:-79.3832},
+  {c:"Sydney",s:"New South Wales",co:"Australia",lat:-33.8688,lon:151.2093},
+];
+
+function searchCities(q){
+  if(!q||q.length<2)return[];
+  const n=q.toLowerCase().trim();
+  const seen=new Set(),out=[];
+  for(const city of CITIES){
+    const cn=city.c.toLowerCase(),key=city.c+'|'+city.s;
+    if(seen.has(key))continue;
+    let sc=0;
+    if(cn===n)sc=100;else if(cn.startsWith(n))sc=90;else if(cn.includes(n))sc=70;
+    else if(city.s.toLowerCase().includes(n))sc=30;
+    if(sc>0){seen.add(key);out.push({...city,sc});}
+  }
+  return out.sort((a,b)=>b.sc-a.sc).slice(0,8);
+}
+
+function hlText(text,q){
+  const idx=text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx<0)return text;
+  return text.slice(0,idx)+'<em>'+text.slice(idx,idx+q.length)+'</em>'+text.slice(idx+q.length);
+}
+
+// ─── Unknown birth time toggle (reusable) ──────────────────────────
+function makeTimeToggle(prefix){
+  const timeInput=document.getElementById(prefix+'-time');
+  const timeUnknown=document.getElementById(prefix+'-time-unknown');
+  const timePeriod=document.getElementById(prefix+'-time-period');
+  timeUnknown.addEventListener('change',()=>{
+    if(timeUnknown.checked){
+      timeInput.value='';timeInput.disabled=true;timeInput.style.opacity='.4';
+      timePeriod.style.display='block';
+    }else{
+      timeInput.disabled=false;timeInput.style.opacity='1';
+      timePeriod.style.display='none';
+    }
+  });
+  return {
+    getTime:()=>timeUnknown.checked?timePeriod.value:timeInput.value,
+    isKnown:()=>!timeUnknown.checked && !!timeInput.value,
+    reset:()=>{timeUnknown.checked=false;timeInput.disabled=false;timeInput.style.opacity='1';timeInput.value='';timePeriod.style.display='none';}
+  };
+}
+
+// ─── City autocomplete wiring (reusable) ───────────────────────────
+function makeCityAutocomplete(prefix){
+  let picked=null, hiIdx=-1, res=[];
+  const input=document.getElementById(prefix+'-city');
+  const drop=document.getElementById(prefix+'-city-drop');
+  const confirm=document.getElementById(prefix+'-city-confirm');
+  const confirmText=document.getElementById(prefix+'-city-confirm-text');
+  const icon=document.getElementById(prefix+'-city-icon');
+
+  function renderDrop(q){
+    if(!res.length){drop.classList.remove('open');return;}
+    drop.innerHTML=res.map((r,i)=>`
+      <div class="city-item${i===hiIdx?' active':''}" data-i="${i}">
+        <div class="city-name">📍 ${hlText(r.c,q.split(',')[0].trim())}</div>
+        <div class="city-meta">${r.s} · ${r.co} <span class="city-coords">(${r.lat.toFixed(2)}°N ${Math.abs(r.lon).toFixed(2)}°${r.lon>=0?'E':'W'})</span></div>
+      </div>`).join('');
+    drop.querySelectorAll('.city-item').forEach(el=>{
+      el.addEventListener('mousedown',e=>{e.preventDefault();pick(res[+el.dataset.i]);});
+    });
+    drop.classList.add('open');
+  }
+
+  function pick(item){
+    input.value=`${item.c}, ${item.s}`;
+    picked=item;
+    drop.classList.remove('open');
+    icon.textContent='✓';
+    input.style.borderColor='rgba(94,196,186,0.6)';
+    confirmText.textContent=`${item.c}, ${item.s}, ${item.co} · ${item.lat.toFixed(4)}°N ${Math.abs(item.lon).toFixed(4)}°${item.lon>=0?'E':'W'} locked`;
+    confirm.classList.add('show');
+  }
+
+  input.addEventListener('input',()=>{
+    const q=input.value;
+    picked=null; icon.textContent='🔍';
+    input.style.borderColor='';
+    confirm.classList.remove('show');
+    if(q.length<2){drop.innerHTML='';drop.classList.remove('open');return;}
+    res=searchCities(q);
+    renderDrop(q);
+  });
+
+  input.addEventListener('keydown',e=>{
+    if(!drop.classList.contains('open'))return;
+    if(e.key==='ArrowDown'){e.preventDefault();hiIdx=Math.min(hiIdx+1,res.length-1);renderDrop(input.value);}
+    if(e.key==='ArrowUp'){e.preventDefault();hiIdx=Math.max(hiIdx-1,0);renderDrop(input.value);}
+    if(e.key==='Enter'&&hiIdx>=0){e.preventDefault();pick(res[hiIdx]);}
+    if(e.key==='Escape')drop.classList.remove('open');
+  });
+
+  document.addEventListener('mousedown',e=>{
+    if(!drop.contains(e.target)&&e.target!==input)drop.classList.remove('open');
+  });
+
+  return {
+    getPicked:()=>picked,
+    getTyped:()=>input.value.trim(),
+    reset:()=>{picked=null;input.value='';confirm.classList.remove('show');icon.textContent='🔍';input.style.borderColor='';}
+  };
+}
+
+const timeAC=makeTimeToggle('f');
+const cityAC=makeCityAutocomplete('f');
+const boyTimeAC=makeTimeToggle('m-boy');
+const girlTimeAC=makeTimeToggle('m-girl');
+const boyCityAC=makeCityAutocomplete('m-boy');
+const girlCityAC=makeCityAutocomplete('m-girl');
+
+// ─── Mode switcher ──────────────────────────────────────────────────
+window.switchMode=function(mode){
+  document.getElementById('mode-kundali').style.display=mode==='kundali'?'block':'none';
+  document.getElementById('mode-match').style.display=mode==='match'?'block':'none';
+  document.getElementById('mode-tab-kundali').classList.toggle('on',mode==='kundali');
+  document.getElementById('mode-tab-match').classList.toggle('on',mode==='match');
+};
+
+// ─── Form submit ───────────────────────────────────────────────────
+const LOAD_MSGS=['Computing planetary positions…','Applying Lahiri ayanamsa…','Calculating Lagna degree…','Mapping Vimshottari dasha…','Analysing D10 Dashamsha…','Consulting Brihat Parashara…','Requesting AI analysis…','Finalising your reading…'];
+let loadTimer;
+
+window.submitForm=async function(){
+  const name=document.getElementById('f-name').value.trim();
+  const dob=document.getElementById('f-dob').value;
+  const picked=cityAC.getPicked();
+  const city=picked?picked.c:cityAC.getTyped();
+  if(!name||!dob||!city){showErr('Name, date of birth and place of birth are required.');return;}
+  hideErr();
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('result').classList.remove('show');
+  // Reset progress bar
+  const pf=document.getElementById('prog-fill');
+  pf.style.animation='none';pf.offsetHeight;pf.style.animation='bar 8s linear forwards';
+  let li=0;
+  document.getElementById('load-msg').textContent=LOAD_MSGS[0];
+  loadTimer=setInterval(()=>{li=(li+1)%LOAD_MSGS.length;document.getElementById('load-msg').textContent=LOAD_MSGS[li];},1800);
+
+  const payload={
+    name, dob,
+    time: timeAC.getTime(),
+    time_known: timeAC.isKnown(),
+    city: picked?picked.c:city,
+    state: picked?picked.s:'',
+    country: picked?picked.co:'India',
+    lat: picked?picked.lat:null,
+    lon: picked?picked.lon:null,
+    gender: document.getElementById('f-gender').value,
+    occupation: document.getElementById('f-occupation').value,
+    marital_status: document.getElementById('f-marital').value,
+    curcity: document.getElementById('f-curcity').value,
+    focus: document.getElementById('f-focus').value,
+  };
+
+  try{
+    const res=await fetch('/api/chart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    clearInterval(loadTimer);
+    document.getElementById('loading').classList.remove('show');
+    if(!res.ok||data.error){showErr(data.error||'Server error');document.getElementById('form-section').style.display='block';return;}
+    renderResult(data,name,payload);
+  }catch(e){
+    clearInterval(loadTimer);
+    document.getElementById('loading').classList.remove('show');
+    showErr('Request failed: '+e.message);
+    document.getElementById('form-section').style.display='block';
+  }
+};
+
+window.resetForm=function(){
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('form-section').style.display='block';
+  cityAC.reset();
+  timeAC.reset();
+  window.__rerenderKundali=null;
+};
+
+function showErr(msg,raw){
+  const box=document.getElementById('err-box');
+  document.getElementById('err-msg').textContent=msg;
+  document.getElementById('err-raw').textContent=raw||'';
+  box.classList.add('show');
+}
+function hideErr(){document.getElementById('err-box').classList.remove('show');}
+
+function showMatchErr(msg,raw){
+  const box=document.getElementById('match-err-box');
+  document.getElementById('match-err-msg').textContent=msg;
+  document.getElementById('match-err-raw').textContent=raw||'';
+  box.classList.add('show');
+}
+function hideMatchErr(){document.getElementById('match-err-box').classList.remove('show');}
+
+// ─── North Indian chart SVG ────────────────────────────────────────
+const SIGN_NAMES=["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+const ABBR={Sun:"Su",Moon:"Mo",Mars:"Ma",Mercury:"Me",Jupiter:"Ju",Venus:"Ve",Saturn:"Sa",Rahu:"Ra",Ketu:"Ke"};
+
+function buildNorthChart(lagnaSign,d1){
+  const li=SIGN_NAMES.indexOf(lagnaSign);
+  const hs=h=>SIGN_NAMES[(li+h-1)%12];
+  const bySign={};
+  Object.entries(d1).forEach(([p,s])=>{const a=ABBR[p]||p[0];if(!bySign[s])bySign[s]=[];bySign[s].push(a);});
+  const cell=(h,tx,ty)=>{const s=hs(h);const pl=(bySign[s]||[]).join(' ');
+    return `<text x="${tx}" y="${ty-6}" text-anchor="middle" font-size="7" font-family="Cinzel,Georgia,serif" fill="${h===1?lagna:goldD}">${h}</text>
+    <text x="${tx}" y="${ty+4}" text-anchor="middle" font-size="7" font-family="Cinzel,Georgia,serif" fill="${h===1?goldL:gold}">${s.slice(0,3)}</text>
+    ${pl?`<text x="${tx}" y="${ty+14}" text-anchor="middle" font-size="6" font-family="Inter,sans-serif" fill="${teal}">${pl}</text>`:''}`;}
+  return `<rect x="2" y="2" width="236" height="236" fill="${sur}" stroke="${bdr}" stroke-width="0.7" rx="2"/>
+  <line x1="2" y1="2" x2="80" y2="80" stroke="${bdr}" stroke-width="0.5"/>
+  <line x1="238" y1="2" x2="160" y2="80" stroke="${bdr}" stroke-width="0.5"/>
+  <line x1="2" y1="238" x2="80" y2="160" stroke="${bdr}" stroke-width="0.5"/>
+  <line x1="238" y1="238" x2="160" y2="160" stroke="${bdr}" stroke-width="0.5"/>
+  <rect x="80" y="2" width="80" height="78" fill="none" stroke="${bdr}" stroke-width="0.5"/>
+  <rect x="2" y="80" width="78" height="80" fill="none" stroke="${bdr}" stroke-width="0.5"/>
+  <rect x="160" y="80" width="78" height="80" fill="none" stroke="${bdr}" stroke-width="0.5"/>
+  <rect x="80" y="160" width="80" height="78" fill="none" stroke="${bdr}" stroke-width="0.5"/>
+  <polygon points="2,2 80,2 2,80" fill="rgba(157,121,214,0.14)"/>
+  <polygon points="120,80 160,120 120,160 80,120" fill="rgba(16,9,31,0.85)" stroke="${bdr}" stroke-width="0.5"/>
+  <text x="120" y="116" text-anchor="middle" font-family="Cinzel,Georgia,serif" font-size="10" fill="${gold}">✦</text>
+  <text x="120" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="6" fill="${muted}">KUNDALI</text>
+  ${cell(1,29,29)}${cell(2,120,37)}${cell(3,211,29)}
+  ${cell(4,211,120)}${cell(5,211,211)}${cell(6,120,223)}
+  ${cell(7,29,211)}${cell(8,29,120)}`;
+}
+
+// ─── Render full result ────────────────────────────────────────────
+function ins(items,col){return(items||[]).filter(Boolean).map(t=>`<div class="ins"><div class="ins-dot" style="background:${col||gold}"></div><div class="ins-txt">${t}</div></div>`).join('');}
+function kc(lbl,val,sub){return`<div class="kcard"><div class="kcard-lbl">${lbl}</div><div class="kcard-val">${val||'—'}</div>${sub?`<div class="kcard-sub">${sub}</div>`:''}</div>`;}
+function tl(items){return(items||[]).map((it,i)=>`<div class="tl"><div class="tl-line"><div class="tl-dot ${i===0?'first':''}"></div>${i<items.length-1?'<div class="tl-conn"></div>':''}</div><div><div class="tl-period">${it.period||it.lord}</div><div class="tl-desc">${it.desc||it.start+' – '+it.end}</div></div></div>`).join('');}
+
+function renderResult(data,name,form){
+  const ch=data.chart, an=data.analysis||{};
+  const dasha=ch.dasha;
+
+  // Header
+  const init=name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('res-avatar').textContent=init;
+  document.getElementById('res-name').textContent=`${name} · ${ch.lagna} Lagna`;
+  const timeNote=form.time_known?(form.time?' · '+form.time:''):' · time unknown (approx.)';
+  const statusNote=`${form.marital_status||'Unmarried'}${form.occupation?' · '+form.occupation:''}`;
+  document.getElementById('res-sub').textContent=`${form.dob}${timeNote} · ${form.city}, ${form.state||''}, ${form.country||'India'} · ${statusNote} · Ayanamsa: ${ch.ayanamsa}°`;
+
+  // Chart SVG
+  document.getElementById('kundali-svg').innerHTML=buildNorthChart(ch.lagna,ch.d1);
+
+  // Core cards
+  document.getElementById('core-cards').innerHTML=
+    kc('Lagna',ch.lagna,'Ascendant')+
+    kc('Moon Sign',ch.rashi,'Rashi')+
+    kc('Nakshatra',ch.nakshatra,`Pada ${ch.nakshatra_pada} · ${ch.nakshatra_lord}`);
+  document.getElementById('dasha-cards').innerHTML=
+    kc('Sun sign',ch.sun_sign,'')+
+    kc('Mahadasha',dasha.mahadasha,dasha.mahadasha_start+' – '+dasha.mahadasha_end)+
+    kc('Antardasha',dasha.antardasha,dasha.antardasha_start+' – '+dasha.antardasha_end);
+
+  // Soul purpose
+  document.getElementById('soul-box').innerHTML=`<div class="box-lbl gold-lbl">Soul purpose · ${ch.nakshatra}</div><div class="ins-txt">${an.soul_purpose||'—'}</div>`;
+
+  // Tabs
+  const TABS=[{id:'ov',l:'Overview'},{id:'ca',l:'Career'},{id:'lo',l:'Love & Union'},{id:'he',l:'Health'},{id:'we',l:'Wealth'},{id:'da',l:'Dasha Timeline'},{id:'re',l:'Remedies'}];
+  document.getElementById('tab-bar').innerHTML=TABS.map((t,i)=>`<button class="tab-btn${i===0?' on':''}" onclick="switchTab('${t.id}',this)">${t.l}</button>`).join('');
+
+  const career=an.career||{}, love=an.love||{}, health=an.health||{}, wealth=an.wealth||{};
+
+  document.getElementById('tab-panes').innerHTML=`
+  <div class="tab-pane on" id="pane-ov">
+    <div class="sec">Overview</div>
+    ${ins(an.overview)}
+    <div class="sec" style="margin-top:14px">D10 Dashamsha</div>
+    <div class="cards2">${kc('D10 Lagna',ch.d10_lagna,'Dashamsha ascendant')}${kc('10th house D1',ch.d1['Sun']?ch.d1['Saturn']:'—','Karma bhava')}</div>
+  </div>
+  <div class="tab-pane" id="pane-ca">
+    <div class="sec">Career dharma</div>
+    <div class="cards2">${kc('10th house',ch.d1?.Saturn||'—','Karma bhava')}${kc('D10 Lagna',ch.d10_lagna,'Dashamsha')}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">Blueprint</div>${ins([career.summary])}</div>
+    <div class="sbox"><div class="box-lbl teal-lbl">Strengths</div>${ins(career.strengths,teal)}</div>
+    <div class="sec">Switch timing</div>
+    <div class="hbox">${ins([career.switch_timing||career.switch])}</div>
+    <div class="sec">High-growth sectors</div>
+    ${(career.sectors||[]).map(s=>`<div class="hbox" style="margin-bottom:6px"><div class="box-lbl gold-lbl">${s.sector||s}</div>${s.reason?`<div class="ins-txt">${s.reason}</div>`:''}</div>`).join('')}
+    <div class="sec">Career timeline</div>${tl(career.timeline||[])}
+  </div>
+  <div class="tab-pane" id="pane-lo">
+    <div class="sec">Love & union</div>
+    <div class="cards2">${kc('7th house',ch.d1?.Venus||'—','Union bhava')}${kc('Venus sign',ch.d1?.Venus||'—','Shukra')}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">Reading</div>${ins([love.summary])}</div>
+    ${form.marital_status==='Married'
+      ? `<div class="sbox"><div class="box-lbl teal-lbl">Marital outlook — current dasha</div>${ins([love.marital_outlook],teal)}</div>`
+      : `<div class="sbox"><div class="box-lbl teal-lbl">Marriage windows</div>${(love.marriage_windows||[]).map(w=>`<div class="ins" style="margin-bottom:8px"><div class="ins-dot" style="background:${teal}"></div><div class="ins-txt"><strong style="color:var(--goldL)">${w.period}</strong> — ${w.reason}</div></div>`).join('')}</div>`}
+    <div class="tbox"><div class="box-lbl coral-lbl">Hard truths</div>${ins(love.truths,coral)}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">Partner archetype</div>${ins([love.partner])}</div>
+    ${ch.mangal_dosha?`<div class="tbox"><div class="box-lbl coral-lbl">Mangal Dosha</div><div class="ins-txt">Mars falls in a Manglik house in this chart — worth checking against a prospective partner's chart via Kundali Matching.</div></div>`:''}
+    <div class="prem"><div class="prem-icon">🔮</div><div class="prem-title">Compatibility & Synastry Report</div><p class="prem-desc">Full Ashta Koota matching, 7th house overlay, and Venus-Mars synastry with your partner.</p><button class="prem-btn" onclick="switchMode('match')">Try Kundali Matching ✦</button></div>
+  </div>
+  <div class="tab-pane" id="pane-he">
+    <div class="sec">Health & vitality</div>
+    <div class="cards2">${kc('Constitution',health.constitution,'Prakriti')}${kc('Current risk','Moderate','Rahu dasha period')}</div>
+    <div class="sbox"><div class="box-lbl teal-lbl">Strengths</div>${ins(health.strengths,teal)}</div>
+    <div class="tbox"><div class="box-lbl coral-lbl">Vulnerabilities</div>${ins(health.vulnerabilities,coral)}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">Watch during current dasha</div>${ins(health.watch)}</div>
+  </div>
+  <div class="tab-pane" id="pane-we">
+    <div class="sec">Wealth & artha</div>
+    <div class="cards3">${kc('2nd house',ch.d1?.Moon||'—','Dhana bhava')}${kc('11th house',ch.d1?.Mars||'—','Labha bhava')}${kc('Pattern',wealth.pattern||'—')}</div>
+    <div class="hbox"><div class="box-lbl gold-lbl">Wealth architecture</div>${ins(wealth.insights)}</div>
+    <div class="sec">Timeline</div>${tl(wealth.timeline||[])}
+    <div class="sec">💰 Financial Muhurta — auspicious windows</div>
+    ${(wealth.muhurta||[]).map(m=>`<div class="rcard"><div class="ricon">📅</div><div><div class="rtitle">${m.type} — <span style="color:var(--teal)">${m.window}</span></div><div class="rdesc">${m.reason}</div></div></div>`).join('')}
+  </div>
+  <div class="tab-pane" id="pane-da">
+    <div class="sec">${dasha.mahadasha} – ${dasha.antardasha} — what this period means</div>
+    <div class="hbox">${ins([an.dasha_analysis])}</div>
+    <div class="sec">Vimshottari Mahadasha timeline</div>
+    <table class="dasha-table">
+      <thead><tr><th>Mahadasha</th><th>Start</th><th>End</th></tr></thead>
+      <tbody>${(dasha.all_mahadashas||[]).map(m=>`<tr class="${m.current?'cur':''}"><td>${m.lord}</td><td>${m.start}</td><td>${m.end}</td></tr>`).join('')}</tbody>
+    </table>
+    <div class="sec">Antardashas within ${dasha.mahadasha} Mahadasha</div>
+    <table class="dasha-table">
+      <thead><tr><th>Antardasha</th><th>Start</th><th>End</th></tr></thead>
+      <tbody>${(dasha.antardashas||[]).map(a=>`<tr class="${a.current?'cur':''}"><td>${a.lord}</td><td>${a.start}</td><td>${a.end}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="pane-re">
+    <div class="sec">Personalized upayas</div>
+    ${(an.remedies||[]).map(r=>`<div class="rcard"><div class="ricon">${r.icon}</div><div><div class="rtitle">${r.title}</div><div class="rdesc">${r.desc}</div></div></div>`).join('')}
+  </div>`;
+
+  document.getElementById('result').classList.add('show');
+  window.__rerenderKundali=()=>{
+    const btns=[...document.querySelectorAll('#tab-bar .tab-btn')];
+    const activeIdx=Math.max(0,btns.findIndex(b=>b.classList.contains('on')));
+    renderResult(data,name,form);
+    const newBtns=document.querySelectorAll('#tab-bar .tab-btn');
+    if(newBtns[activeIdx])newBtns[activeIdx].click();
+  };
+}
+
+window.switchTab=function(id,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('pane-'+id).classList.add('on');
+};
+
+// ─── Kundali Matching ───────────────────────────────────────────────
+const MATCH_LOAD_MSGS=['Computing both births…','Locating Moon nakshatras…','Running Ashta Koota (36-guna) scoring…','Checking Mangal Dosha…','Reading Venus-Mars synastry…','Requesting AI compatibility analysis…','Finalising your match report…'];
+let matchLoadTimer;
+
+function personPayload(namePrefix, cityAC, timeAC){
+  const picked=cityAC.getPicked();
+  const city=picked?picked.c:cityAC.getTyped();
+  return {
+    name: document.getElementById(namePrefix+'-name').value.trim(),
+    dob: document.getElementById(namePrefix+'-dob').value,
+    time: timeAC.getTime(),
+    time_known: timeAC.isKnown(),
+    city, state: picked?picked.s:'', country: picked?picked.co:'India',
+    lat: picked?picked.lat:null, lon: picked?picked.lon:null,
+  };
+}
+
+window.submitMatch=async function(){
+  const boy=personPayload('m-boy',boyCityAC,boyTimeAC);
+  const girl=personPayload('m-girl',girlCityAC,girlTimeAC);
+  if(!boy.name||!boy.dob||!boy.city){showMatchErr("Groom's name, date of birth and place of birth are required.");return;}
+  if(!girl.name||!girl.dob||!girl.city){showMatchErr("Bride's name, date of birth and place of birth are required.");return;}
+  hideMatchErr();
+  document.getElementById('match-form-section').style.display='none';
+  document.getElementById('match-loading').classList.add('show');
+  document.getElementById('match-result').classList.remove('show');
+  const pf=document.getElementById('match-prog-fill');
+  pf.style.animation='none';pf.offsetHeight;pf.style.animation='bar 8s linear forwards';
+  let li=0;
+  document.getElementById('match-load-msg').textContent=MATCH_LOAD_MSGS[0];
+  matchLoadTimer=setInterval(()=>{li=(li+1)%MATCH_LOAD_MSGS.length;document.getElementById('match-load-msg').textContent=MATCH_LOAD_MSGS[li];},1800);
+
+  try{
+    const res=await fetch('/api/match',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({boy,girl})});
+    const data=await res.json();
+    clearInterval(matchLoadTimer);
+    document.getElementById('match-loading').classList.remove('show');
+    if(!res.ok||data.error){showMatchErr(data.error||'Server error');document.getElementById('match-form-section').style.display='block';return;}
+    renderMatchResult(data);
+  }catch(e){
+    clearInterval(matchLoadTimer);
+    document.getElementById('match-loading').classList.remove('show');
+    showMatchErr('Request failed: '+e.message);
+    document.getElementById('match-form-section').style.display='block';
+  }
+};
+
+window.resetMatch=function(){
+  document.getElementById('match-result').classList.remove('show');
+  document.getElementById('match-form-section').style.display='block';
+  boyCityAC.reset();girlCityAC.reset();boyTimeAC.reset();girlTimeAC.reset();
+  window.__rerenderMatch=null;
+};
+
+function renderMatchResult(data){
+  const boy=data.boy, girl=data.girl, guna=data.guna_milan, an=data.analysis||{};
+
+  document.getElementById('match-res-name').textContent=`${boy.name} ♥ ${girl.name}`;
+  document.getElementById('match-res-sub').textContent=`${boy.chart.rashi} (${boy.chart.nakshatra}) × ${girl.chart.rashi} (${girl.chart.nakshatra})`;
+
+  document.getElementById('guna-score-num').textContent=guna.total;
+  document.getElementById('guna-verdict').textContent=guna.verdict;
+
+  document.getElementById('mangal-box').innerHTML=
+    `<div class="box-lbl ${(boy.mangal_dosha||girl.mangal_dosha)?'coral-lbl':'gold-lbl'}">Mangal Dosha check</div>
+     <div class="ins-txt">Groom: ${boy.mangal_dosha?'Manglik':'Not Manglik'} · Bride: ${girl.mangal_dosha?'Manglik':'Not Manglik'}<br>${data.mangal_note}</div>`;
+
+  document.getElementById('koota-list').innerHTML=guna.kootas.map(k=>`
+    <div class="koota-item">
+      <div class="koota-head"><span class="kn">${k.name}</span><span class="kv">${k.points} / ${k.max}</span></div>
+      <div class="koota-track"><div class="koota-fill" style="width:${(k.points/k.max*100).toFixed(0)}%"></div></div>
+      <div class="koota-note">${k.note}</div>
+    </div>`).join('');
+
+  document.getElementById('dosha-list').innerHTML=(guna.doshas||[]).map(d=>`<div class="dosha-item">⚠ ${d}</div>`).join('');
+
+  const TABS=[{id:'ov',l:'Overview'},{id:'em',l:'Emotional'},{id:'ro',l:'Romantic'},{id:'co',l:'Values'},{id:'gu',l:'Guidance'},{id:'re',l:'Remedies'}];
+  document.getElementById('match-tab-bar').innerHTML=TABS.map((t,i)=>`<button class="tab-btn${i===0?' on':''}" onclick="switchMatchTab('${t.id}',this)">${t.l}</button>`).join('');
+
+  document.getElementById('match-tab-panes').innerHTML=`
+  <div class="tab-pane on" id="mpane-ov">
+    <div class="sec">Headline</div>
+    <div class="hbox">${ins([an.headline])}</div>
+    <div class="sec">Overall read</div>
+    <div class="hbox">${ins([an.overall])}</div>
+    <div class="sec">Strengths</div>
+    <div class="sbox">${ins(an.strengths,teal)}</div>
+    <div class="sec">Challenges</div>
+    <div class="tbox">${ins(an.challenges,coral)}</div>
+  </div>
+  <div class="tab-pane" id="mpane-em">
+    <div class="sec">Emotional compatibility</div>
+    <div class="hbox">${ins([an.emotional_compatibility])}</div>
+  </div>
+  <div class="tab-pane" id="mpane-ro">
+    <div class="sec">Romantic chemistry</div>
+    <div class="hbox">${ins([an.romantic_chemistry])}</div>
+  </div>
+  <div class="tab-pane" id="mpane-co">
+    <div class="sec">Communication & values</div>
+    <div class="hbox">${ins([an.communication_values])}</div>
+  </div>
+  <div class="tab-pane" id="mpane-gu">
+    <div class="sec">Practical guidance</div>
+    ${ins(an.guidance)}
+  </div>
+  <div class="tab-pane" id="mpane-re">
+    <div class="sec">Suggested remedies</div>
+    ${(an.remedies||[]).map(r=>`<div class="rcard"><div class="ricon">${r.icon}</div><div><div class="rtitle">${r.title}</div><div class="rdesc">${r.desc}</div></div></div>`).join('')}
+  </div>`;
+
+  document.getElementById('match-result').classList.add('show');
+  window.__rerenderMatch=()=>{
+    const btns=[...document.querySelectorAll('#match-tab-bar .tab-btn')];
+    const activeIdx=Math.max(0,btns.findIndex(b=>b.classList.contains('on')));
+    renderMatchResult(data);
+    const newBtns=document.querySelectorAll('#match-tab-bar .tab-btn');
+    if(newBtns[activeIdx])newBtns[activeIdx].click();
+  };
+}
+
+window.switchMatchTab=function(id,btn){
+  document.querySelectorAll('#match-tab-bar .tab-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('#match-tab-panes .tab-pane').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('mpane-'+id).classList.add('on');
+};
+</script>
+</body>
+</html>
