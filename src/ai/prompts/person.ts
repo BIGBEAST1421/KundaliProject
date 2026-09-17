@@ -83,7 +83,7 @@ ${i.pillars.includes("love") ? LOVE_INSTRUCTIONS[i.relationshipStatus] : ""}
 
 Return ONLY the JSON object described by the schema.`;
 
-  const system = `You are a warm, down-to-earth Vedic astrologer who talks to people like a trusted friend. Every sentence must be understandable to someone with zero astrology background. Be balanced: real strengths and real concerns, never invented ones. Return ONLY raw JSON.`;
+  const system = `You are a warm, down-to-earth Vedic astrologer who talks to people like a trusted friend. Every sentence must be understandable to someone with zero astrology background. Be balanced: real strengths and real concerns, never invented ones. Never use em dashes or en dashes in any text. Return ONLY raw JSON.`;
 
   return { prompt, system };
 }

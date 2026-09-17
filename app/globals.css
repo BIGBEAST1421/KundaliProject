@@ -185,3 +185,15 @@ html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3 { font-family: var(--
   a { color: inherit; text-decoration: none; }
   .shadow-card { box-shadow: none !important; }
 }
+
+/* ── Utilities ─────────────────────────────────────────────────────────── */
+@utility h-13 { height: 3.25rem; }
+
+/* ── Hero orbits (SVG-native transforms; CSS px = user units with view-box) ─ */
+.orb { transform-box: view-box; transform-origin: 180px 180px; animation: orbit-cw var(--dur, 20s) linear infinite; }
+.orb--ccw { animation-name: orbit-ccw; }
+.orb--pulse { animation: orb-pulse 5s ease-in-out infinite; }
+@keyframes orbit-cw { to { transform: rotate(360deg); } }
+@keyframes orbit-ccw { to { transform: rotate(-360deg); } }
+@keyframes orb-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .orb, .orb--pulse { animation: none !important; } }

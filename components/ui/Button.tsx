@@ -2,17 +2,18 @@ import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
-type Size = "md" | "lg";
+type Size = "sm" | "md" | "lg";
 
-const base = "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-[background-color,color,border-color,transform] duration-200 ease-[var(--ease-out-quart)] disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] select-none";
+const base = "inline-flex items-center justify-center gap-2 rounded-xl font-semibold whitespace-nowrap transition-[background-color,color,border-color,box-shadow,transform] duration-200 ease-[var(--ease-out-quart)] disabled:opacity-50 disabled:pointer-events-none active:translate-y-px select-none";
 const variants: Record<Variant, string> = {
-  primary: "bg-accent text-accent-ink hover:brightness-95",
-  secondary: "border border-line-strong text-ink hover:bg-surface",
-  ghost: "text-ink hover:bg-surface",
+  primary: "bg-accent text-accent-ink shadow-[0_1px_0_oklch(1_0_0/0.25)_inset,0_6px_16px_-8px_var(--accent)] hover:brightness-105 hover:shadow-[0_1px_0_oklch(1_0_0/0.25)_inset,0_10px_22px_-8px_var(--accent)]",
+  secondary: "bg-surface-2 text-ink border border-line-strong hover:bg-line hover:border-line-strong",
+  ghost: "text-ink hover:bg-surface-2",
 };
 const sizes: Record<Size, string> = {
-  md: "h-10 px-4 text-sm",
-  lg: "h-12 px-6 text-base",
+  sm: "h-9 px-3.5 text-sm",
+  md: "h-11 px-5 text-sm",
+  lg: "h-13 px-7 text-base",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", extra = ""): string {

@@ -50,7 +50,7 @@ Using this EXACT data, write the compatibility analysis. Ground every claim in t
 
 Return ONLY the JSON object described by the schema.`;
 
-  const system = `You are a warm, down-to-earth Vedic astrologer specialising in marriage compatibility. Every sentence must be understandable to someone with zero astrology background, grounded in the exact computed data, balanced and honest. Return ONLY raw JSON.`;
+  const system = `You are a warm, down-to-earth Vedic astrologer specialising in marriage compatibility. Every sentence must be understandable to someone with zero astrology background, grounded in the exact computed data, balanced and honest. Never use em dashes or en dashes in any text. Return ONLY raw JSON.`;
 
   return { prompt, system };
 }

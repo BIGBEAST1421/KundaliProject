@@ -5,6 +5,7 @@ import {
   type Birth, type Language, type MatchFactor, type MatchPerson, type MatchReport, type Verdict,
 } from "./types";
 import { ReportBuildError } from "./buildPerson";
+import { sanitizeDeep } from "./sanitize";
 
 /** Plain-language framing for each koota, used by web, share and print. */
 export const KOOTA_INFO: Record<Koota["name"], { key: string; title: string; meaning: string }> = {
@@ -82,7 +83,7 @@ export interface BuildMatchInput {
 }
 
 export function buildMatchReport(input: BuildMatchInput): MatchReport {
-  const insights = MatchInsightsSchema.safeParse(input.ai ?? {});
+  const insights = MatchInsightsSchema.safeParse(sanitizeDeep(input.ai ?? {}));
   if (!insights.success) throw new ReportBuildError("AI response is missing compatibility insights", insights.error.issues);
 
   const report = MatchReportSchema.safeParse({

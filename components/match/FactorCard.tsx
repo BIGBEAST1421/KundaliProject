@@ -13,7 +13,7 @@ interface Props {
 export function FactorCard({ f, d, boyName, girlName }: Props) {
   const label = d[`verdict_${f.verdict}`];
   return (
-    <li className="print-avoid rounded-[var(--radius-card)] border border-line bg-bg p-5">
+    <div className="print-avoid h-full rounded-[var(--radius-card)] border border-line bg-bg p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="font-sans text-base font-semibold">{f.title}</h3>
@@ -36,6 +36,6 @@ export function FactorCard({ f, d, boyName, girlName }: Props) {
           <dd className="font-medium">{f.girl}</dd>
         </div>
       </dl>
-    </li>
+    </div>
   );
 }

@@ -7,10 +7,14 @@ import { Section } from "@/components/ui/Section";
 import { InsightList } from "@/components/ui/InsightList";
 import { ShareBar } from "@/components/report/ShareBar";
 import { FactorCard } from "./FactorCard";
+import { Tabs, type TabPanel } from "@/components/motion/Tabs";
+import { Reveal, RevealItem } from "@/components/motion/Reveal";
+import { HoverLift } from "@/components/motion/Hover";
+import { CountUp } from "@/components/motion/CountUp";
 
 function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: Dict }) {
   return (
-    <div className="rounded-[var(--radius-card)] border border-line p-5">
+    <div className="h-full rounded-[var(--radius-card)] border border-line p-5">
       <p className="text-xs text-muted">{label}</p>
       <h2 className="mt-1 text-3xl leading-none">{p.name}</h2>
       <p className="mt-2 text-sm text-muted">{p.birth.dob}{p.birth.timeKnown && p.birth.time ? ` · ${p.birth.time}` : ""} · {p.birth.city}</p>
@@ -32,23 +36,16 @@ export function MatchView({ report }: { report: MatchReport }) {
   const strengths = factors.filter((f) => f.verdict === "strength").length;
   const concerns = factors.filter((f) => f.verdict === "concern").length;
 
-  return (
-    <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14" lang={report.language}>
-      <header className="fade-up flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-sm text-muted">{d.match_headline}</p>
-          <h1 className="mt-1 text-4xl md:text-5xl leading-none">{boy.name} <span className="text-accent">&amp;</span> {girl.name}</h1>
-          <p className="mt-4 max-w-prose text-lg leading-relaxed">{insights.headline}</p>
-        </div>
-        <ShareBar sharePath={`/match/${report.uid}`} newHref="/match" newLabel={d.match_new} />
-      </header>
-
-      {/* Score */}
-      <div className="print-avoid mt-10 rounded-[var(--radius-card)] border border-line bg-surface p-6 md:p-8">
+  const overviewPanel = (
+    <Reveal stagger={0.1} className="space-y-6">
+      <RevealItem className="print-avoid rounded-[var(--radius-card)] border border-line bg-surface p-6 md:p-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm text-muted">{d.guna_score}</p>
-            <p className="font-display text-5xl leading-none md:text-6xl">{guna.total}<span className="ml-2 text-xl text-muted">{d.of_36}</span></p>
+            <p className="font-display text-5xl leading-none md:text-6xl">
+              <CountUp value={guna.total} decimals={Number.isInteger(guna.total) ? 0 : 1} />
+              <span className="ml-2 text-xl text-muted">{d.of_36}</span>
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <VerdictBadge verdict="strength" label={`${strengths} ${d.verdict_strength}`} />
@@ -58,19 +55,33 @@ export function MatchView({ report }: { report: MatchReport }) {
         </div>
         <div className="mt-5"><Meter value={guna.total} max={guna.max} label={d.guna_score} /></div>
         <p className="mt-4 max-w-prose leading-relaxed">{guna.verdict}</p>
-      </div>
+      </RevealItem>
 
-      {/* People side by side */}
-      <div className="mt-10 grid gap-4 md:grid-cols-2">
-        <PersonCol label={d.groom_short} p={boy} d={d} />
-        <PersonCol label={d.bride_short} p={girl} d={d} />
+      <div className="grid gap-4 md:grid-cols-2">
+        <RevealItem><HoverLift className="h-full"><PersonCol label={d.groom_short} p={boy} d={d} /></HoverLift></RevealItem>
+        <RevealItem><HoverLift className="h-full"><PersonCol label={d.bride_short} p={girl} d={d} /></HoverLift></RevealItem>
       </div>
+    </Reveal>
+  );
 
-      <div className="mt-16 space-y-16">
+  return (
+    <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14" lang={report.language}>
+      <Reveal as="header" stagger={0.06} className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm text-muted">{d.match_headline}</p>
+          <h1 className="mt-1 text-4xl md:text-5xl leading-none">{boy.name} <span className="text-accent">&amp;</span> {girl.name}</h1>
+          <p className="mt-4 max-w-prose text-lg leading-relaxed">{insights.headline}</p>
+        </div>
+        <RevealItem><ShareBar sharePath={`/match/${report.uid}`} newHref="/match" newLabel={d.match_new} /></RevealItem>
+      </Reveal>
+
+      <Tabs className="mt-10" panels={[
+        { id: "overview", label: d.tab_overview, content: overviewPanel },
+        { id: "factors", label: d.tab_factors, hint: `${strengths}/${factors.length}`, content: (
         <Section id="factors" title={d.factors_title} caption={d.factors_sub}>
-          <ul className="grid gap-4 md:grid-cols-2">
-            {factors.map((f) => <FactorCard key={f.key} f={f} d={d} boyName={boy.name} girlName={girl.name} />)}
-            <li className="print-avoid rounded-[var(--radius-card)] border border-line bg-bg p-5">
+          <Reveal as="ul" stagger={0.06} className="grid gap-4 md:grid-cols-2">
+            {factors.map((f) => <RevealItem key={f.key} as="li"><HoverLift className="h-full"><FactorCard f={f} d={d} boyName={boy.name} girlName={girl.name} /></HoverLift></RevealItem>)}
+            <RevealItem as="li"><HoverLift className="print-avoid h-full rounded-[var(--radius-card)] border border-line bg-bg p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-sans text-base font-semibold">{d.mangal_title}</h3>
                 <VerdictBadge verdict={mangal.verdict} label={d[`verdict_${mangal.verdict}`]} />
@@ -80,11 +91,13 @@ export function MatchView({ report }: { report: MatchReport }) {
                 <div><dt className="text-xs text-muted">{boy.name}</dt><dd className="font-medium">{boy.mangal.isManglik ? d.manglik : d.not_manglik}</dd></div>
                 <div><dt className="text-xs text-muted">{girl.name}</dt><dd className="font-medium">{girl.mangal.isManglik ? d.manglik : d.not_manglik}</dd></div>
               </dl>
-            </li>
-          </ul>
+            </HoverLift></RevealItem>
+          </Reveal>
         </Section>
-
-        <Section id="overall" title={d.sec_overall} className="print-break">
+        ) },
+        { id: "analysis", label: d.tab_analysis, content: (
+          <div className="space-y-14">
+        <Section id="overall" title={d.sec_overall}>
           <p className="max-w-prose text-[1.05rem] leading-relaxed">{insights.overall}</p>
           <div className="mt-8 grid gap-8 md:grid-cols-3">
             <div><h3 className="font-sans text-sm font-semibold">{d.sec_emotional}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{insights.emotional}</p></div>
@@ -92,7 +105,6 @@ export function MatchView({ report }: { report: MatchReport }) {
             <div><h3 className="font-sans text-sm font-semibold">{d.sec_communication}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{insights.communication}</p></div>
           </div>
         </Section>
-
         <div className="grid gap-10 md:grid-cols-2">
           <Section id="strengths" title={d.sec_match_strengths}>
             <InsightList items={insights.strengths} tone="strength" />
@@ -101,7 +113,9 @@ export function MatchView({ report }: { report: MatchReport }) {
             <InsightList items={insights.concerns} tone="concern" emptyText={d.no_concerns} />
           </Section>
         </div>
-
+          </div>
+        ) },
+        { id: "guidance", label: d.tab_guidance, content: (
         <Section id="guidance" title={d.sec_guidance}>
           <InsightList items={insights.guidance} />
           {insights.remedies.length > 0 && (
@@ -115,7 +129,8 @@ export function MatchView({ report }: { report: MatchReport }) {
             </ul>
           )}
         </Section>
-      </div>
+        ) },
+      ] satisfies TabPanel[]} />
     </article>
   );
 }

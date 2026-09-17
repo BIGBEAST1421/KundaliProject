@@ -10,7 +10,7 @@ interface Props {
   newLabel: string;
 }
 
-/** Copy public link · print-to-PDF · start again. Hidden in print. */
+/** Share link · Download PDF · New. One row on desktop, full-width stack on phones. Hidden in print. */
 export function ShareBar({ sharePath, newHref, newLabel }: Props) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
@@ -27,16 +27,16 @@ export function ShareBar({ sharePath, newHref, newLabel }: Props) {
   };
 
   return (
-    <div className="no-print flex flex-wrap items-center gap-2">
-      <Button variant="secondary" onClick={copy} aria-live="polite">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></svg>
+    <div className="no-print grid grid-cols-2 gap-2 sm:flex sm:items-center">
+      <Button onClick={copy} aria-live="polite" className="col-span-2 sm:col-span-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></svg>
         {copied ? t("share_copied") : t("share_copy")}
       </Button>
       <Button variant="secondary" onClick={() => window.print()}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" /></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" /></svg>
         {t("share_pdf")}
       </Button>
-      <LinkButton href={newHref} variant="ghost">{newLabel}</LinkButton>
+      <LinkButton href={newHref} variant="secondary">{newLabel}</LinkButton>
     </div>
   );
 }

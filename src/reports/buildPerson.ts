@@ -5,6 +5,7 @@ import {
   type Birth, type ChartSummary, type Language, type PersonReport, type Pillar, type Profile, type Sections,
 } from "./types";
 import { normalizePillars } from "./pillars";
+import { sanitizeDeep } from "./sanitize";
 
 export class ReportBuildError extends Error {
   constructor(message: string, readonly issues?: unknown) {
@@ -54,7 +55,7 @@ export interface BuildPersonInput {
  */
 export function buildPersonReport(input: BuildPersonInput): PersonReport {
   const pillars = normalizePillars([...input.pillars]);
-  const raw = (input.ai ?? {}) as Record<string, unknown>;
+  const raw = sanitizeDeep((input.ai ?? {}) as Record<string, unknown>);
 
   const core = CoreInsightsSchema.safeParse(raw);
   if (!core.success) throw new ReportBuildError("AI response is missing core insights", core.error.issues);

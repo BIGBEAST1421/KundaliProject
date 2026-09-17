@@ -4,6 +4,7 @@ import "./globals.css";
 import { I18nProvider } from "@/src/i18n";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Starfield } from "@/components/Starfield";
 
 const spectral = Spectral({ subsets: ["latin"], weight: ["400", "500", "600"], style: ["normal", "italic"], variable: "--font-spectral", display: "swap" });
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-dvh flex flex-col">
         <I18nProvider>
+          <Starfield />
           <SiteHeader />
           <div className="flex-1">{children}</div>
           <SiteFooter />
