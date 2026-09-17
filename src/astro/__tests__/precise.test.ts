@@ -14,7 +14,7 @@ describe("precise", () => {
   it("formats DMS", () => {
     expect(toDMS(14.464722)).toBe(`14°27'53"`);
     expect(toDMS(0)).toBe(`0°00'00"`);
-    expect(toDMS(29.99999)).toBe(`29°60'00"`); // second rollover carries into minutes
+    expect(toDMS(29.99999)).toBe(`30°00'00"`); // rollover carries through minutes and degrees
   });
   it("computes house lords from lagna", () => {
     expect(houseLord(1, "Cancer")).toBe("Moon");

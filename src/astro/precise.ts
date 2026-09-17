@@ -4,11 +4,12 @@ import { getNakshatra, type Nakshatra } from "./nakshatras";
 
 /** Degrees → D°M'S" string, e.g. 14°27'53". */
 export function toDMS(deg: number): string {
-  const d = Math.floor(deg);
+  let d = Math.floor(deg);
   const mFloat = (deg - d) * 60;
   let m = Math.floor(mFloat);
   let s = Math.round((mFloat - m) * 60);
   if (s === 60) { s = 0; m += 1; }
+  if (m === 60) { m = 0; d += 1; }
   return `${d}°${String(m).padStart(2, "0")}'${String(s).padStart(2, "0")}"`;
 }
 
