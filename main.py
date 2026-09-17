@@ -26,6 +26,7 @@ gemini_model = genai.GenerativeModel("gemini-3.6-flash")
 
 
 # ── Routes ──────────────────────────────────────────────────────────
+#temporary
 
 @app.route("/")
 def index():
