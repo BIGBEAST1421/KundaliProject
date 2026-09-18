@@ -2,7 +2,7 @@
 
 Next.js 16 app that computes real Vedic birth charts (Swiss Ephemeris, Lahiri ayanamsa), asks Gemini for a
 balanced plain-language reading, stores the **structured** result in Supabase, and serves it at a
-shareable URL. Also does Ashta Koota (36-guna) kundli matching with every factor explained.
+shareable URL. Also does Ashta Koota (36-guna) kundali matching with every factor explained.
 
 ```
 User input → chart (TS) → Gemini (JSON schema) → structured report → Supabase → UI / share link / print
@@ -51,7 +51,7 @@ pnpm build && pnpm start
 | `/app` | Birth report form |
 | `/<name-slug>` | A person's report, e.g. `/rahul-sharma` (duplicates get `-2`, `-3`…) |
 | `/report/<uid>` | Public share link for the same report (UID is the real identity) |
-| `/match` | Kundli matching form |
+| `/match` | Kundali matching form |
 | `/match/<uid>` | Compatibility report |
 | `POST /api/reports` | Create a report → `{ uid, slug }` |
 | `POST /api/match` | Create a match → `{ uid }` |

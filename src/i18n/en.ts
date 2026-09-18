@@ -2,7 +2,7 @@
 export const en = {
   // nav
   nav_report: "Birth Report",
-  nav_match: "Kundli Match",
+  nav_match: "Kundali Matching",
   nav_home: "Home",
   theme_toggle: "Switch theme",
   lang_toggle: "हिंदी",
@@ -11,7 +11,7 @@ export const en = {
   hero_title: "Your birth chart, explained like a friend would.",
   hero_sub: "Real Vedic calculations from your exact birth details, turned into an honest, easy-to-read report. Strengths and real concerns, nothing invented.",
   hero_cta: "Create birth report",
-  hero_cta2: "Match two kundlis",
+  hero_cta2: "Match two kundalis",
   hero_note: "Free · No sign-up · Shareable link",
   how_title: "How it works",
   how_1_t: "Share your birth details",
@@ -22,7 +22,7 @@ export const en = {
   how_3_d: "Plain-language insights for the areas you choose, with a link you can share or print.",
   reports_title: "A birth report you can actually read",
   reports_d: "Pick what you want to know about, career, love, health or money, and get only that. Each section shows what's working for you and, only when it's genuinely there, what needs care.",
-  match_title: "Kundli matching that explains itself",
+  match_title: "Kundali matching that explains itself",
   match_d: "All 8 classical factors (36 gunas) and the Mangal Dosha check, each with a one-line meaning and a clear strength / concern / neutral verdict. Side by side, so you can see where you differ.",
   example_title: "What an insight looks like",
   example_1: "Your Rahu period until Dec 2029 rewards unconventional moves, technology, foreign ties or independent work fit more naturally than a fixed ladder.",
@@ -82,7 +82,7 @@ export const en = {
   lbl_bride: "Bride",
   ph_groom: "e.g. Rahul Mehta",
   ph_bride: "e.g. Priya Sharma",
-  btn_match: "Match kundlis",
+  btn_match: "Match kundalis",
   btn_matching: "Comparing…",
 
   // loader messages
