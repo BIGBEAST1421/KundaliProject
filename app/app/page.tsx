@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Birth report" };
 
 export default function AppPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:py-16">
+    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 md:py-16">
       <FormIntro kind="report" />
       <div className="mt-10">
         <ReportForm />

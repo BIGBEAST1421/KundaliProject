@@ -33,22 +33,24 @@ interface Props {
   errors?: PersonErrors;
   idPrefix: string;
   namePlaceholder: string;
+  /** Multi-step forms collect the name on an earlier step. */
+  hideName?: boolean;
 }
 
 /** Name, DOB, time (with unknown toggle) and place — shared by report and match forms. */
-export function PersonFields({ value, onChange, errors = {}, idPrefix, namePlaceholder }: Props) {
+export function PersonFields({ value, onChange, errors = {}, idPrefix, namePlaceholder, hideName }: Props) {
   const { t } = useI18n();
   const set = <K extends keyof PersonFormValue>(k: K, v: PersonFormValue[K]) => onChange({ ...value, [k]: v });
   const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
-      <div className="sm:col-span-2">
+      {!hideName && <div className="sm:col-span-2">
         <Field label={t("lbl_name")} htmlFor={`${idPrefix}-name`} error={errors.name}>
           <Input id={`${idPrefix}-name`} value={value.name} placeholder={namePlaceholder} autoComplete="name" maxLength={80}
             onChange={(e) => set("name", e.target.value)} />
         </Field>
-      </div>
+      </div>}
       <Field label={t("lbl_dob")} htmlFor={`${idPrefix}-dob`} error={errors.dob}>
         <Input id={`${idPrefix}-dob`} type="date" value={value.dob} max={today} min="1900-01-01" onChange={(e) => set("dob", e.target.value)} />
       </Field>
