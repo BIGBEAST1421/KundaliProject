@@ -6,6 +6,7 @@ import { dict } from "@/src/i18n/dict";
 import { useI18n } from "@/src/i18n";
 import { APP_NAME } from "@/src/lib/brand";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
+import { signLabel, planetLabel, nakshatraLabel } from "@/src/astro/i18n";
 import type { PersonReport, CoreInsights, Sections, IndicationsNarrative } from "@/src/reports/types";
 import type { ReportFacts } from "@/src/reports/facts-schema";
 import { Badge } from "@/components/ui/Badge";
@@ -57,6 +58,8 @@ export function ReportView({ report, mode = "owner" }: Props) {
   const place = [birth.city, birth.state, birth.country].filter(Boolean).join(", ");
   const created = new Date(report.createdAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
   const pillarNames = report.pillars.map((p) => PILLAR_LABELS[p][lang]).join(" · ");
+  const RELATIONSHIP_LABEL = { unmarried: d.opt_unmarried, married: d.opt_married, separated: d.opt_separated, widowed: d.opt_widowed } as const;
+  const maritalStatusLabel = RELATIONSHIP_LABEL[profile.relationshipStatus] ?? profile.maritalStatus;
 
   // The AI-generated prose is only ever written once, in report.language. Switching the site's
   // live language toggle fetches (and caches server-side) a translation of just that prose.
@@ -98,17 +101,17 @@ export function ReportView({ report, mode = "owner" }: Props) {
       <Reveal stagger={0.08}>
         <div className="grid gap-8 md:grid-cols-[minmax(0,300px)_1fr] md:items-start">
           <RevealItem className="print-avoid">
-            <NorthChart lagna={chart.lagna} d1={chart.d1} title={d.sec_chart} />
+            <NorthChart lagna={chart.lagna} d1={chart.d1} title={d.sec_chart} lang={lang} />
             <p className="mt-2 text-center text-xs text-muted">{d.ayanamsa} {chart.ayanamsa}° · {chart.utcTime}</p>
           </RevealItem>
           <div className="grid gap-3 sm:grid-cols-2">
             {[
-              [d.lbl_lagna, chart.lagna, `${d.sub_lagna} · ${chart.lagnaDegree}°`],
-              [d.lbl_moonsign, chart.rashi, d.sub_moonsign],
-              [d.lbl_nakshatra, chart.nakshatra.name, `${d.pada} ${chart.nakshatra.pada} · ${chart.nakshatra.lord}`],
-              [d.lbl_sunsign, chart.sunSign, ""],
-              [d.lbl_mahadasha, chart.dasha.mahadasha, `${chart.dasha.mahadashaStart} – ${chart.dasha.mahadashaEnd}`],
-              [d.lbl_antardasha, chart.dasha.antardasha, `${chart.dasha.antardashaStart} – ${chart.dasha.antardashaEnd}`],
+              [d.lbl_lagna, signLabel(chart.lagna, lang), `${d.sub_lagna} · ${chart.lagnaDegree}°`],
+              [d.lbl_moonsign, signLabel(chart.rashi, lang), d.sub_moonsign],
+              [d.lbl_nakshatra, nakshatraLabel(chart.nakshatra.name, lang), `${d.pada} ${chart.nakshatra.pada} · ${planetLabel(chart.nakshatra.lord, lang)}`],
+              [d.lbl_sunsign, signLabel(chart.sunSign, lang), ""],
+              [d.lbl_mahadasha, planetLabel(chart.dasha.mahadasha, lang), `${chart.dasha.mahadashaStart} – ${chart.dasha.mahadashaEnd}`],
+              [d.lbl_antardasha, planetLabel(chart.dasha.antardasha, lang), `${chart.dasha.antardashaStart} – ${chart.dasha.antardashaEnd}`],
             ].map(([l, v, s]) => (
               <RevealItem key={l}><HoverLift><StatCard label={l} value={v} sub={s || undefined} /></HoverLift></RevealItem>
             ))}
@@ -117,7 +120,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
       </Reveal>
       <Reveal><Section id="soul" title={d.sec_soul}><p className="max-w-prose font-display text-xl md:text-2xl leading-snug italic">{core.soulPurpose}</p></Section></Reveal>
       <Reveal><Section id="overview" title={d.sec_overview}><InsightList items={core.overview} /></Section></Reveal>
-      <Reveal><Section id="dasha" title={d.sec_dasha_now} caption={`${chart.dasha.mahadasha} · ${chart.dasha.antardasha}`}><p className="max-w-prose text-[1.05rem] leading-relaxed">{core.dashaAnalysis}</p></Section></Reveal>
+      <Reveal><Section id="dasha" title={d.sec_dasha_now} caption={`${planetLabel(chart.dasha.mahadasha, lang)} · ${planetLabel(chart.dasha.antardasha, lang)}`}><p className="max-w-prose text-[1.05rem] leading-relaxed">{core.dashaAnalysis}</p></Section></Reveal>
     </div>
   );
 
@@ -126,10 +129,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
     {
       id: "chart", label: d.grp_chart, icon: <Icon d={ICONS.chart} />,
       tabs: [
-        { id: "planets", label: d.tab_planets, keywords: "sun moon mars mercury jupiter venus saturn rahu ketu degree retrograde combust dignity strength", content: facts ? <Reveal><Section id="planets" title={d.tab_planets}><PlanetTable f={facts} d={d} /></Section></Reveal> : noFacts },
+        { id: "planets", label: d.tab_planets, keywords: "sun moon mars mercury jupiter venus saturn rahu ketu degree retrograde combust dignity strength", content: facts ? <Reveal><Section id="planets" title={d.tab_planets}><PlanetTable f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
         { id: "houses", label: d.tab_houses, keywords: "house lord bhava 7th 10th", content: facts ? <Reveal><Section id="houses" title={d.tab_houses}><HouseGrid f={facts} d={d} lagna={chart.lagna} lang={lang} /></Section></Reveal> : noFacts },
-        { id: "vargas", label: d.tab_vargas, keywords: "navamsa dasamsa d9 d10 divisional", content: facts ? <Reveal><Section id="vargas" title={d.tab_vargas}><VargaView f={facts} d={d} /></Section></Reveal> : noFacts },
-        { id: "aspects", label: d.tab_aspects, keywords: "drishti aspect glance", content: facts ? <Reveal><Section id="aspects" title={d.tab_aspects} caption={d.aspects_sub}><AspectsView f={facts} d={d} /></Section></Reveal> : noFacts },
+        { id: "vargas", label: d.tab_vargas, keywords: "navamsa dasamsa d9 d10 divisional", content: facts ? <Reveal><Section id="vargas" title={d.tab_vargas}><VargaView f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
+        { id: "aspects", label: d.tab_aspects, keywords: "drishti aspect glance", content: facts ? <Reveal><Section id="aspects" title={d.tab_aspects} caption={d.aspects_sub}><AspectsView f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
       ],
     },
     {
@@ -148,15 +151,15 @@ export function ReportView({ report, mode = "owner" }: Props) {
         { id: "dasha", label: d.tab_dasha, keywords: "dasha mahadasha antardasha timeline period vimshottari", content: (
           <Reveal><Section id="timeline" title={d.sec_dasha_timeline}>
             <div className="grid gap-10 md:grid-cols-2">
-              <Timeline items={chart.dasha.allMahadashas.map((m) => ({ period: m.lord, desc: `${m.start} – ${m.end}`, current: m.current }))} />
+              <Timeline items={chart.dasha.allMahadashas.map((m) => ({ period: planetLabel(m.lord, lang), desc: `${m.start} – ${m.end}`, current: m.current }))} />
               <div>
-                <h3 className="mb-4 font-sans text-sm font-semibold">{d.sec_antardashas.replace("{m}", chart.dasha.mahadasha)}</h3>
-                <Timeline items={chart.dasha.antardashas.map((a) => ({ period: a.lord, desc: `${a.start} – ${a.end}`, current: a.current }))} />
+                <h3 className="mb-4 font-sans text-sm font-semibold">{d.sec_antardashas.replace("{m}", planetLabel(chart.dasha.mahadasha, lang))}</h3>
+                <Timeline items={chart.dasha.antardashas.map((a) => ({ period: planetLabel(a.lord, lang), desc: `${a.start} – ${a.end}`, current: a.current }))} />
               </div>
             </div>
           </Section></Reveal>
         ) },
-        { id: "transits", label: d.tab_transits, keywords: "transit gochar today now sade sati saturn jupiter", content: facts ? <Reveal><Section id="transits" title={d.tab_transits} caption={d.transits_sub}><TransitsView f={facts} d={d} /></Section></Reveal> : noFacts },
+        { id: "transits", label: d.tab_transits, keywords: "transit gochar today now sade sati saturn jupiter", content: facts ? <Reveal><Section id="transits" title={d.tab_transits} caption={d.transits_sub}><TransitsView f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
         ...(core.remedies.length ? [{ id: "remedies", label: d.tab_remedies, keywords: "remedy mantra gemstone practice upay", content: (
           <Section id="remedies" title={d.sec_remedies}>
             <Reveal stagger={0.07} as="ul" className="grid gap-3 sm:grid-cols-2">
@@ -182,7 +185,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
             <RevealItem><h1 className="text-4xl md:text-5xl leading-none">{report.name}</h1></RevealItem>
             <RevealItem as="p" className="mt-2 text-muted">
               {birth.dob}{birth.timeKnown && birth.time ? ` · ${birth.time}` : ""} · {place}
-              {profile.maritalStatus ? ` · ${profile.maritalStatus}` : ""}{profile.occupation ? ` · ${profile.occupation}` : ""}
+              {profile.maritalStatus ? ` · ${maritalStatusLabel}` : ""}{profile.occupation ? ` · ${profile.occupation}` : ""}
             </RevealItem>
             <RevealItem className="mt-3 flex flex-wrap gap-2">
               {!birth.timeKnown && <Badge>{d.time_unknown_badge}</Badge>}

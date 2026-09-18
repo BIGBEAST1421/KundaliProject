@@ -1,12 +1,15 @@
 import type { Dict } from "@/src/i18n/en";
 import type { ReportFacts } from "@/src/reports/facts-schema";
+import type { Language } from "@/src/reports/types";
 import { DIGNITY_LABEL, type Dignity } from "@/src/astro/dignity";
+import { planetLabel, signLabel, nakshatraLabel, dignityLabelHi } from "@/src/astro/i18n";
 import { Badge } from "@/components/ui/Badge";
 
 const DIG_TONE: Partial<Record<Dignity, "strength" | "concern" | "neutral">> = { exalted: "strength", moolatrikona: "strength", own: "strength", debilitated: "concern", enemy: "concern" };
 
 /** Precise placements: sign + DMS, house, nakshatra/pada, dignity, strength bar, motion. */
-export function PlanetTable({ f, d }: { f: ReportFacts; d: Dict }) {
+export function PlanetTable({ f, d, lang = "en" }: { f: ReportFacts; d: Dict; lang?: Language }) {
+  const dignityLabel = (dig: Dignity) => (lang === "hi" ? dignityLabelHi(dig) : DIGNITY_LABEL[dig]);
   const retroLabel = (r: string) => r === "direct" ? d.retro_direct : r === "retrograde" ? d.retro_retro : r === "always-retrograde" ? d.retro_always : d.retro_never;
   return (
     <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line">
@@ -28,12 +31,12 @@ export function PlanetTable({ f, d }: { f: ReportFacts; d: Dict }) {
             const isAsc = p.body === "Ascendant";
             return (
               <tr key={p.body} className={isAsc ? "bg-accent-soft/40" : ""}>
-                <td className="px-4 py-3 font-semibold">{isAsc ? d.lbl_lagna : p.body}</td>
-                <td className="px-4 py-3 whitespace-nowrap">{p.sign} <span className="font-mono text-xs text-muted">{p.dms}</span></td>
+                <td className="px-4 py-3 font-semibold">{isAsc ? d.lbl_lagna : planetLabel(p.body, lang)}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{signLabel(p.sign, lang)} <span className="font-mono text-xs text-muted">{p.dms}</span></td>
                 <td className="px-4 py-3">{p.house}</td>
-                <td className="px-4 py-3 whitespace-nowrap">{p.nakshatra.name} <span className="text-muted">· {d.pada} {p.nakshatra.pada}</span></td>
+                <td className="px-4 py-3 whitespace-nowrap">{nakshatraLabel(p.nakshatra.name, lang)} <span className="text-muted">· {d.pada} {p.nakshatra.pada}</span></td>
                 <td className="px-4 py-3">
-                  {s ? <Badge tone={DIG_TONE[s.dignity as Dignity] ?? "muted"}>{DIGNITY_LABEL[s.dignity as Dignity]}</Badge> : <span className="text-muted">·</span>}
+                  {s ? <Badge tone={DIG_TONE[s.dignity as Dignity] ?? "muted"}>{dignityLabel(s.dignity as Dignity)}</Badge> : <span className="text-muted">·</span>}
                   {s?.combust && <Badge tone="concern" className="ml-1">{d.combust}</Badge>}
                 </td>
                 <td className="px-4 py-3 min-w-[140px]">

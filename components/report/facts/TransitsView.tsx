@@ -1,9 +1,11 @@
 import type { Dict } from "@/src/i18n/en";
 import type { ReportFacts } from "@/src/reports/facts-schema";
+import type { Language } from "@/src/reports/types";
+import { planetLabel, signLabel } from "@/src/astro/i18n";
 import { Badge } from "@/components/ui/Badge";
 import { InsightList } from "@/components/ui/InsightList";
 
-export function TransitsView({ f, d }: { f: ReportFacts; d: Dict }) {
+export function TransitsView({ f, d, lang = "en" }: { f: ReportFacts; d: Dict; lang?: Language }) {
   const t = f.transits;
   return (
     <div className="space-y-8">
@@ -27,8 +29,8 @@ export function TransitsView({ f, d }: { f: ReportFacts; d: Dict }) {
           <tbody className="divide-y divide-line">
             {t.planets.map((p) => (
               <tr key={p.planet}>
-                <td className="px-4 py-3 font-semibold">{p.planet}</td>
-                <td className="px-4 py-3">{p.sign}</td>
+                <td className="px-4 py-3 font-semibold">{planetLabel(p.planet, lang)}</td>
+                <td className="px-4 py-3">{signLabel(p.sign, lang)}</td>
                 <td className="px-4 py-3">{p.houseFromLagna}</td>
                 <td className="px-4 py-3">{p.houseFromMoon}</td>
                 <td className="px-4 py-3">{p.retrograde ? <Badge tone="concern">{d.retro_retro}</Badge> : <span className="text-muted">{d.retro_direct}</span>}</td>

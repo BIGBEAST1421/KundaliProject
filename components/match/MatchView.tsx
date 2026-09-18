@@ -7,7 +7,8 @@ import { useI18n } from "@/src/i18n";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/src/lib/brand";
 import type { Dict } from "@/src/i18n/en";
-import type { MatchReport, MatchInsights } from "@/src/reports/types";
+import type { MatchReport, MatchInsights, Language } from "@/src/reports/types";
+import { signLabel, nakshatraLabel } from "@/src/astro/i18n";
 
 type FactorNarrative = { title: string; meaning: string; result: string };
 type MatchTranslated = { insights: MatchInsights; factors: FactorNarrative[]; gunaVerdict: string; mangalNote: string };
@@ -23,16 +24,16 @@ import { HoverLift } from "@/components/motion/Hover";
 import { CosmicLoader } from "@/components/ui/CosmicLoader";
 import { CountUp } from "@/components/motion/CountUp";
 
-function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: Dict }) {
+function PersonCol({ label, p, d, lang }: { label: string; p: MatchReport["boy"]; d: Dict; lang: Language }) {
   return (
     <div className="h-full rounded-[var(--radius-card)] border border-line p-5">
       <p className="text-xs text-muted">{label}</p>
       <h2 className="mt-1 text-3xl leading-none">{p.name}</h2>
       <p className="mt-2 text-sm text-muted">{p.birth.dob}{p.birth.timeKnown && p.birth.time ? ` · ${p.birth.time}` : ""} · {p.birth.city}</p>
       <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-        <dt className="text-muted">{d.lbl_moonsign}</dt><dd className="font-medium">{p.chart.rashi}</dd>
-        <dt className="text-muted">{d.lbl_nakshatra}</dt><dd className="font-medium">{p.chart.nakshatra.name} · {d.pada} {p.chart.nakshatra.pada}</dd>
-        <dt className="text-muted">{d.lbl_lagna}</dt><dd className="font-medium">{p.chart.lagna}</dd>
+        <dt className="text-muted">{d.lbl_moonsign}</dt><dd className="font-medium">{signLabel(p.chart.rashi, lang)}</dd>
+        <dt className="text-muted">{d.lbl_nakshatra}</dt><dd className="font-medium">{nakshatraLabel(p.chart.nakshatra.name, lang)} · {d.pada} {p.chart.nakshatra.pada}</dd>
+        <dt className="text-muted">{d.lbl_lagna}</dt><dd className="font-medium">{signLabel(p.chart.lagna, lang)}</dd>
         <dt className="text-muted">{d.mangal_title}</dt>
         <dd><Badge tone={p.mangal.isManglik ? "concern" : "strength"}>{p.mangal.isManglik ? d.manglik : d.not_manglik}</Badge></dd>
       </dl>
@@ -99,8 +100,8 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
       </RevealItem>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <RevealItem><HoverLift className="h-full"><PersonCol label={d.groom_short} p={boy} d={d} /></HoverLift></RevealItem>
-        <RevealItem><HoverLift className="h-full"><PersonCol label={d.bride_short} p={girl} d={d} /></HoverLift></RevealItem>
+        <RevealItem><HoverLift className="h-full"><PersonCol label={d.groom_short} p={boy} d={d} lang={lang} /></HoverLift></RevealItem>
+        <RevealItem><HoverLift className="h-full"><PersonCol label={d.bride_short} p={girl} d={d} lang={lang} /></HoverLift></RevealItem>
       </div>
     </Reveal>
   );
@@ -122,7 +123,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
         { id: "factors", label: d.tab_factors, hint: `${strengths}/${factors.length}`, content: (
         <Section id="factors" title={d.factors_title} caption={d.factors_sub}>
           <Reveal as="ul" stagger={0.06} className="grid gap-4 md:grid-cols-2">
-            {factors.map((f) => <RevealItem key={f.key} as="li"><HoverLift className="h-full"><FactorCard f={f} d={d} boyName={boy.name} girlName={girl.name} /></HoverLift></RevealItem>)}
+            {factors.map((f) => <RevealItem key={f.key} as="li"><HoverLift className="h-full"><FactorCard f={f} d={d} boyName={boy.name} girlName={girl.name} lang={lang} /></HoverLift></RevealItem>)}
             <RevealItem as="li"><HoverLift className="print-avoid h-full rounded-[var(--radius-card)] border border-line bg-bg p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-sans text-base font-semibold">{d.mangal_title}</h3>

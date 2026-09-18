@@ -1,14 +1,16 @@
 import { SIGNS } from "@/src/astro/signs";
-import { PLANET_ABBREVIATIONS } from "@/src/astro/signs";
+import { signLabel, planetAbbrLabel } from "@/src/astro/i18n";
+import type { Language } from "@/src/reports/types";
 
 interface Props {
   lagna: string;
   d1: Record<string, string>;
   title: string;
+  lang?: Language;
 }
 
 /** North-Indian style D1 chart. House 1 is the top diamond; signs rotate anticlockwise from the Lagna. */
-export function NorthChart({ lagna, d1, title }: Props) {
+export function NorthChart({ lagna, d1, title, lang = "en" }: Props) {
   const lagnaIdx = SIGNS.indexOf(lagna as (typeof SIGNS)[number]);
   // House centres (x, y) for a 300×300 board, houses 1..12 anticlockwise from the top diamond.
   const centres: [number, number][] = [
@@ -19,7 +21,7 @@ export function NorthChart({ lagna, d1, title }: Props) {
     const signIdx = (lagnaIdx + i) % 12;
     const planets = Object.entries(d1)
       .filter(([p, s]) => p !== "Ascendant" && SIGNS.indexOf(s as (typeof SIGNS)[number]) === signIdx)
-      .map(([p]) => PLANET_ABBREVIATIONS[p as keyof typeof PLANET_ABBREVIATIONS] ?? p.slice(0, 2));
+      .map(([p]) => planetAbbrLabel(p, lang));
     return { cx, cy, signNum: signIdx + 1, planets, house: i + 1 };
   });
 
@@ -39,7 +41,7 @@ export function NorthChart({ lagna, d1, title }: Props) {
           )}
         </g>
       ))}
-      <text x="150" y="154" textAnchor="middle" fontSize="10" fill="var(--accent)" fontFamily="var(--font-display)" fontStyle="italic">{lagna}</text>
+      <text x="150" y="154" textAnchor="middle" fontSize="10" fill="var(--accent)" fontFamily="var(--font-display)" fontStyle="italic">{signLabel(lagna, lang)}</text>
     </svg>
   );
 }
