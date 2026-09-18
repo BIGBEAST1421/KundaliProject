@@ -119,11 +119,23 @@ export type ChartSummary = z.infer<typeof ChartSummarySchema>;
 export const PersonNarrativeSchema = CoreInsightsSchema.merge(SectionsSchema);
 export type PersonNarrative = z.infer<typeof PersonNarrativeSchema>;
 
+/** Translated {title, text, because} for one fired classical rule — everything else about it is deterministic. */
+export const RuleNarrativeSchema = z.object({ title: str, text: str, because: strList });
+export type RuleNarrative = z.infer<typeof RuleNarrativeSchema>;
+
+export const IndicationsNarrativeSchema = z.object({
+  career: z.array(RuleNarrativeSchema),
+  marriage: z.array(RuleNarrativeSchema),
+});
+export type IndicationsNarrative = z.infer<typeof IndicationsNarrativeSchema>;
+
 /** Cached AI translation of the narrative content into the one other supported language. */
 export const PersonTranslationSchema = z.object({
   language: LanguageSchema,
   core: CoreInsightsSchema,
   sections: SectionsSchema,
+  /** Translated classical-rule text; empty arrays for reports with no facts. */
+  indications: IndicationsNarrativeSchema,
 });
 export type PersonTranslation = z.infer<typeof PersonTranslationSchema>;
 

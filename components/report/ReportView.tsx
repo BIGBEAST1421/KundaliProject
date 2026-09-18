@@ -6,7 +6,8 @@ import { dict } from "@/src/i18n/dict";
 import { useI18n } from "@/src/i18n";
 import { APP_NAME } from "@/src/lib/brand";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
-import type { PersonReport, CoreInsights, Sections } from "@/src/reports/types";
+import type { PersonReport, CoreInsights, Sections, IndicationsNarrative } from "@/src/reports/types";
+import type { ReportFacts } from "@/src/reports/facts-schema";
 import { Badge } from "@/components/ui/Badge";
 import { Section } from "@/components/ui/Section";
 import { InsightList } from "@/components/ui/InsightList";
@@ -59,8 +60,9 @@ export function ReportView({ report, mode = "owner" }: Props) {
 
   // The AI-generated prose is only ever written once, in report.language. Switching the site's
   // live language toggle fetches (and caches server-side) a translation of just that prose.
+  type Translated = { core: CoreInsights; sections: Sections; indications: IndicationsNarrative };
   const cached = report.translation && report.translation.language === lang ? report.translation : null;
-  const [translated, setTranslated] = useState<{ core: CoreInsights; sections: Sections } | null>(cached);
+  const [translated, setTranslated] = useState<Translated | null>(cached);
   const [translating, setTranslating] = useState(false);
   useEffect(() => {
     if (lang === report.language) { setTranslated(null); return; }
@@ -73,7 +75,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
       body: JSON.stringify({ lang }),
     })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error("translate failed"))))
-      .then((data: { core: CoreInsights; sections: Sections }) => { if (!cancelled) setTranslated(data); })
+      .then((data: Translated) => { if (!cancelled) setTranslated(data); })
       .catch(() => { /* fall back to the original language silently */ })
       .finally(() => { if (!cancelled) setTranslating(false); });
     return () => { cancelled = true; };
@@ -81,6 +83,13 @@ export function ReportView({ report, mode = "owner" }: Props) {
 
   const core = translated?.core ?? report.core;
   const sections = translated?.sections ?? report.sections;
+
+  function mergedRules(domain: "career" | "marriage"): ReportFacts["rules"]["career"] {
+    const rules = facts?.rules[domain] ?? [];
+    const t = translated?.indications[domain];
+    if (!t) return rules;
+    return rules.map((r, i) => (t[i] ? { ...r, title: t[i].title, text: t[i].text, because: t[i].because } : r));
+  }
 
   const noFacts = <p className="rounded-[var(--radius-card)] border border-line bg-surface p-5 text-sm text-muted">{d.no_facts}</p>;
 
@@ -126,8 +135,8 @@ export function ReportView({ report, mode = "owner" }: Props) {
     {
       id: "insights", label: d.grp_insights, icon: <Icon d={ICONS.insights} />,
       tabs: [
-        ...(sections.career ? [{ id: "career", label: d.tab_career, keywords: "career job work profession 10th business", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.career} d={d} />}<CareerBlock s={sections.career} d={d} /></Reveal> }] : []),
-        ...(sections.love ? [{ id: "love", label: d.tab_love, keywords: "love marriage partner spouse relationship venus 7th manglik", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.marriage} d={d} />}<LoveBlock s={sections.love} d={d} /></Reveal> }] : []),
+        ...(sections.career ? [{ id: "career", label: d.tab_career, keywords: "career job work profession 10th business", content: <Reveal className="space-y-10">{facts && <Indications rules={mergedRules("career")} d={d} />}<CareerBlock s={sections.career} d={d} /></Reveal> }] : []),
+        ...(sections.love ? [{ id: "love", label: d.tab_love, keywords: "love marriage partner spouse relationship venus 7th manglik", content: <Reveal className="space-y-10">{facts && <Indications rules={mergedRules("marriage")} d={d} />}<LoveBlock s={sections.love} d={d} /></Reveal> }] : []),
         ...(sections.health ? [{ id: "health", label: d.tab_health, keywords: "health body energy constitution", content: <Reveal><HealthBlock s={sections.health} d={d} /></Reveal> }] : []),
         ...(sections.wealth ? [{ id: "wealth", label: d.tab_wealth, keywords: "wealth money finance savings investment muhurta", content: <Reveal><WealthBlock s={sections.wealth} d={d} /></Reveal> }] : []),
         { id: "yogas", label: d.tab_yogas, keywords: "yoga dosha raja yoga gajakesari kemadruma manglik viparita neecha bhanga dhana", content: facts ? <Reveal><Section id="yogas" title={d.tab_yogas} caption={d.yogas_sub}><YogasView f={facts} d={d} /></Section></Reveal> : noFacts },

@@ -56,7 +56,7 @@ export const WEALTH_SCHEMA = obj({
     "Exactly three: career switch, investment, business launch / major purchase"),
 });
 
-export function buildPersonSchema(pillars: readonly Pillar[], status: RelationshipStatus): Schema {
+function personProps(pillars: readonly Pillar[], status: RelationshipStatus): Record<string, Schema> {
   const props: Record<string, Schema> = {
     soulPurpose: S("Soul mission of the Moon nakshatra for this chart, 30-40 words"),
     overview: arr(S(), "Three chart insights specific to placements, 2 sentences each"),
@@ -67,7 +67,33 @@ export function buildPersonSchema(pillars: readonly Pillar[], status: Relationsh
   if (pillars.includes("love")) props.love = loveSchema(status);
   if (pillars.includes("health")) props.health = HEALTH_SCHEMA;
   if (pillars.includes("wealth")) props.wealth = WEALTH_SCHEMA;
-  return obj(props);
+  return props;
+}
+
+export function buildPersonSchema(pillars: readonly Pillar[], status: RelationshipStatus): Schema {
+  return obj(personProps(pillars, status));
+}
+
+const RULE_NARRATIVE = obj({ title: S(), text: S(), because: arr(S()) });
+
+/**
+ * Translation output shape: core + section fields plus the classical-rule text (title, text,
+ * because) for whichever "Classical Indications" rules fired on this chart — those are
+ * deterministic template strings baked in at report-creation time, not covered by `core`/
+ * `sections`, but still narrative a viewer reads.
+ */
+export function buildPersonTranslationSchema(
+  pillars: readonly Pillar[],
+  status: RelationshipStatus,
+  indicationsCount: { career: number; marriage: number },
+): Schema {
+  return obj({
+    ...personProps(pillars, status),
+    indications: obj({
+      career: arr(RULE_NARRATIVE, `Exactly ${indicationsCount.career} items, same order as input — do not reorder, omit or add.`),
+      marriage: arr(RULE_NARRATIVE, `Exactly ${indicationsCount.marriage} items, same order as input — do not reorder, omit or add.`),
+    }),
+  });
 }
 
 /**
