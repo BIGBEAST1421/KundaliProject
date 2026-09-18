@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { dict } from "@/src/i18n/dict";
+import { Logo } from "@/components/Logo";
 import type { Dict } from "@/src/i18n/en";
 import type { MatchReport } from "@/src/reports/types";
 import { Badge, VerdictBadge } from "@/components/ui/Badge";
@@ -30,7 +32,7 @@ function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: D
 }
 
 /** Comparison-first compatibility report. Server component; language follows the report. */
-export function MatchView({ report }: { report: MatchReport }) {
+export function MatchView({ report, mode = "owner" }: { report: MatchReport; mode?: "owner" | "share" }) {
   const d = dict(report.language);
   const { guna, factors, insights, mangal, boy, girl } = report;
   const strengths = factors.filter((f) => f.verdict === "strength").length;
@@ -72,7 +74,7 @@ export function MatchView({ report }: { report: MatchReport }) {
           <h1 className="mt-1 text-4xl md:text-5xl leading-none">{boy.name} <span className="text-accent">&amp;</span> {girl.name}</h1>
           <p className="mt-4 max-w-prose text-lg leading-relaxed">{insights.headline}</p>
         </div>
-        <RevealItem><ShareBar sharePath={`/match/${report.uid}`} newHref="/match" newLabel={d.match_new} /></RevealItem>
+        {mode === "owner" && <RevealItem><ShareBar sharePath={`/match/${report.uid}/share`} newHref="/match" newLabel={d.match_new} /></RevealItem>}
       </Reveal>
 
       <Tabs className="mt-10" panels={[
@@ -131,6 +133,11 @@ export function MatchView({ report }: { report: MatchReport }) {
         </Section>
         ) },
       ] satisfies TabPanel[]} />
+      {mode === "share" && (
+        <footer className="mt-16 flex flex-wrap items-center justify-end gap-2 border-t border-line pt-6 text-xs text-muted">
+          {d.share_view_footer} <Logo text={d.brand} /> · <Link href="/match" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link>
+        </footer>
+      )}
     </article>
   );
 }
