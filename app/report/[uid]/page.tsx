@@ -14,5 +14,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SharedReportPage({ params }: Props) {
   const report = await repo.getPersonByUid((await params).uid);
   if (!report) notFound();
-  return <ReportView report={report} />;
+  return <ReportView report={report} mode="share" />;
 }

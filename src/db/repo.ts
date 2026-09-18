@@ -42,8 +42,8 @@ function matchFromRow(r: MatchRow): MatchReport {
   return parsed.data;
 }
 
-const PERSON_COLS = "uid, slug, name, language, birth, profile, pillars, chart, core, sections, facts, created_at";
-const MATCH_COLS = "uid, language, boy, girl, guna, factors, mangal, insights, created_at";
+const PERSON_COLS = "*";
+const MATCH_COLS = "*";
 
 export const repo = {
   /** Existing slugs equal to `base` or of the form `base-N`, for duplicate handling. */

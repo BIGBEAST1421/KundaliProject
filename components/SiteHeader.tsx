@@ -11,6 +11,8 @@ import { LinkButton } from "./ui/Button";
 export function SiteHeader() {
   const { t } = useI18n();
   const path = usePathname();
+  // Shared/public report pages get a quiet header: logo and toggles only.
+  const minimal = path.startsWith("/report/") || /^\/match\/[^/]+\/share/.test(path);
   const isActive = (href: string) => path === href || (href !== "/" && path.startsWith(href + "/"));
   const link = (href: string, label: string) => (
     <Link href={href} aria-current={isActive(href) ? "page" : undefined}
@@ -24,20 +26,24 @@ export function SiteHeader() {
     <header className="no-print sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6" aria-label="Main">
         <Link href="/" className="shrink-0"><Logo text={t("brand")} /></Link>
-        <div className="hidden md:flex items-center gap-1">
-          {link("/app", t("nav_report"))}
-          {link("/match", t("nav_match"))}
-        </div>
+        {!minimal && (
+          <div className="hidden md:flex items-center gap-1">
+            {link("/app", t("nav_report"))}
+            {link("/match", t("nav_match"))}
+          </div>
+        )}
         <div className="ml-auto flex items-center gap-2">
           <LangToggle />
           <ThemeToggle />
-          <LinkButton href="/app" size="sm" className="hidden sm:inline-flex">{t("nav_cta")}</LinkButton>
+          {!minimal && <LinkButton href="/app" size="sm" className="hidden sm:inline-flex">{t("nav_cta")}</LinkButton>}
         </div>
       </nav>
-      <div className="md:hidden flex gap-1 px-3 pb-2">
-        {link("/app", t("nav_report"))}
-        {link("/match", t("nav_match"))}
-      </div>
+      {!minimal && (
+        <div className="md:hidden flex gap-1 px-3 pb-2">
+          {link("/app", t("nav_report"))}
+          {link("/match", t("nav_match"))}
+        </div>
+      )}
     </header>
   );
 }

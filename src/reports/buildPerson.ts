@@ -5,7 +5,7 @@ import {
   type Birth, type ChartSummary, type Language, type PersonReport, type Pillar, type Profile, type Sections,
 } from "./types";
 import { normalizePillars } from "./pillars";
-import type { ReportFacts } from "./facts";
+import type { ReportFacts } from "./facts-schema";
 import { sanitizeDeep } from "./sanitize";
 
 export class ReportBuildError extends Error {

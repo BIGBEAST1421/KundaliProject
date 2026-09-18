@@ -3,7 +3,7 @@
  * Supabase persistence, web rendering, public share pages and print.
  */
 import { z } from "zod";
-import { ReportFactsSchema } from "./facts";
+import { ReportFactsSchema } from "./facts-schema";
 
 export const PILLARS = ["career", "love", "health", "wealth"] as const;
 export const PillarSchema = z.enum(PILLARS);
