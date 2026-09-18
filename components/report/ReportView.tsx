@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { dict } from "@/src/i18n/dict";
+import { useI18n } from "@/src/i18n";
+import { APP_NAME } from "@/src/lib/brand";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
 import type { PersonReport } from "@/src/reports/types";
 import { Badge } from "@/components/ui/Badge";
@@ -37,16 +41,19 @@ interface Props {
 }
 
 /**
- * Stored PersonReport → grouped, tabbed reading. Server component; the same markup serves the
- * name route (owner) and the public share route (view-only). Labels follow the report language.
+ * Stored PersonReport → grouped, tabbed reading. Client component so labels follow the site's
+ * live language toggle; the same markup serves the name route (owner) and the public share
+ * route (view-only). Only the AI-generated prose (soul purpose, section text, …) stays in
+ * whichever language the report was created in — it isn't retranslated on the fly.
  */
 export function ReportView({ report, mode = "owner" }: Props) {
-  const d = dict(report.language);
+  const { lang } = useI18n();
+  const d = dict(lang);
   const { chart, birth, profile, facts } = report;
   const initials = report.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const place = [birth.city, birth.state, birth.country].filter(Boolean).join(", ");
-  const created = new Date(report.createdAt).toLocaleDateString(report.language === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
-  const pillarNames = report.pillars.map((p) => PILLAR_LABELS[p][report.language]).join(" · ");
+  const created = new Date(report.createdAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
+  const pillarNames = report.pillars.map((p) => PILLAR_LABELS[p][lang]).join(" · ");
 
   const noFacts = <p className="rounded-[var(--radius-card)] border border-line bg-surface p-5 text-sm text-muted">{d.no_facts}</p>;
 
@@ -84,7 +91,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
       id: "chart", label: d.grp_chart, icon: <Icon d={ICONS.chart} />,
       tabs: [
         { id: "planets", label: d.tab_planets, keywords: "sun moon mars mercury jupiter venus saturn rahu ketu degree retrograde combust dignity strength", content: facts ? <Reveal><Section id="planets" title={d.tab_planets}><PlanetTable f={facts} d={d} /></Section></Reveal> : noFacts },
-        { id: "houses", label: d.tab_houses, keywords: "house lord bhava 7th 10th", content: facts ? <Reveal><Section id="houses" title={d.tab_houses}><HouseGrid f={facts} d={d} lagna={chart.lagna} lang={report.language} /></Section></Reveal> : noFacts },
+        { id: "houses", label: d.tab_houses, keywords: "house lord bhava 7th 10th", content: facts ? <Reveal><Section id="houses" title={d.tab_houses}><HouseGrid f={facts} d={d} lagna={chart.lagna} lang={lang} /></Section></Reveal> : noFacts },
         { id: "vargas", label: d.tab_vargas, keywords: "navamsa dasamsa d9 d10 divisional", content: facts ? <Reveal><Section id="vargas" title={d.tab_vargas}><VargaView f={facts} d={d} /></Section></Reveal> : noFacts },
         { id: "aspects", label: d.tab_aspects, keywords: "drishti aspect glance", content: facts ? <Reveal><Section id="aspects" title={d.tab_aspects} caption={d.aspects_sub}><AspectsView f={facts} d={d} /></Section></Reveal> : noFacts },
       ],
@@ -131,7 +138,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
   ];
 
   return (
-    <article className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14" lang={report.language}>
+    <article className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14" lang={lang}>
       <Reveal as="header" stagger={0.06} className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="flex items-start gap-4">
           <RevealItem className="grid size-14 shrink-0 place-items-center rounded-full bg-accent-soft font-display text-xl">{initials}</RevealItem>
@@ -156,7 +163,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-xs text-muted">
         <span>{d.report_created} {created}</span>
         {mode === "share" ? (
-          <span className="flex items-center gap-2">{d.share_view_footer} <Logo text={d.brand} /> · <Link href="/app" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link></span>
+          <span className="flex items-center gap-2">{d.share_view_footer} <Logo text={APP_NAME} /> · <Link href="/app" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link></span>
         ) : (
           <span className="font-mono">/report/{report.uid.slice(0, 8)}…</span>
         )}

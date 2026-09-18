@@ -7,6 +7,7 @@ import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { LangToggle } from "./LangToggle";
 import { LinkButton } from "./ui/Button";
+import { APP_NAME } from "@/src/lib/brand";
 
 export function SiteHeader() {
   const { t } = useI18n();
@@ -25,7 +26,7 @@ export function SiteHeader() {
   return (
     <header className="no-print sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6" aria-label="Main">
-        <Link href="/" className="shrink-0"><Logo text={t("brand")} /></Link>
+        <Link href="/" className="shrink-0"><Logo text={APP_NAME} /></Link>
         {!minimal && (
           <div className="hidden md:flex items-center gap-1">
             {link("/app", t("nav_report"))}

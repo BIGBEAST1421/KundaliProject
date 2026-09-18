@@ -2,7 +2,6 @@ import type { Dict } from "./en";
 
 /** Hindi UI copy, natural spoken Hindi, Devanagari. */
 export const hi: Dict = {
-  brand: "कुंडली",
   nav_report: "जन्म रिपोर्ट",
   nav_match: "कुंडली मिलान",
   nav_home: "होम",

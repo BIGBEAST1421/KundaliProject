@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { dict } from "@/src/i18n/dict";
+import { useI18n } from "@/src/i18n";
 import { Logo } from "@/components/Logo";
+import { APP_NAME } from "@/src/lib/brand";
 import type { Dict } from "@/src/i18n/en";
 import type { MatchReport } from "@/src/reports/types";
 import { Badge, VerdictBadge } from "@/components/ui/Badge";
@@ -31,9 +35,10 @@ function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: D
   );
 }
 
-/** Comparison-first compatibility report. Server component; language follows the report. */
+/** Comparison-first compatibility report. Client component so labels follow the live language toggle. */
 export function MatchView({ report, mode = "owner" }: { report: MatchReport; mode?: "owner" | "share" }) {
-  const d = dict(report.language);
+  const { lang } = useI18n();
+  const d = dict(lang);
   const { guna, factors, insights, mangal, boy, girl } = report;
   const strengths = factors.filter((f) => f.verdict === "strength").length;
   const concerns = factors.filter((f) => f.verdict === "concern").length;
@@ -67,7 +72,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
   );
 
   return (
-    <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14" lang={report.language}>
+    <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-14" lang={lang}>
       <Reveal as="header" stagger={0.06} className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm text-muted">{d.match_headline}</p>
@@ -135,7 +140,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
       ] satisfies TabPanel[]} />
       {mode === "share" && (
         <footer className="mt-16 flex flex-wrap items-center justify-end gap-2 border-t border-line pt-6 text-xs text-muted">
-          {d.share_view_footer} <Logo text={d.brand} /> · <Link href="/match" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link>
+          {d.share_view_footer} <Logo text={APP_NAME} /> · <Link href="/match" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link>
         </footer>
       )}
     </article>

@@ -1,7 +1,6 @@
 /** English UI copy, plain, friendly, short. Keys are shared with hi.ts. */
 export const en = {
-  // brand / nav
-  brand: "Kundali",
+  // nav
   nav_report: "Birth Report",
   nav_match: "Kundli Match",
   nav_home: "Home",
