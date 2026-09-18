@@ -17,7 +17,7 @@ export const isUuid = (s: string) => UUID_RE.test(s);
 
 type PersonRow = {
   uid: string; slug: string; name: string; language: string; birth: unknown; profile: unknown;
-  pillars: string[]; chart: unknown; core: unknown; sections: unknown; created_at: string;
+  pillars: string[]; chart: unknown; core: unknown; sections: unknown; facts?: unknown; created_at: string;
 };
 type MatchRow = {
   uid: string; language: string; boy: unknown; girl: unknown; guna: unknown; factors: unknown;
@@ -27,7 +27,7 @@ type MatchRow = {
 function personFromRow(r: PersonRow): PersonReport {
   const parsed = PersonReportSchema.safeParse({
     uid: r.uid, slug: r.slug, name: r.name, language: r.language, birth: r.birth, profile: r.profile,
-    pillars: r.pillars, chart: r.chart, core: r.core, sections: r.sections, createdAt: r.created_at,
+    pillars: r.pillars, chart: r.chart, core: r.core, sections: r.sections, facts: r.facts ?? null, createdAt: r.created_at,
   });
   if (!parsed.success) throw new RepoError(`Stored report ${r.uid} is malformed`, parsed.error.issues);
   return parsed.data;
@@ -42,7 +42,7 @@ function matchFromRow(r: MatchRow): MatchReport {
   return parsed.data;
 }
 
-const PERSON_COLS = "uid, slug, name, language, birth, profile, pillars, chart, core, sections, created_at";
+const PERSON_COLS = "uid, slug, name, language, birth, profile, pillars, chart, core, sections, facts, created_at";
 const MATCH_COLS = "uid, language, boy, girl, guna, factors, mangal, insights, created_at";
 
 export const repo = {
@@ -62,7 +62,7 @@ export const repo = {
       .insert({
         uid: report.uid, slug: report.slug, name: report.name, language: report.language,
         birth: report.birth, profile: report.profile, pillars: report.pillars, chart: report.chart,
-        core: report.core, sections: report.sections, created_at: report.createdAt,
+        core: report.core, sections: report.sections, facts: report.facts ?? null, created_at: report.createdAt,
       })
       .select(PERSON_COLS)
       .single();

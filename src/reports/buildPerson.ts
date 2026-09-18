@@ -5,6 +5,7 @@ import {
   type Birth, type ChartSummary, type Language, type PersonReport, type Pillar, type Profile, type Sections,
 } from "./types";
 import { normalizePillars } from "./pillars";
+import type { ReportFacts } from "./facts";
 import { sanitizeDeep } from "./sanitize";
 
 export class ReportBuildError extends Error {
@@ -46,6 +47,7 @@ export interface BuildPersonInput {
   chart: ChartSummary;
   /** Raw JSON returned by the AI. */
   ai: unknown;
+  facts?: ReportFacts | null;
   createdAt?: string;
 }
 
@@ -81,6 +83,7 @@ export function buildPersonReport(input: BuildPersonInput): PersonReport {
     chart: input.chart,
     core: core.data,
     sections,
+    facts: input.facts ?? null,
     createdAt: input.createdAt ?? new Date().toISOString(),
   });
   if (!report.success) throw new ReportBuildError("Report failed validation", report.error.issues);

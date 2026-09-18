@@ -16,6 +16,8 @@ export interface PersonPromptInput {
   pillars: readonly Pillar[];
   chart: Chart;
   language: Language;
+  /** Output of factsForPrompt(); when present the AI must ground everything in it. */
+  factsBlock?: string;
 }
 
 export function relationshipStatusFrom(maritalStatus: string): RelationshipStatus {
@@ -69,6 +71,9 @@ ${mahadashaBlock}
 Antardashas within the current ${dasha.mahadasha} Mahadasha:
 ${antardashaBlock}
 
+${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground EVERY statement in these. Do not mention any placement, yoga or period that is not listed here. Where a classical rule fired, weave its meaning into the matching section and respect its confidence level (direct: state it; moderate: "suggests"; soft: "may"). If a yoga is marked CANCELLED, say so and explain what that changes.
+${i.factsBlock}
+` : ""}
 Nakshatra deity: ${chart.nakshatra.deity}
 Sections requested: ${i.pillars.join(", ")} (generate ONLY these, plus the core fields).
 

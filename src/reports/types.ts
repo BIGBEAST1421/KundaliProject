@@ -3,6 +3,7 @@
  * Supabase persistence, web rendering, public share pages and print.
  */
 import { z } from "zod";
+import { ReportFactsSchema } from "./facts";
 
 export const PILLARS = ["career", "love", "health", "wealth"] as const;
 export const PillarSchema = z.enum(PILLARS);
@@ -125,6 +126,8 @@ export const PersonReportSchema = z.object({
   chart: ChartSummarySchema,
   core: CoreInsightsSchema,
   sections: SectionsSchema,
+  /** Deterministic chart facts; absent on reports created before v2. */
+  facts: ReportFactsSchema.nullable().optional(),
   createdAt: z.string(),
 });
 export type PersonReport = z.infer<typeof PersonReportSchema>;

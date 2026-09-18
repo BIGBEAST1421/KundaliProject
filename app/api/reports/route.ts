@@ -6,6 +6,7 @@ import { generateJson } from "@/src/ai/client";
 import { buildPersonSchema } from "@/src/ai/schemas";
 import { personPrompt, relationshipStatusFrom } from "@/src/ai/prompts/person";
 import { buildPersonReport, summarizeChart } from "@/src/reports/buildPerson";
+import { computeFacts, factsForPrompt } from "@/src/reports/facts";
 import { normalizePillars } from "@/src/reports/pillars";
 import { toSlug, nextSlug } from "@/src/reports/slug";
 import { CreateReportSchema } from "@/src/reports/input";
@@ -31,12 +32,13 @@ export async function POST(req: NextRequest) {
     const chart = computeChart(input.dob, input.timeKnown ? input.time : "", coords.lat, coords.lon);
     const mangal = checkMangalDosha(chart);
     const relationshipStatus = relationshipStatusFrom(input.maritalStatus);
+    const facts = computeFacts(chart);
 
     const { prompt, system } = personPrompt({
       name: input.name, dob: input.dob, time: input.time, timeKnown: input.timeKnown,
       location: [input.city, input.state, input.country].filter(Boolean).join(", "),
       gender: input.gender, occupation: input.occupation, maritalStatus: input.maritalStatus,
-      relationshipStatus, pillars, chart, language: input.language,
+      relationshipStatus, pillars, chart, language: input.language, factsBlock: factsForPrompt(facts),
     });
     const ai = await generateJson({ prompt, system, schema: buildPersonSchema(pillars, relationshipStatus) });
 
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
         city: input.city, state: input.state, country: input.country, lat: coords.lat, lon: coords.lon,
       },
       profile: { gender: input.gender, occupation: input.occupation, maritalStatus: input.maritalStatus, relationshipStatus },
-      pillars, chart: summarizeChart(chart, mangal), ai,
+      pillars, chart: summarizeChart(chart, mangal), ai, facts,
     });
 
     const saved = await repo.createPerson(report);
