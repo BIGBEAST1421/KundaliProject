@@ -1,4 +1,4 @@
-# Kundali — Product Context
+# AstroTrue — Product Context
 
 ## Register
 product (with a brand-register landing page at `/`)

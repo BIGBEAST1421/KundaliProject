@@ -5,6 +5,7 @@ import { I18nProvider } from "@/src/i18n";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Starfield } from "@/components/Starfield";
+import { APP_NAME, APP_TAGLINE } from "@/src/lib/brand";
 
 const spectral = Spectral({ subsets: ["latin"], weight: ["400", "500", "600"], style: ["normal", "italic"], variable: "--font-spectral", display: "swap" });
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
@@ -12,7 +13,7 @@ const notoDev = Noto_Sans_Devanagari({ subsets: ["devanagari"], weight: ["400", 
 const tiro = Tiro_Devanagari_Hindi({ subsets: ["devanagari"], weight: "400", variable: "--font-tiro", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Kundali — Vedic birth charts, explained simply", template: "%s · Kundali" },
+  title: { default: `${APP_NAME} — ${APP_TAGLINE}`, template: `%s · ${APP_NAME}` },
   description: "Real Vedic birth-chart calculations and honest, plain-language readings. Kundli matching with every factor explained.",
 };
 

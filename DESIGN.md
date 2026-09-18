@@ -1,4 +1,4 @@
-# Kundali — Design System
+# AstroTrue — Design System
 
 ## Theme
 Light: pure white surface, near-black ink. Dark: deep warm charcoal, soft ivory ink. Follows system preference; manual toggle stored as `theme` in localStorage.

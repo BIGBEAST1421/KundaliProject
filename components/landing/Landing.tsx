@@ -8,6 +8,7 @@ import { Meter } from "@/components/ui/Meter";
 import { HeroOrbits } from "./HeroOrbits";
 import { Reveal, RevealItem } from "@/components/motion/Reveal";
 import { HoverLift } from "@/components/motion/Hover";
+import { APP_TAGLINE } from "@/src/lib/brand";
 
 export function Landing() {
   const { t } = useI18n();
@@ -18,7 +19,8 @@ export function Landing() {
       <section className="sky">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-20 pt-16 sm:px-6 md:grid-cols-[1.1fr_0.9fr] md:pt-24">
           <Reveal stagger={0.1} once>
-            <RevealItem><h1 className="text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[1.05]">{t("hero_title")}</h1></RevealItem>
+            <RevealItem as="p" className="text-sm font-semibold uppercase tracking-wide text-accent">{APP_TAGLINE}</RevealItem>
+            <RevealItem><h1 className="mt-2 text-[clamp(2.5rem,5.5vw,4.5rem)] leading-[1.05]">{t("hero_title")}</h1></RevealItem>
             <RevealItem as="p" className="mt-6 max-w-[38rem] text-lg leading-relaxed text-muted">{t("hero_sub")}</RevealItem>
             <RevealItem className="mt-9 flex flex-wrap gap-3">
               <LinkButton href="/app" size="lg">{t("hero_cta")}</LinkButton>

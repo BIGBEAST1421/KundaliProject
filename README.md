@@ -1,4 +1,4 @@
-# Kundali — Vedic birth charts, explained simply
+# AstroTrue — What's really in your stars
 
 Next.js 16 app that computes real Vedic birth charts (Swiss Ephemeris, Lahiri ayanamsa), asks Gemini for a
 balanced plain-language reading, stores the **structured** result in Supabase, and serves it at a
