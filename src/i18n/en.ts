@@ -96,6 +96,7 @@ export const en = {
   load_steps_match: ["Computing both charts…", "Scoring the 36 gunas…", "Checking Mangal Dosha…", "Writing your comparison…"],
 
   // report
+  translating: "Translating this reading…",
   lbl_lagna: "Lagna",
   sub_lagna: "Rising sign",
   lbl_moonsign: "Moon sign",

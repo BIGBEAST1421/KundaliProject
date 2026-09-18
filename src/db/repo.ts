@@ -2,7 +2,7 @@ import "server-only";
 import { supabase } from "./supabase";
 import {
   PersonReportSchema, MatchReportSchema,
-  type PersonReport, type MatchReport,
+  type PersonReport, type MatchReport, type PersonTranslation, type MatchTranslation,
 } from "@/src/reports/types";
 
 export class RepoError extends Error {
@@ -17,17 +17,18 @@ export const isUuid = (s: string) => UUID_RE.test(s);
 
 type PersonRow = {
   uid: string; slug: string; name: string; language: string; birth: unknown; profile: unknown;
-  pillars: string[]; chart: unknown; core: unknown; sections: unknown; facts?: unknown; created_at: string;
+  pillars: string[]; chart: unknown; core: unknown; sections: unknown; facts?: unknown; translation?: unknown; created_at: string;
 };
 type MatchRow = {
   uid: string; language: string; boy: unknown; girl: unknown; guna: unknown; factors: unknown;
-  mangal: unknown; insights: unknown; created_at: string;
+  mangal: unknown; insights: unknown; translation?: unknown; created_at: string;
 };
 
 function personFromRow(r: PersonRow): PersonReport {
   const parsed = PersonReportSchema.safeParse({
     uid: r.uid, slug: r.slug, name: r.name, language: r.language, birth: r.birth, profile: r.profile,
-    pillars: r.pillars, chart: r.chart, core: r.core, sections: r.sections, facts: r.facts ?? null, createdAt: r.created_at,
+    pillars: r.pillars, chart: r.chart, core: r.core, sections: r.sections, facts: r.facts ?? null,
+    translation: r.translation ?? null, createdAt: r.created_at,
   });
   if (!parsed.success) throw new RepoError(`Stored report ${r.uid} is malformed`, parsed.error.issues);
   return parsed.data;
@@ -36,7 +37,7 @@ function personFromRow(r: PersonRow): PersonReport {
 function matchFromRow(r: MatchRow): MatchReport {
   const parsed = MatchReportSchema.safeParse({
     uid: r.uid, language: r.language, boy: r.boy, girl: r.girl, guna: r.guna, factors: r.factors,
-    mangal: r.mangal, insights: r.insights, createdAt: r.created_at,
+    mangal: r.mangal, insights: r.insights, translation: r.translation ?? null, createdAt: r.created_at,
   });
   if (!parsed.success) throw new RepoError(`Stored match ${r.uid} is malformed`, parsed.error.issues);
   return parsed.data;
@@ -104,5 +105,16 @@ export const repo = {
       .from("match_reports").select(MATCH_COLS).eq("uid", uid).maybeSingle();
     if (error) throw new RepoError("Could not load the match report", error);
     return data ? matchFromRow(data as MatchRow) : null;
+  },
+
+  /** Caches the AI translation of a report's narrative so it's only generated once. */
+  async savePersonTranslation(uid: string, translation: PersonTranslation): Promise<void> {
+    const { error } = await supabase().from("person_reports").update({ translation }).eq("uid", uid);
+    if (error) throw new RepoError("Could not save the translation", error);
+  },
+
+  async saveMatchTranslation(uid: string, translation: MatchTranslation): Promise<void> {
+    const { error } = await supabase().from("match_reports").update({ translation }).eq("uid", uid);
+    if (error) throw new RepoError("Could not save the translation", error);
   },
 };

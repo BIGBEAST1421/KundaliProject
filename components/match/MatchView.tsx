@@ -1,12 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { dict } from "@/src/i18n/dict";
 import { useI18n } from "@/src/i18n";
 import { Logo } from "@/components/Logo";
 import { APP_NAME } from "@/src/lib/brand";
 import type { Dict } from "@/src/i18n/en";
-import type { MatchReport } from "@/src/reports/types";
+import type { MatchReport, MatchInsights } from "@/src/reports/types";
+
+type FactorNarrative = { title: string; meaning: string; result: string };
+type MatchTranslated = { insights: MatchInsights; factors: FactorNarrative[]; gunaVerdict: string; mangalNote: string };
 import { Badge, VerdictBadge } from "@/components/ui/Badge";
 import { Meter } from "@/components/ui/Meter";
 import { Section } from "@/components/ui/Section";
@@ -39,7 +43,36 @@ function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: D
 export function MatchView({ report, mode = "owner" }: { report: MatchReport; mode?: "owner" | "share" }) {
   const { lang } = useI18n();
   const d = dict(lang);
-  const { guna, factors, insights, mangal, boy, girl } = report;
+  const { guna, factors: rawFactors, mangal, boy, girl } = report;
+
+  // As with ReportView, the narrative text is only ever written once, in report.language.
+  const cached: MatchTranslated | null = report.translation && report.translation.language === lang ? report.translation : null;
+  const [translated, setTranslated] = useState<MatchTranslated | null>(cached);
+  const [translating, setTranslating] = useState(false);
+  useEffect(() => {
+    if (lang === report.language) { setTranslated(null); return; }
+    if (report.translation && report.translation.language === lang) { setTranslated(report.translation); return; }
+    let cancelled = false;
+    setTranslating(true);
+    fetch(`/api/match/${report.uid}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lang }),
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("translate failed"))))
+      .then((data: MatchTranslated) => { if (!cancelled) setTranslated(data); })
+      .catch(() => { /* fall back to the original language silently */ })
+      .finally(() => { if (!cancelled) setTranslating(false); });
+    return () => { cancelled = true; };
+  }, [lang, report.uid, report.language, report.translation]);
+
+  const insights = translated?.insights ?? report.insights;
+  const mangalNote = translated?.mangalNote ?? report.mangal.note;
+  const gunaVerdict = translated?.gunaVerdict ?? guna.verdict;
+  const factors = rawFactors.map((f, i) => {
+    const t = translated?.factors[i];
+    return t ? { ...f, title: t.title, meaning: t.meaning, result: t.result } : f;
+  });
   const strengths = factors.filter((f) => f.verdict === "strength").length;
   const concerns = factors.filter((f) => f.verdict === "concern").length;
 
@@ -61,7 +94,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
           </div>
         </div>
         <div className="mt-5"><Meter value={guna.total} max={guna.max} label={d.guna_score} /></div>
-        <p className="mt-4 max-w-prose leading-relaxed">{guna.verdict}</p>
+        <p className="mt-4 max-w-prose leading-relaxed">{gunaVerdict}</p>
       </RevealItem>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -82,6 +115,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
         {mode === "owner" && <RevealItem><ShareBar sharePath={`/match/${report.uid}/share`} newHref="/match" newLabel={d.match_new} /></RevealItem>}
       </Reveal>
 
+      {translating && <p className="mt-4 text-sm text-muted">{d.translating}</p>}
       <Tabs className="mt-10" panels={[
         { id: "overview", label: d.tab_overview, content: overviewPanel },
         { id: "factors", label: d.tab_factors, hint: `${strengths}/${factors.length}`, content: (
@@ -93,7 +127,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
                 <h3 className="font-sans text-base font-semibold">{d.mangal_title}</h3>
                 <VerdictBadge verdict={mangal.verdict} label={d[`verdict_${mangal.verdict}`]} />
               </div>
-              <p className="mt-3 text-sm leading-relaxed">{mangal.note}</p>
+              <p className="mt-3 text-sm leading-relaxed">{mangalNote}</p>
               <dl className="mt-4 grid grid-cols-2 gap-3 rounded-lg bg-surface p-3 text-sm">
                 <div><dt className="text-xs text-muted">{boy.name}</dt><dd className="font-medium">{boy.mangal.isManglik ? d.manglik : d.not_manglik}</dd></div>
                 <div><dt className="text-xs text-muted">{girl.name}</dt><dd className="font-medium">{girl.mangal.isManglik ? d.manglik : d.not_manglik}</dd></div>

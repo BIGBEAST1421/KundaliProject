@@ -1,11 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { dict } from "@/src/i18n/dict";
 import { useI18n } from "@/src/i18n";
 import { APP_NAME } from "@/src/lib/brand";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
-import type { PersonReport } from "@/src/reports/types";
+import type { PersonReport, CoreInsights, Sections } from "@/src/reports/types";
 import { Badge } from "@/components/ui/Badge";
 import { Section } from "@/components/ui/Section";
 import { InsightList } from "@/components/ui/InsightList";
@@ -55,6 +56,31 @@ export function ReportView({ report, mode = "owner" }: Props) {
   const created = new Date(report.createdAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
   const pillarNames = report.pillars.map((p) => PILLAR_LABELS[p][lang]).join(" · ");
 
+  // The AI-generated prose is only ever written once, in report.language. Switching the site's
+  // live language toggle fetches (and caches server-side) a translation of just that prose.
+  const cached = report.translation && report.translation.language === lang ? report.translation : null;
+  const [translated, setTranslated] = useState<{ core: CoreInsights; sections: Sections } | null>(cached);
+  const [translating, setTranslating] = useState(false);
+  useEffect(() => {
+    if (lang === report.language) { setTranslated(null); return; }
+    if (report.translation && report.translation.language === lang) { setTranslated(report.translation); return; }
+    let cancelled = false;
+    setTranslating(true);
+    fetch(`/api/reports/${report.uid}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lang }),
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("translate failed"))))
+      .then((data: { core: CoreInsights; sections: Sections }) => { if (!cancelled) setTranslated(data); })
+      .catch(() => { /* fall back to the original language silently */ })
+      .finally(() => { if (!cancelled) setTranslating(false); });
+    return () => { cancelled = true; };
+  }, [lang, report.uid, report.language, report.translation]);
+
+  const core = translated?.core ?? report.core;
+  const sections = translated?.sections ?? report.sections;
+
   const noFacts = <p className="rounded-[var(--radius-card)] border border-line bg-surface p-5 text-sm text-muted">{d.no_facts}</p>;
 
   const overview = (
@@ -79,9 +105,9 @@ export function ReportView({ report, mode = "owner" }: Props) {
           </div>
         </div>
       </Reveal>
-      <Reveal><Section id="soul" title={d.sec_soul}><p className="max-w-prose font-display text-xl md:text-2xl leading-snug italic">{report.core.soulPurpose}</p></Section></Reveal>
-      <Reveal><Section id="overview" title={d.sec_overview}><InsightList items={report.core.overview} /></Section></Reveal>
-      <Reveal><Section id="dasha" title={d.sec_dasha_now} caption={`${chart.dasha.mahadasha} · ${chart.dasha.antardasha}`}><p className="max-w-prose text-[1.05rem] leading-relaxed">{report.core.dashaAnalysis}</p></Section></Reveal>
+      <Reveal><Section id="soul" title={d.sec_soul}><p className="max-w-prose font-display text-xl md:text-2xl leading-snug italic">{core.soulPurpose}</p></Section></Reveal>
+      <Reveal><Section id="overview" title={d.sec_overview}><InsightList items={core.overview} /></Section></Reveal>
+      <Reveal><Section id="dasha" title={d.sec_dasha_now} caption={`${chart.dasha.mahadasha} · ${chart.dasha.antardasha}`}><p className="max-w-prose text-[1.05rem] leading-relaxed">{core.dashaAnalysis}</p></Section></Reveal>
     </div>
   );
 
@@ -99,10 +125,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
     {
       id: "insights", label: d.grp_insights, icon: <Icon d={ICONS.insights} />,
       tabs: [
-        ...(report.sections.career ? [{ id: "career", label: d.tab_career, keywords: "career job work profession 10th business", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.career} d={d} />}<CareerBlock s={report.sections.career} d={d} /></Reveal> }] : []),
-        ...(report.sections.love ? [{ id: "love", label: d.tab_love, keywords: "love marriage partner spouse relationship venus 7th manglik", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.marriage} d={d} />}<LoveBlock s={report.sections.love} d={d} /></Reveal> }] : []),
-        ...(report.sections.health ? [{ id: "health", label: d.tab_health, keywords: "health body energy constitution", content: <Reveal><HealthBlock s={report.sections.health} d={d} /></Reveal> }] : []),
-        ...(report.sections.wealth ? [{ id: "wealth", label: d.tab_wealth, keywords: "wealth money finance savings investment muhurta", content: <Reveal><WealthBlock s={report.sections.wealth} d={d} /></Reveal> }] : []),
+        ...(sections.career ? [{ id: "career", label: d.tab_career, keywords: "career job work profession 10th business", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.career} d={d} />}<CareerBlock s={sections.career} d={d} /></Reveal> }] : []),
+        ...(sections.love ? [{ id: "love", label: d.tab_love, keywords: "love marriage partner spouse relationship venus 7th manglik", content: <Reveal className="space-y-10">{facts && <Indications rules={facts.rules.marriage} d={d} />}<LoveBlock s={sections.love} d={d} /></Reveal> }] : []),
+        ...(sections.health ? [{ id: "health", label: d.tab_health, keywords: "health body energy constitution", content: <Reveal><HealthBlock s={sections.health} d={d} /></Reveal> }] : []),
+        ...(sections.wealth ? [{ id: "wealth", label: d.tab_wealth, keywords: "wealth money finance savings investment muhurta", content: <Reveal><WealthBlock s={sections.wealth} d={d} /></Reveal> }] : []),
         { id: "yogas", label: d.tab_yogas, keywords: "yoga dosha raja yoga gajakesari kemadruma manglik viparita neecha bhanga dhana", content: facts ? <Reveal><Section id="yogas" title={d.tab_yogas} caption={d.yogas_sub}><YogasView f={facts} d={d} /></Section></Reveal> : noFacts },
       ],
     },
@@ -121,10 +147,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
           </Section></Reveal>
         ) },
         { id: "transits", label: d.tab_transits, keywords: "transit gochar today now sade sati saturn jupiter", content: facts ? <Reveal><Section id="transits" title={d.tab_transits} caption={d.transits_sub}><TransitsView f={facts} d={d} /></Section></Reveal> : noFacts },
-        ...(report.core.remedies.length ? [{ id: "remedies", label: d.tab_remedies, keywords: "remedy mantra gemstone practice upay", content: (
+        ...(core.remedies.length ? [{ id: "remedies", label: d.tab_remedies, keywords: "remedy mantra gemstone practice upay", content: (
           <Section id="remedies" title={d.sec_remedies}>
             <Reveal stagger={0.07} as="ul" className="grid gap-3 sm:grid-cols-2">
-              {report.core.remedies.map((r, i) => (
+              {core.remedies.map((r, i) => (
                 <RevealItem key={i} as="li"><HoverLift className="flex h-full gap-3 rounded-xl bg-surface p-4">
                   <span className="text-xl leading-none" aria-hidden>{r.icon}</span>
                   <div><p className="font-medium">{r.title}</p><p className="mt-1 text-sm leading-relaxed text-muted">{r.desc}</p></div>
@@ -158,6 +184,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
         {mode === "owner" && <RevealItem><ShareBar sharePath={`/report/${report.uid}`} newHref="/app" newLabel={d.share_new} /></RevealItem>}
       </Reveal>
 
+      {translating && <p className="mt-4 text-sm text-muted">{d.translating}</p>}
       <ReportShell groups={groups} jumpPlaceholder={d.jump_placeholder} jumpEmpty={d.jump_none} className="mt-10" />
 
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-xs text-muted">

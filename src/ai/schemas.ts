@@ -70,6 +70,23 @@ export function buildPersonSchema(pillars: readonly Pillar[], status: Relationsh
   return obj(props);
 }
 
+/**
+ * Translation output shape: the full `insights` object plus the narrative strings that live
+ * outside it (per-factor meaning/result, the guna verdict, the mangal note) — everything a
+ * viewer actually reads that isn't already covered by the static i18n dictionary.
+ */
+export function buildMatchTranslationSchema(factorCount: number): Schema {
+  return obj({
+    insights: MATCH_SCHEMA,
+    factors: arr(
+      obj({ title: S(), meaning: S(), result: S() }),
+      `Exactly ${factorCount} items, in the same order as the input factors array — translate "title", "meaning" and "result" for each, do not reorder, omit or add items.`,
+    ),
+    gunaVerdict: S("Translation of the guna score verdict sentence"),
+    mangalNote: S("Translation of the Mangal Dosha note"),
+  });
+}
+
 export const MATCH_SCHEMA = obj({
   headline: S("One warm, honest sentence with the overall verdict, referencing the score"),
   overall: S("3-4 sentences synthesising the score, doshas and both Moon signs"),

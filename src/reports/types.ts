@@ -115,6 +115,18 @@ export const ChartSummarySchema = z.object({
 });
 export type ChartSummary = z.infer<typeof ChartSummarySchema>;
 
+/** Shape the AI must return when translating a report's narrative: core fields plus whichever sections exist. */
+export const PersonNarrativeSchema = CoreInsightsSchema.merge(SectionsSchema);
+export type PersonNarrative = z.infer<typeof PersonNarrativeSchema>;
+
+/** Cached AI translation of the narrative content into the one other supported language. */
+export const PersonTranslationSchema = z.object({
+  language: LanguageSchema,
+  core: CoreInsightsSchema,
+  sections: SectionsSchema,
+});
+export type PersonTranslation = z.infer<typeof PersonTranslationSchema>;
+
 export const PersonReportSchema = z.object({
   uid: z.string().uuid(),
   slug: str.min(1),
@@ -128,6 +140,8 @@ export const PersonReportSchema = z.object({
   sections: SectionsSchema,
   /** Deterministic chart facts; absent on reports created before v2. */
   facts: ReportFactsSchema.nullable().optional(),
+  /** Cached translation into the other language, generated on first request. */
+  translation: PersonTranslationSchema.nullable().optional(),
   createdAt: z.string(),
 });
 export type PersonReport = z.infer<typeof PersonReportSchema>;
@@ -181,6 +195,17 @@ export const MatchInsightsSchema = z.object({
 });
 export type MatchInsights = z.infer<typeof MatchInsightsSchema>;
 
+/** Cached AI translation of the narrative content into the one other supported language. */
+export const MatchTranslationSchema = z.object({
+  language: LanguageSchema,
+  insights: MatchInsightsSchema,
+  /** Translated {title, meaning, result} for each entry in `factors`, same order. */
+  factors: z.array(z.object({ title: str, meaning: str, result: str })),
+  gunaVerdict: str,
+  mangalNote: str,
+});
+export type MatchTranslation = z.infer<typeof MatchTranslationSchema>;
+
 export const MatchReportSchema = z.object({
   uid: z.string().uuid(),
   language: LanguageSchema,
@@ -190,6 +215,8 @@ export const MatchReportSchema = z.object({
   factors: z.array(MatchFactorSchema),
   mangal: z.object({ verdict: VerdictSchema, note: str }),
   insights: MatchInsightsSchema,
+  /** Cached translation into the other language, generated on first request. */
+  translation: MatchTranslationSchema.nullable().optional(),
   createdAt: z.string(),
 });
 export type MatchReport = z.infer<typeof MatchReportSchema>;
