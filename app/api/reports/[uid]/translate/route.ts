@@ -9,6 +9,8 @@ import { errorResponse } from "@/src/lib/errors";
 
 const BodySchema = z.object({ lang: LanguageSchema });
 
+export const maxDuration = 60;
+
 /**
  * Translates a report's AI-generated narrative into the requested language, caching the
  * result so it's only ever generated once per report. Static UI labels are handled entirely

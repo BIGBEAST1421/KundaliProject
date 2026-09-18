@@ -10,6 +10,8 @@ import { errorResponse } from "@/src/lib/errors";
 const BodySchema = z.object({ lang: LanguageSchema });
 const RawSchema = MatchTranslationSchema.omit({ language: true });
 
+export const maxDuration = 60;
+
 /** Translates a match report's narrative (insights, per-factor text, verdicts) — cached per report. */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ uid: string }> }) {
   try {

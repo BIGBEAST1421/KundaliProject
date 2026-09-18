@@ -20,6 +20,7 @@ import { FactorCard } from "./FactorCard";
 import { Tabs, type TabPanel } from "@/components/motion/Tabs";
 import { Reveal, RevealItem } from "@/components/motion/Reveal";
 import { HoverLift } from "@/components/motion/Hover";
+import { CosmicLoader } from "@/components/ui/CosmicLoader";
 import { CountUp } from "@/components/motion/CountUp";
 
 function PersonCol({ label, p, d }: { label: string; p: MatchReport["boy"]; d: Dict }) {
@@ -115,7 +116,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
         {mode === "owner" && <RevealItem><ShareBar sharePath={`/match/${report.uid}/share`} newHref="/match" newLabel={d.match_new} /></RevealItem>}
       </Reveal>
 
-      {translating && <p className="mt-4 text-sm text-muted">{d.translating}</p>}
+      {translating && <CosmicLoader message={d.translating} size="sm" className="mt-6" />}
       <Tabs className="mt-10" panels={[
         { id: "overview", label: d.tab_overview, content: overviewPanel },
         { id: "factors", label: d.tab_factors, hint: `${strengths}/${factors.length}`, content: (

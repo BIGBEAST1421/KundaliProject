@@ -13,6 +13,7 @@ import { InsightList } from "@/components/ui/InsightList";
 import { ReportShell, type ShellGroup } from "@/components/motion/ReportShell";
 import { Reveal, RevealItem } from "@/components/motion/Reveal";
 import { HoverLift } from "@/components/motion/Hover";
+import { CosmicLoader } from "@/components/ui/CosmicLoader";
 import { NorthChart } from "./NorthChart";
 import { StatCard } from "./StatCard";
 import { Timeline } from "./Timeline";
@@ -184,7 +185,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
         {mode === "owner" && <RevealItem><ShareBar sharePath={`/report/${report.uid}`} newHref="/app" newLabel={d.share_new} /></RevealItem>}
       </Reveal>
 
-      {translating && <p className="mt-4 text-sm text-muted">{d.translating}</p>}
+      {translating && <CosmicLoader message={d.translating} size="sm" className="mt-6" />}
       <ReportShell groups={groups} jumpPlaceholder={d.jump_placeholder} jumpEmpty={d.jump_none} className="mt-10" />
 
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-xs text-muted">
