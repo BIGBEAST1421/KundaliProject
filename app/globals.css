@@ -174,14 +174,22 @@ html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3 { font-family: var(--
 
 /* ── Print ─────────────────────────────────────────────────────────────── */
 @media print {
-  /* !important: :root[data-theme="dark"] (used for the dark theme toggle) has higher
-     specificity than a plain :root rule and has no print guard of its own, so without
-     !important here it would win and print near-white text on a white page. */
-  :root { --bg: white !important; --surface: white !important; --surface-2: #f4f4f4 !important; --ink: #111 !important; --muted: #444 !important; --line: #ccc !important; --line-strong: #999 !important;
-          --accent: #8a5a00 !important; --accent-soft: #fff4dc !important; --strength: #1f6b5a !important; --strength-soft: #e8f3ef !important; --concern: #9a3b1f !important; --concern-soft: #fbeae4 !important;
-          --neutral: #445 !important; --neutral-soft: #eef !important; color-scheme: light !important; }
-  @page { margin: 16mm; }
-  body { font-size: 11pt; }
+  /* Printed/downloaded PDFs intentionally match the site's dark theme rather than forcing a
+     light page — these are the same values as :root[data-theme="dark"] above. !important is
+     needed regardless of theme, since :root[data-theme="dark"]/light both have higher
+     specificity than a plain :root rule and neither has a print guard of its own.
+     print-color-adjust forces backgrounds to actually render even when the browser's print
+     dialog has "Background graphics" unchecked (off by default in many setups) — without it,
+     a dark background could be silently dropped while the light text stays light, reproducing
+     the exact illegible-PDF bug this theme choice is meant to avoid. */
+  * { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+  :root { --bg: oklch(0.17 0.008 80) !important; --surface: oklch(0.215 0.009 80) !important; --surface-2: oklch(0.25 0.01 80) !important;
+          --ink: oklch(0.94 0.008 80) !important; --muted: oklch(0.72 0.01 80) !important; --line: oklch(0.3 0.01 80) !important; --line-strong: oklch(0.4 0.012 80) !important;
+          --accent: oklch(0.8 0.14 80) !important; --accent-ink: oklch(0.2 0.03 80) !important; --accent-soft: oklch(0.3 0.05 80) !important;
+          --strength: oklch(0.75 0.1 170) !important; --strength-soft: oklch(0.28 0.04 170) !important; --concern: oklch(0.75 0.13 35) !important; --concern-soft: oklch(0.3 0.05 35) !important;
+          --neutral: oklch(0.75 0.02 250) !important; --neutral-soft: oklch(0.28 0.02 250) !important; color-scheme: dark !important; }
+  @page { margin: 16mm; background: oklch(0.17 0.008 80); }
+  body { font-size: 11pt; background: var(--bg); }
   /* .no-print alone covers SiteHeader/SiteFooter (both already tagged with it) — a bare
      `footer`/`nav` tag selector would also hide ReportView's/MatchView's own <footer> (the
      "Created" line and share link), which should print. */
