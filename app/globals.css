@@ -174,9 +174,12 @@ html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3 { font-family: var(--
 
 /* ── Print ─────────────────────────────────────────────────────────────── */
 @media print {
-  :root { --bg: white; --surface: white; --surface-2: #f4f4f4; --ink: #111; --muted: #444; --line: #ccc; --line-strong: #999;
-          --accent: #8a5a00; --accent-soft: #fff4dc; --strength: #1f6b5a; --strength-soft: #e8f3ef; --concern: #9a3b1f; --concern-soft: #fbeae4;
-          --neutral: #445; --neutral-soft: #eef; color-scheme: light; }
+  /* !important: :root[data-theme="dark"] (used for the dark theme toggle) has higher
+     specificity than a plain :root rule and has no print guard of its own, so without
+     !important here it would win and print near-white text on a white page. */
+  :root { --bg: white !important; --surface: white !important; --surface-2: #f4f4f4 !important; --ink: #111 !important; --muted: #444 !important; --line: #ccc !important; --line-strong: #999 !important;
+          --accent: #8a5a00 !important; --accent-soft: #fff4dc !important; --strength: #1f6b5a !important; --strength-soft: #e8f3ef !important; --concern: #9a3b1f !important; --concern-soft: #fbeae4 !important;
+          --neutral: #445 !important; --neutral-soft: #eef !important; color-scheme: light !important; }
   @page { margin: 16mm; }
   body { font-size: 11pt; }
   .no-print, nav, footer, .sky::before { display: none !important; }

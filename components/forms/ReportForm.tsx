@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useI18n } from "@/src/i18n";
 import { ALL_PILLARS } from "@/src/reports/pillars";
+import { OCCUPATIONS, occupationLabel } from "@/src/reports/occupations";
 import type { Pillar } from "@/src/reports/types";
 import { postJson, ClientApiError } from "@/src/lib/api-client";
 import { Button } from "@/components/ui/Button";
@@ -16,7 +17,6 @@ import { Stepper } from "./Stepper";
 import { ChartPreview } from "./ChartPreview";
 import { PillarCards } from "./PillarCards";
 
-const OCCUPATIONS = ["Student", "Employed", "Business", "Government / Army", "Homemaker", "Retired", "Unemployed"];
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export function ReportForm() {
@@ -109,7 +109,7 @@ export function ReportForm() {
                 </Field>
                 <Field label={t("lbl_occupation")} htmlFor="occupation">
                   <Select id="occupation" value={occupation} onChange={(e) => setOccupation(e.target.value)}>
-                    <option value="">{t("opt_occ_none")}</option>{OCCUPATIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+                    <option value="">{t("opt_occ_none")}</option>{OCCUPATIONS.map((o) => <option key={o} value={o}>{occupationLabel(o, lang)}</option>)}
                   </Select>
                 </Field>
                 <Field label={t("lbl_marital")} htmlFor="marital">

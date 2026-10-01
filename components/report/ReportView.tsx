@@ -7,6 +7,7 @@ import { useI18n } from "@/src/i18n";
 import { APP_NAME } from "@/src/lib/brand";
 import { PILLAR_LABELS } from "@/src/reports/pillars";
 import { signLabel, planetLabel, nakshatraLabel } from "@/src/astro/i18n";
+import { occupationLabel } from "@/src/reports/occupations";
 import type { PersonReport, CoreInsights, Sections, IndicationsNarrative } from "@/src/reports/types";
 import type { ReportFacts } from "@/src/reports/facts-schema";
 import { Badge } from "@/components/ui/Badge";
@@ -185,7 +186,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
             <RevealItem><h1 className="text-4xl md:text-5xl leading-none">{report.name}</h1></RevealItem>
             <RevealItem as="p" className="mt-2 text-muted">
               {birth.dob}{birth.timeKnown && birth.time ? ` · ${birth.time}` : ""} · {place}
-              {profile.maritalStatus ? ` · ${maritalStatusLabel}` : ""}{profile.occupation ? ` · ${profile.occupation}` : ""}
+              {profile.maritalStatus ? ` · ${maritalStatusLabel}` : ""}{profile.occupation ? ` · ${occupationLabel(profile.occupation, lang)}` : ""}
             </RevealItem>
             <RevealItem className="mt-3 flex flex-wrap gap-2">
               {!birth.timeKnown && <Badge>{d.time_unknown_badge}</Badge>}
