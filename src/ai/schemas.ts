@@ -62,6 +62,7 @@ function personProps(pillars: readonly Pillar[], status: RelationshipStatus): Re
     overview: arr(S(), "Three chart insights specific to placements, 2 sentences each"),
     dashaAnalysis: S("3-4 sentences on the current Mahadasha–Antardasha combination"),
     remedies: arr(REMEDY, "Four remedies: mantra, gemstone, practice, moon remedy — each tied to a specific placement"),
+    lalKitabSynthesis: S("2-3 sentences synthesising the Lal Kitab debts/planet-status facts and fired lalkitab rules; say plainly if nothing notable fired"),
   };
   if (pillars.includes("career")) props.career = CAREER_SCHEMA;
   if (pillars.includes("love")) props.love = loveSchema(status);
@@ -85,13 +86,14 @@ const RULE_NARRATIVE = obj({ title: S(), text: S(), because: arr(S()) });
 export function buildPersonTranslationSchema(
   pillars: readonly Pillar[],
   status: RelationshipStatus,
-  indicationsCount: { career: number; marriage: number },
+  indicationsCount: { career: number; marriage: number; lalkitab: number },
 ): Schema {
   return obj({
     ...personProps(pillars, status),
     indications: obj({
       career: arr(RULE_NARRATIVE, `Exactly ${indicationsCount.career} items, same order as input — do not reorder, omit or add.`),
       marriage: arr(RULE_NARRATIVE, `Exactly ${indicationsCount.marriage} items, same order as input — do not reorder, omit or add.`),
+      lalkitab: arr(RULE_NARRATIVE, `Exactly ${indicationsCount.lalkitab} items, same order as input — do not reorder, omit or add.`),
     }),
   });
 }

@@ -70,6 +70,8 @@ export const CoreInsightsSchema = z.object({
   overview: strList,
   dashaAnalysis: str,
   remedies: z.array(RemedySchema).default([]),
+  /** Short synthesis of the Lal Kitab facts (debts, planet status, fired rules). Absent on reports created before that module shipped. */
+  lalKitabSynthesis: str.default(""),
 });
 export type CoreInsights = z.infer<typeof CoreInsightsSchema>;
 
@@ -126,6 +128,7 @@ export type RuleNarrative = z.infer<typeof RuleNarrativeSchema>;
 export const IndicationsNarrativeSchema = z.object({
   career: z.array(RuleNarrativeSchema),
   marriage: z.array(RuleNarrativeSchema),
+  lalkitab: z.array(RuleNarrativeSchema).default([]),
 });
 export type IndicationsNarrative = z.infer<typeof IndicationsNarrativeSchema>;
 

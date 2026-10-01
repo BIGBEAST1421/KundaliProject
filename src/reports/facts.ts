@@ -9,6 +9,8 @@ import { computeStrengths } from "@/src/astro/strength";
 import { vargaChart } from "@/src/astro/varga";
 import { detectYogas } from "@/src/astro/yogas";
 import { computeTransits } from "@/src/astro/transits";
+import { planetStatuses } from "@/src/astro/lalkitab/status";
+import { detectDebts } from "@/src/astro/lalkitab/debts";
 import { evaluateAll } from "@/src/rules";
 import { ReportFactsSchema, type ReportFacts } from "./facts-schema";
 
@@ -18,6 +20,7 @@ export function computeFacts(chart: Chart, today = new Date()): ReportFacts {
   const yogas = detectYogas(chart);
   const strengths = computeStrengths(chart);
   const vargas = { D9: vargaChart(chart, "D9"), D10: vargaChart(chart, "D10") };
+  const lalKitab = { planetStatus: planetStatuses(chart), debts: detectDebts(chart) };
   const facts: ReportFacts = {
     version: 1,
     planets: planetDetails(chart),
@@ -28,7 +31,8 @@ export function computeFacts(chart: Chart, today = new Date()): ReportFacts {
     vargas,
     yogas,
     transits: computeTransits(chart, today),
-    rules: evaluateAll({ chart, yogas, strengths, vargas }),
+    rules: evaluateAll({ chart, yogas, strengths, vargas, lalKitab }),
+    lalKitab,
   };
   return ReportFactsSchema.parse(facts);
 }
@@ -49,8 +53,14 @@ export function factsForPrompt(f: ReportFacts): string {
     lines.push(`  ${y.name}${y.cancelled ? " (CANCELLED: " + y.cancellationReasons.join("; ") + ")" : ""} grade ${y.grade}/3${y.activeInDasha ? ", ACTIVE in current dasha" : ""}. ${y.reason}`);
   }
   if (!f.yogas.some((y) => y.present)) lines.push("  none");
-  lines.push("CLASSICAL RULES THAT FIRED (use these as the backbone of career and love sections; confidence tells you how firmly to phrase):");
-  for (const d of ["career", "marriage"] as const) {
+  if (f.lalKitab) {
+    lines.push("LAL KITAB DEBTS (RIN):");
+    for (const debt of f.lalKitab.debts) lines.push(`  ${debt.name}: ${debt.present ? `PRESENT (${debt.reason})` : "absent"}`);
+    lines.push("LAL KITAB PLANET STATUS:");
+    for (const [p, s] of Object.entries(f.lalKitab.planetStatus)) lines.push(`  ${p}: ${s}`);
+  }
+  lines.push("CLASSICAL RULES THAT FIRED (use these as the backbone of career and love sections, and ground \"lalKitabSynthesis\" in the Lal Kitab rules; confidence tells you how firmly to phrase):");
+  for (const d of ["career", "marriage", "lalkitab"] as const) {
     for (const r of f.rules[d]) lines.push(`  [${d}, weight ${r.weight}, ${r.positive ? "favourable" : "concern"}, ${r.confidence}] ${r.title}: ${r.text} (because ${r.because.join("; ")})`);
   }
   lines.push(`CURRENT TRANSITS (${f.transits.date}):`);

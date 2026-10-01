@@ -140,7 +140,7 @@ export function ReportShell({ groups, jumpPlaceholder, jumpEmpty, className = ""
 
         {/* Mobile bars */}
         <div className="lg:hidden">
-          <div role="tablist" aria-label="Report groups" className="grid grid-cols-4 gap-1 rounded-xl bg-surface-2 p-1">
+          <div role="tablist" aria-label="Report groups" className="grid gap-1 rounded-xl bg-surface-2 p-1" style={{ gridTemplateColumns: `repeat(${groups.length}, minmax(0, 1fr))` }}>
             {groups.map((g) => (
               <button key={g.id} type="button" role="tab" aria-selected={g.id === group.id} onClick={() => select(g.id)}
                 className={`h-9 rounded-lg text-xs font-semibold transition-colors ${g.id === group.id ? "bg-bg text-ink shadow-sm" : "text-muted"}`}>

@@ -12,7 +12,11 @@ const ResponseSchema = PersonNarrativeSchema.extend({ indications: IndicationsNa
 
 export const maxDuration = 60;
 
-const EMPTY_INDICATIONS = { career: [], marriage: [] };
+const EMPTY_INDICATIONS = { career: [], marriage: [], lalkitab: [] };
+
+function toNarrative(rules: readonly { title: string; text: string; because: string[] }[]) {
+  return rules.map((r) => ({ title: r.title, text: r.text, because: r.because }));
+}
 
 /**
  * Translates a report's AI-generated narrative — plus the Classical Indications rule text,
@@ -34,7 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uid
         core: report.core,
         sections: report.sections,
         indications: rules
-          ? { career: rules.career.map((r) => ({ title: r.title, text: r.text, because: r.because })), marriage: rules.marriage.map((r) => ({ title: r.title, text: r.text, because: r.because })) }
+          ? { career: toNarrative(rules.career), marriage: toNarrative(rules.marriage), lalkitab: toNarrative(rules.lalkitab) }
           : EMPTY_INDICATIONS,
       });
     }
@@ -44,13 +48,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uid
     }
 
     const rules = report.facts?.rules;
-    const indicationsCount = { career: rules?.career.length ?? 0, marriage: rules?.marriage.length ?? 0 };
+    const indicationsCount = { career: rules?.career.length ?? 0, marriage: rules?.marriage.length ?? 0, lalkitab: rules?.lalkitab.length ?? 0 };
     const schema = buildPersonTranslationSchema(report.pillars, report.profile.relationshipStatus, indicationsCount);
     const content = {
       ...report.core,
       ...report.sections,
       indications: rules
-        ? { career: rules.career.map((r) => ({ title: r.title, text: r.text, because: r.because })), marriage: rules.marriage.map((r) => ({ title: r.title, text: r.text, because: r.because })) }
+        ? { career: toNarrative(rules.career), marriage: toNarrative(rules.marriage), lalkitab: toNarrative(rules.lalkitab) }
         : EMPTY_INDICATIONS,
     };
     const { prompt, system } = translatePrompt(content, lang);
@@ -62,12 +66,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uid
     } catch (err) {
       throw new AiError("parse", "The translation came back malformed.", err);
     }
-    if (parsed.indications.career.length !== indicationsCount.career || parsed.indications.marriage.length !== indicationsCount.marriage) {
+    if (
+      parsed.indications.career.length !== indicationsCount.career ||
+      parsed.indications.marriage.length !== indicationsCount.marriage ||
+      parsed.indications.lalkitab.length !== indicationsCount.lalkitab
+    ) {
       throw new AiError("parse", "The translation lost track of the classical indications.");
     }
 
-    const { soulPurpose, overview, dashaAnalysis, remedies, career, love, health, wealth, indications } = parsed;
-    const core = { soulPurpose, overview, dashaAnalysis, remedies };
+    const { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis, career, love, health, wealth, indications } = parsed;
+    const core = { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis };
     const sections = { career, love, health, wealth };
 
     try {

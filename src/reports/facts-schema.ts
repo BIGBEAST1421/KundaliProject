@@ -32,8 +32,18 @@ export const TransitSchema = z.object({
   intersections: z.array(str),
 });
 export const FiredRuleSchema = z.object({
-  id: str, domain: z.enum(["marriage", "career"]), title: str, text: str, weight: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  id: str, domain: z.enum(["marriage", "career", "lalkitab"]), title: str, text: str, weight: z.union([z.literal(1), z.literal(2), z.literal(3)]),
   positive: z.boolean(), confidence: z.enum(["direct", "moderate", "soft"]), keyPlanets: z.array(planet), because: z.array(str),
+});
+
+export const PlanetStatusSchema = z.enum(["awake", "sleeping", "static"]);
+export const LalKitabDebtSchema = z.object({
+  key: z.enum(["pitra", "matri", "deva", "stri"]), name: str, present: z.boolean(),
+  participants: z.array(planet), houses: z.array(num), activeInDasha: z.boolean(), reason: str,
+});
+export const LalKitabFactsSchema = z.object({
+  debts: z.array(LalKitabDebtSchema),
+  planetStatus: z.record(planet, PlanetStatusSchema),
 });
 
 export const ReportFactsSchema = z.object({
@@ -46,6 +56,11 @@ export const ReportFactsSchema = z.object({
   vargas: z.object({ D9: VargaSchema, D10: VargaSchema }),
   yogas: z.array(YogaSchema),
   transits: TransitSchema,
-  rules: z.object({ marriage: z.array(FiredRuleSchema), career: z.array(FiredRuleSchema) }),
+  rules: z.object({
+    marriage: z.array(FiredRuleSchema), career: z.array(FiredRuleSchema),
+    lalkitab: z.array(FiredRuleSchema).default([]),
+  }),
+  /** Absent on reports created before the Lal Kitab module shipped. */
+  lalKitab: LalKitabFactsSchema.optional(),
 });
 export type ReportFacts = z.infer<typeof ReportFactsSchema>;

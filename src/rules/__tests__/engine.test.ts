@@ -6,11 +6,18 @@ import { vargaChart } from "@/src/astro/varga";
 import { evaluate, check, type RuleFacts } from "../engine";
 import { MARRIAGE_RULES } from "../marriage";
 import { CAREER_RULES } from "../career";
+import { LALKITAB_RULES } from "../lalkitab";
 import { evaluateAll } from "../index";
 import type { Rule } from "../types";
+import { planetStatuses } from "@/src/astro/lalkitab/status";
+import { detectDebts } from "@/src/astro/lalkitab/debts";
 
 function facts(chart: ReturnType<typeof syntheticChart>): RuleFacts {
-  return { chart, yogas: detectYogas(chart), strengths: computeStrengths(chart), vargas: { D9: vargaChart(chart, "D9"), D10: vargaChart(chart, "D10") } };
+  return {
+    chart, yogas: detectYogas(chart), strengths: computeStrengths(chart),
+    vargas: { D9: vargaChart(chart, "D9"), D10: vargaChart(chart, "D10") },
+    lalKitab: { debts: detectDebts(chart), planetStatus: planetStatuses(chart) },
+  };
 }
 
 describe("rule engine", () => {
@@ -56,7 +63,7 @@ describe("rule engine", () => {
 
   it("ranks by weight and every corpus rule has unique ids and ≥1 condition", () => {
     const ids = new Set<string>();
-    for (const r of [...MARRIAGE_RULES, ...CAREER_RULES]) {
+    for (const r of [...MARRIAGE_RULES, ...CAREER_RULES, ...LALKITAB_RULES]) {
       expect(ids.has(r.id)).toBe(false); ids.add(r.id);
       expect(r.conditions.length).toBeGreaterThan(0);
       expect(r.text).not.toMatch(/[—–]/);
@@ -65,5 +72,14 @@ describe("rule engine", () => {
     for (let i = 1; i < all.career.length; i++) expect(all.career[i - 1].weight).toBeGreaterThanOrEqual(all.career[i].weight);
     expect(MARRIAGE_RULES.length).toBeGreaterThanOrEqual(15);
     expect(CAREER_RULES.length).toBeGreaterThanOrEqual(15);
+    expect(LALKITAB_RULES.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it("detects Lal Kitab planet status and debts deterministically", () => {
+    const f = facts(syntheticChart("Aries", { Sun: "Aries", Saturn: "Aries" })); // Sun+Saturn conjunct → Pitra Rin
+    const pitra = f.lalKitab.debts.find((d) => d.key === "pitra")!;
+    expect(pitra.present).toBe(true);
+    const fired = evaluate(LALKITAB_RULES, f);
+    expect(fired.some((r) => r.id === "lk-pitra-present")).toBe(true);
   });
 });

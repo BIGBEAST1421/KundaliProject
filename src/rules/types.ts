@@ -1,7 +1,9 @@
 import type { Planet, Sign } from "@/src/astro/signs";
 import type { Dignity } from "@/src/astro/dignity";
+import type { PlanetStatus } from "@/src/astro/lalkitab/status";
+import type { DebtKey } from "@/src/astro/lalkitab/debts";
 
-export type Domain = "marriage" | "career";
+export type Domain = "marriage" | "career" | "lalkitab";
 
 export type Condition =
   | { type: "planetInHouse"; planet: Planet; houses: number[] }
@@ -19,6 +21,8 @@ export type Condition =
   | { type: "vargaPlanetInHouse"; varga: "D9" | "D10"; planet: Planet; houses: number[] }
   | { type: "vargaHouseLordInHouse"; varga: "D9" | "D10"; house: number; inHouses: number[] }
   | { type: "planetStrength"; planet: Planet; min?: number; max?: number }
+  | { type: "planetStatus"; planet: Planet; status: PlanetStatus[] }
+  | { type: "lalKitabDebt"; key: DebtKey; present?: boolean }
   | { type: "not"; condition: Condition };
 
 export interface Rule {

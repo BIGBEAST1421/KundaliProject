@@ -29,12 +29,14 @@ import { AspectsView } from "./facts/AspectsView";
 import { YogasView } from "./facts/YogasView";
 import { TransitsView } from "./facts/TransitsView";
 import { Indications } from "./facts/Indications";
+import { LalKitabView } from "./facts/LalKitabView";
 import { Logo } from "@/components/Logo";
 
 const Icon = ({ d }: { d: string }) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d={d} /></svg>;
 const ICONS = {
   overview: "M4 12a8 8 0 1 0 16 0 8 8 0 0 0-16 0Zm8-3v3l2 2",
   chart: "M4 4h16v16H4zM4 4l16 16M20 4 4 20M12 4 4 12l8 8 8-8z",
+  lalkitab: "M12 2 2 7l10 5 10-5-10-5Zm0 20V12M2 7v10l10 5M22 7v10l-10 5",
   insights: "M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9L9.5 8z",
   timing: "M12 8v4l3 2M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0",
 };
@@ -88,7 +90,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
   const core = translated?.core ?? report.core;
   const sections = translated?.sections ?? report.sections;
 
-  function mergedRules(domain: "career" | "marriage"): ReportFacts["rules"]["career"] {
+  function mergedRules(domain: "career" | "marriage" | "lalkitab"): ReportFacts["rules"]["career"] {
     const rules = facts?.rules[domain] ?? [];
     const t = translated?.indications[domain];
     if (!t) return rules;
@@ -135,6 +137,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
         { id: "vargas", label: d.tab_vargas, keywords: "navamsa dasamsa d9 d10 divisional", content: facts ? <Reveal><Section id="vargas" title={d.tab_vargas}><VargaView f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
         { id: "aspects", label: d.tab_aspects, keywords: "drishti aspect glance", content: facts ? <Reveal><Section id="aspects" title={d.tab_aspects} caption={d.aspects_sub}><AspectsView f={facts} d={d} lang={lang} /></Section></Reveal> : noFacts },
       ],
+    },
+    {
+      id: "lalkitab", label: d.grp_lalkitab, icon: <Icon d={ICONS.lalkitab} />,
+      tabs: [{ id: "lalkitab-facts", label: d.grp_lalkitab, keywords: "lal kitab rin debt pitra matri deva stri sleeping awake static totka remedy", content: facts?.lalKitab ? <Reveal className="space-y-10"><LalKitabView f={facts} d={d} lang={lang} synthesis={core.lalKitabSynthesis} /><Indications rules={mergedRules("lalkitab")} d={d} /></Reveal> : noFacts }],
     },
     {
       id: "insights", label: d.grp_insights, icon: <Icon d={ICONS.insights} />,

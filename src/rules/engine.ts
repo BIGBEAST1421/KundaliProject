@@ -7,6 +7,8 @@ import type { Yoga } from "@/src/astro/yogas";
 import type { PlanetStrength } from "@/src/astro/strength";
 import { confidenceBand } from "@/src/astro/strength";
 import type { Varga } from "@/src/astro/varga";
+import type { PlanetStatus } from "@/src/astro/lalkitab/status";
+import type { LalKitabDebt } from "@/src/astro/lalkitab/debts";
 import type { Condition, FiredRule, Rule } from "./types";
 
 export interface RuleFacts {
@@ -14,6 +16,7 @@ export interface RuleFacts {
   yogas: Yoga[];
   strengths: PlanetStrength[];
   vargas: { D9: Varga; D10: Varga };
+  lalKitab: { debts: LalKitabDebt[]; planetStatus: Record<Planet, PlanetStatus> };
 }
 
 const ord = (n: number) => `${n}${["th", "st", "nd", "rd"][(n % 10 > 3 || Math.floor((n % 100) / 10) === 1) ? 0 : n % 10]}`;
@@ -84,6 +87,16 @@ export function check(c: Condition, f: RuleFacts): string | null {
       if (c.max != null && s > c.max) return null;
       return `${c.planet} strength is ${s}/100`;
     }
+    case "planetStatus": {
+      const s = f.lalKitab.planetStatus[c.planet];
+      return c.status.includes(s) ? `${c.planet} is ${s} in the ${ord(chart.houseOf[c.planet])} house (Lal Kitab)` : null;
+    }
+    case "lalKitabDebt": {
+      const debt = f.lalKitab.debts.find((d) => d.key === c.key);
+      if (!debt) return null;
+      if (c.present != null && debt.present !== c.present) return null;
+      return debt.present ? `${debt.name} is present: ${debt.reason}` : `${debt.name} is absent`;
+    }
     case "not": return check(c.condition, f) === null ? "(condition absent)" : null;
   }
 }
@@ -91,7 +104,7 @@ export function check(c: Condition, f: RuleFacts): string | null {
 /** Planets a condition refers to, used to pick key planets for confidence. */
 function planetsOf(c: Condition, chart: Chart): Planet[] {
   switch (c.type) {
-    case "planetInHouse": case "planetInSign": case "planetDignity": case "planetStrength": case "vargaPlanetInHouse": return [c.planet];
+    case "planetInHouse": case "planetInSign": case "planetDignity": case "planetStrength": case "vargaPlanetInHouse": case "planetStatus": return [c.planet];
     case "planetWith": return [c.a, c.b];
     case "houseLordInHouse": case "houseLordDignity": case "houseLordIs": return [houseLord(c.house, chart.lagna)];
     case "aspect": return [c.from];

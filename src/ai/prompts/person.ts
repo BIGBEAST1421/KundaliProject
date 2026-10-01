@@ -82,6 +82,7 @@ CORE:
 - "overview": three insights specific to actual placements, 2 sentences each.
 - "dashaAnalysis": 3-4 sentences on how the current ${dasha.mahadasha} Mahadasha and ${dasha.antardasha} Antardasha interact — are the two lords friends, neutral or enemies; which houses they own/occupy here; so does this period lean favourable, mixed or challenging, and in which area of life.
 - "remedies": four (mantra, gemstone, practice, moon remedy), each naming the specific planet/dasha lord it addresses and WHY it fits this chart.
+- "lalKitabSynthesis": 2-3 sentences synthesising the LAL KITAB DEBTS and PLANET STATUS facts and fired "lalkitab" rules above. Ground this strictly in what is listed there — if no debt is present and nothing notable fired, say so plainly rather than inventing one.
 
 ${i.pillars.map((p) => PILLAR_GUIDES[p]).join("\n")}
 ${i.pillars.includes("love") ? LOVE_INSTRUCTIONS[i.relationshipStatus] : ""}
