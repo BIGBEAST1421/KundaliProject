@@ -40,7 +40,7 @@ export function Reveal({ children, delay = 0, stagger = 0, className = "", as = 
     : item(delay);
 
   return (
-    <Tag ref={ref as never} className={className} initial="hidden" animate={show ? "show" : "hidden"} variants={variants}>
+    <Tag ref={ref as never} className={`reveal-anim ${className}`} initial="hidden" animate={show ? "show" : "hidden"} variants={variants}>
       {children}
     </Tag>
   );
@@ -51,5 +51,5 @@ export function RevealItem({ children, className = "", as = "div" }: { children:
   const reduce = useReducedMotion();
   const Tag = motion[as];
   if (reduce) return <Tag className={className}>{children}</Tag>;
-  return <Tag className={className} variants={item()}>{children}</Tag>;
+  return <Tag className={`reveal-anim ${className}`} variants={item()}>{children}</Tag>;
 }
