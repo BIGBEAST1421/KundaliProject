@@ -182,7 +182,10 @@ html[lang="hi"] h1, html[lang="hi"] h2, html[lang="hi"] h3 { font-family: var(--
           --neutral: #445 !important; --neutral-soft: #eef !important; color-scheme: light !important; }
   @page { margin: 16mm; }
   body { font-size: 11pt; }
-  .no-print, nav, footer, .sky::before { display: none !important; }
+  /* .no-print alone covers SiteHeader/SiteFooter (both already tagged with it) — a bare
+     `footer`/`nav` tag selector would also hide ReportView's/MatchView's own <footer> (the
+     "Created" line and share link), which should print. */
+  .no-print, .sky::before { display: none !important; }
   .print-break { break-before: page; }
   .print-avoid { break-inside: avoid; }
   a { color: inherit; text-decoration: none; }

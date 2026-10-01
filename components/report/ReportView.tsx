@@ -212,7 +212,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
         {mode === "share" ? (
           <span className="flex items-center gap-2">{d.share_view_footer} <Logo text={APP_NAME} /> · <Link href="/app" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link></span>
         ) : (
-          <span className="font-mono">/report/{report.uid.slice(0, 8)}…</span>
+          <span className="flex items-center gap-2"><Logo text={APP_NAME} /> · <span className="font-mono">/{report.slug}</span></span>
         )}
       </footer>
     </article>

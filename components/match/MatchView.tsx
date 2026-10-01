@@ -46,6 +46,7 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
   const { lang } = useI18n();
   const d = dict(lang);
   const { guna, factors: rawFactors, mangal, boy, girl } = report;
+  const created = new Date(report.createdAt).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
 
   // As with ReportView, the narrative text is only ever written once, in report.language.
   const cached: MatchTranslated | null = report.translation && report.translation.language === lang ? report.translation : null;
@@ -174,11 +175,14 @@ export function MatchView({ report, mode = "owner" }: { report: MatchReport; mod
         </Section>
         ) },
       ] satisfies TabPanel[]} />
-      {mode === "share" && (
-        <footer className="mt-16 flex flex-wrap items-center justify-end gap-2 border-t border-line pt-6 text-xs text-muted">
-          {d.share_view_footer} <Logo text={APP_NAME} /> · <Link href="/match" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link>
-        </footer>
-      )}
+      <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-xs text-muted">
+        <span>{d.report_created} {created}</span>
+        {mode === "share" ? (
+          <span className="flex items-center gap-2">{d.share_view_footer} <Logo text={APP_NAME} /> · <Link href="/match" className="font-medium text-ink underline decoration-accent underline-offset-4">{d.share_cta}</Link></span>
+        ) : (
+          <span className="flex items-center gap-2"><Logo text={APP_NAME} /> · <span className="font-mono">/match/{report.uid.slice(0, 8)}…</span></span>
+        )}
+      </footer>
     </article>
   );
 }
