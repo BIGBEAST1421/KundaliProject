@@ -14,6 +14,9 @@ const obj = (properties: Record<string, Schema>, required = Object.keys(properti
 const TIMELINE_ITEM = obj({ period: S("Exact Mahadasha/Antardasha label from the scaffold"), desc: S("2 sentences") });
 const REMEDY = obj({ icon: S("single emoji"), title: S(), desc: S() });
 
+/** The ask-a-question chat: one grounded answer to one free-form question. */
+export const ASK_SCHEMA = obj({ answer: S("3-5 warm sentences answering the question, grounded strictly in the given facts") });
+
 const BALANCE = {
   summary: S("2-3 plain, warm sentences"),
   positives: arr(S(), "Genuine strengths/favourable points, 1 sentence each. 2-4 items."),

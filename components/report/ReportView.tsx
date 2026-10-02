@@ -31,6 +31,7 @@ import { TransitsView } from "./facts/TransitsView";
 import { Indications } from "./facts/Indications";
 import { LalKitabView } from "./facts/LalKitabView";
 import { BhriguView } from "./facts/BhriguView";
+import { AskChat } from "./AskChat";
 import { Logo } from "@/components/Logo";
 
 const Icon = ({ d }: { d: string }) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d={d} /></svg>;
@@ -41,6 +42,7 @@ const ICONS = {
   bhrigu: "M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83",
   insights: "M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9L9.5 8z",
   timing: "M12 8v4l3 2M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0",
+  ask: "M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z",
 };
 
 interface Props {
@@ -186,6 +188,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
           </Section>
         ) }] : []),
       ],
+    },
+    {
+      id: "ask", label: d.grp_ask, icon: <Icon d={ICONS.ask} />,
+      tabs: [{ id: "ask-chat", label: d.grp_ask, keywords: "ask question chat marriage career love timing", content: <AskChat report={report} d={d} lang={lang} /> }],
     },
   ];
 

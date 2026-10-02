@@ -1,9 +1,8 @@
-import { DateTime } from "luxon";
 import type { Chart } from "@/src/astro/chart";
 import { buildChartSummary } from "@/src/astro/summary";
 import { bhriguPredictions } from "@/src/astro/bhrigu";
 import type { Language, Pillar, RelationshipStatus } from "@/src/reports/types";
-import { VOICE_RULES, languageNote } from "./shared";
+import { VOICE_RULES, languageNote, dashaTimelineBlock, lifeStageAccuracy } from "./shared";
 
 export interface PersonPromptInput {
   name: string;
@@ -47,12 +46,7 @@ const PILLAR_GUIDES: Record<Pillar, string> = {
 export function personPrompt(i: PersonPromptInput): { prompt: string; system: string } {
   const { chart } = i;
   const dasha = chart.dasha;
-  const mark = (c: boolean) => (c ? "-> " : "   ");
-  const mahadashaBlock = dasha.allMahadashas.map((m) => `  ${mark(m.current)}${m.lord} Mahadasha: ${m.start} - ${m.end}`).join("\n");
-  const antardashaBlock = dasha.antardashas.map((a) => `  ${mark(a.current)}${a.lord} Antardasha: ${a.start} - ${a.end}`).join("\n");
-
-  const today = DateTime.now();
-  const adultDate = DateTime.fromISO(i.dob).plus({ years: 18 }).toFormat("MMM yyyy");
+  const { adultDate, todayLine, guard } = lifeStageAccuracy(i.dob, dasha.mahadasha);
 
   const bhrigu = bhriguPredictions(chart, "en");
   const bhriguBlock = bhrigu.length
@@ -77,15 +71,12 @@ COMPUTED CHART:
 ${buildChartSummary(chart)}
 ${timeCaveat}
 
-TODAY: ${today.toFormat("MMM yyyy")}. This person turned 18 in ${adultDate}.
+${todayLine}
 
 EXACT DASHA PERIODS (ephemeris-based; every date range you mention anywhere MUST be one of these or a sub-range within one — never invent dates):
-Mahadasha timeline:
-${mahadashaBlock}
-Antardashas within the current ${dasha.mahadasha} Mahadasha:
-${antardashaBlock}
+${dashaTimelineBlock(dasha)}
 
-LIFE-STAGE ACCURACY (critical): never describe any date range, or any part of one, before ${adultDate} as a career, marriage, business or financial-timing period — the person was a child or student then, not an adult making those decisions. If a Mahadasha or Antardasha you want to reference started before ${adultDate}, either narrow it to the portion from ${adultDate} onward (state it as a sub-range, e.g. "${dasha.mahadasha} Mahadasha, from ${adultDate}") or pick a different period from the scaffold that falls entirely after it. This applies to every "timeline", "switchTiming", "marriageWindows" and "muhurta" entry in any section — not just the current one.
+${guard}
 
 ${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground EVERY statement in these. Do not mention any placement, yoga or period that is not listed here. Where a classical rule fired, weave its meaning into the matching section and respect its confidence level (direct: state it; moderate: "suggests"; soft: "may"). If a yoga is marked CANCELLED, say so and explain what that changes.
 ${i.factsBlock}

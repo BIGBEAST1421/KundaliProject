@@ -144,6 +144,15 @@ export const PersonTranslationSchema = z.object({
 });
 export type PersonTranslation = z.infer<typeof PersonTranslationSchema>;
 
+/** One ask-a-question chat turn: the viewer's question and the grounded answer. */
+export const QuestionEntrySchema = z.object({
+  q: str.min(1),
+  a: str.min(1),
+  lang: LanguageSchema,
+  ts: str,
+});
+export type QuestionEntry = z.infer<typeof QuestionEntrySchema>;
+
 export const PersonReportSchema = z.object({
   uid: z.string().uuid(),
   slug: str.min(1),
@@ -159,6 +168,9 @@ export const PersonReportSchema = z.object({
   facts: ReportFactsSchema.nullable().optional(),
   /** Cached translation into the other language, generated on first request. */
   translation: PersonTranslationSchema.nullable().optional(),
+  /** Ask-a-question chat log. The DB column backfills `[]` for pre-existing rows, so this
+   * only needs `.default([])`, not `.nullable()` like `facts`/`translation`. */
+  questions: z.array(QuestionEntrySchema).default([]),
   createdAt: z.string(),
 });
 export type PersonReport = z.infer<typeof PersonReportSchema>;

@@ -2,7 +2,7 @@ import "server-only";
 import { supabase } from "./supabase";
 import {
   PersonReportSchema, MatchReportSchema,
-  type PersonReport, type MatchReport, type PersonTranslation, type MatchTranslation,
+  type PersonReport, type MatchReport, type PersonTranslation, type MatchTranslation, type QuestionEntry,
 } from "@/src/reports/types";
 
 export class RepoError extends Error {
@@ -17,7 +17,8 @@ export const isUuid = (s: string) => UUID_RE.test(s);
 
 type PersonRow = {
   uid: string; slug: string; name: string; language: string; birth: unknown; profile: unknown;
-  pillars: string[]; chart: unknown; core: unknown; sections: unknown; facts?: unknown; translation?: unknown; created_at: string;
+  pillars: string[]; chart: unknown; core: unknown; sections: unknown; facts?: unknown; translation?: unknown;
+  questions?: unknown; created_at: string;
 };
 type MatchRow = {
   uid: string; language: string; boy: unknown; girl: unknown; guna: unknown; factors: unknown;
@@ -28,7 +29,7 @@ function personFromRow(r: PersonRow): PersonReport {
   const parsed = PersonReportSchema.safeParse({
     uid: r.uid, slug: r.slug, name: r.name, language: r.language, birth: r.birth, profile: r.profile,
     pillars: r.pillars, chart: r.chart, core: r.core, sections: r.sections, facts: r.facts ?? null,
-    translation: r.translation ?? null, createdAt: r.created_at,
+    translation: r.translation ?? null, questions: r.questions ?? [], createdAt: r.created_at,
   });
   if (!parsed.success) throw new RepoError(`Stored report ${r.uid} is malformed`, parsed.error.issues);
   return parsed.data;
@@ -116,5 +117,11 @@ export const repo = {
   async saveMatchTranslation(uid: string, translation: MatchTranslation): Promise<void> {
     const { error } = await supabase().from("match_reports").update({ translation }).eq("uid", uid);
     if (error) throw new RepoError("Could not save the translation", error);
+  },
+
+  /** Appends to the ask-a-question chat log (full overwrite, same pattern as translations). */
+  async savePersonQuestions(uid: string, questions: QuestionEntry[]): Promise<void> {
+    const { error } = await supabase().from("person_reports").update({ questions }).eq("uid", uid);
+    if (error) throw new RepoError("Could not save the question", error);
   },
 };
