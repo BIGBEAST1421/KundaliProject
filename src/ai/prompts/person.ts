@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import type { Chart } from "@/src/astro/chart";
 import { buildChartSummary } from "@/src/astro/summary";
 import type { Language, Pillar, RelationshipStatus } from "@/src/reports/types";
@@ -49,6 +50,9 @@ export function personPrompt(i: PersonPromptInput): { prompt: string; system: st
   const mahadashaBlock = dasha.allMahadashas.map((m) => `  ${mark(m.current)}${m.lord} Mahadasha: ${m.start} - ${m.end}`).join("\n");
   const antardashaBlock = dasha.antardashas.map((a) => `  ${mark(a.current)}${a.lord} Antardasha: ${a.start} - ${a.end}`).join("\n");
 
+  const today = DateTime.now();
+  const adultDate = DateTime.fromISO(i.dob).plus({ years: 18 }).toFormat("MMM yyyy");
+
   const timeCaveat = i.timeKnown ? "" : `
 IMPORTANT: The exact birth time is NOT known — the chart uses an approximate time, so the Lagna, house placements and D10 may shift. Base insights primarily on the Moon sign, Nakshatra and Sun sign; phrase any Lagna/house-based point as a tendency, never a certainty.`;
 
@@ -65,11 +69,15 @@ COMPUTED CHART:
 ${buildChartSummary(chart)}
 ${timeCaveat}
 
+TODAY: ${today.toFormat("MMM yyyy")}. This person turned 18 in ${adultDate}.
+
 EXACT DASHA PERIODS (ephemeris-based; every date range you mention anywhere MUST be one of these or a sub-range within one — never invent dates):
 Mahadasha timeline:
 ${mahadashaBlock}
 Antardashas within the current ${dasha.mahadasha} Mahadasha:
 ${antardashaBlock}
+
+LIFE-STAGE ACCURACY (critical): never describe any date range, or any part of one, before ${adultDate} as a career, marriage, business or financial-timing period — the person was a child or student then, not an adult making those decisions. If a Mahadasha or Antardasha you want to reference started before ${adultDate}, either narrow it to the portion from ${adultDate} onward (state it as a sub-range, e.g. "${dasha.mahadasha} Mahadasha, from ${adultDate}") or pick a different period from the scaffold that falls entirely after it. This applies to every "timeline", "switchTiming", "marriageWindows" and "muhurta" entry in any section — not just the current one.
 
 ${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground EVERY statement in these. Do not mention any placement, yoga or period that is not listed here. Where a classical rule fired, weave its meaning into the matching section and respect its confidence level (direct: state it; moderate: "suggests"; soft: "may"). If a yoga is marked CANCELLED, say so and explain what that changes.
 ${i.factsBlock}
@@ -86,6 +94,7 @@ CORE:
 
 ${i.pillars.map((p) => PILLAR_GUIDES[p]).join("\n")}
 ${i.pillars.includes("love") ? LOVE_INSTRUCTIONS[i.relationshipStatus] : ""}
+${i.pillars.includes("career") || i.pillars.includes("wealth") ? `Reminder: in "timeline" and "muhurta", no window's start may be before ${adultDate} — this includes picking a whole Mahadasha as the window. If the natural choice started earlier, use only its portion from ${adultDate} onward and label it as such (e.g. "Jupiter Mahadasha, from ${adultDate}"), or pick a later Antardasha within it instead.` : ""}
 
 Return ONLY the JSON object described by the schema.`;
 
