@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Dict } from "@/src/i18n/en";
 import type { PersonReport, Language, QuestionEntry } from "@/src/reports/types";
-import { CosmicLoader } from "@/components/ui/CosmicLoader";
+import { ChartOrbitLoader } from "@/components/ui/ChartOrbitLoader";
 import { Input } from "@/components/forms/Field";
 import { Button } from "@/components/ui/Button";
 
@@ -102,7 +102,7 @@ export function AskChat({ report, d, lang }: { report: PersonReport; d: Dict; la
                 <p className="mt-2 text-sm leading-relaxed text-muted">{m.a}</p>
               </div>
             ))}
-            {pending && <CosmicLoader message={d.ask_thinking} size="sm" />}
+            {pending && <ChartOrbitLoader message={d.ask_thinking} />}
           </div>
 
           {error && <p className="px-4 text-sm text-concern" role="alert">{error}</p>}
