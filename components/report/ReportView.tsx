@@ -30,6 +30,7 @@ import { YogasView } from "./facts/YogasView";
 import { TransitsView } from "./facts/TransitsView";
 import { Indications } from "./facts/Indications";
 import { LalKitabView } from "./facts/LalKitabView";
+import { BhriguView } from "./facts/BhriguView";
 import { Logo } from "@/components/Logo";
 
 const Icon = ({ d }: { d: string }) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d={d} /></svg>;
@@ -37,6 +38,7 @@ const ICONS = {
   overview: "M4 12a8 8 0 1 0 16 0 8 8 0 0 0-16 0Zm8-3v3l2 2",
   chart: "M4 4h16v16H4zM4 4l16 16M20 4 4 20M12 4 4 12l8 8 8-8z",
   lalkitab: "M12 2 2 7l10 5 10-5-10-5Zm0 20V12M2 7v10l10 5M22 7v10l-10 5",
+  bhrigu: "M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83",
   insights: "M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2l.9-5.5-4-3.9L9.5 8z",
   timing: "M12 8v4l3 2M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0",
 };
@@ -143,6 +145,10 @@ export function ReportView({ report, mode = "owner" }: Props) {
       tabs: [{ id: "lalkitab-facts", label: d.grp_lalkitab, keywords: "lal kitab rin debt pitra matri deva stri sleeping awake static totka remedy", content: facts?.lalKitab ? <Reveal className="space-y-10"><LalKitabView f={facts} d={d} lang={lang} synthesis={core.lalKitabSynthesis} /><Indications rules={mergedRules("lalkitab")} d={d} /></Reveal> : noFacts }],
     },
     {
+      id: "bhrigu", label: d.grp_bhrigu, icon: <Icon d={ICONS.bhrigu} />,
+      tabs: [{ id: "bhrigu-readings", label: d.grp_bhrigu, keywords: "bhrigu samhita phalit darpan ascendant planet house reading", content: <Reveal><BhriguView chart={chart} d={d} lang={lang} /></Reveal> }],
+    },
+    {
       id: "insights", label: d.grp_insights, icon: <Icon d={ICONS.insights} />,
       tabs: [
         ...(sections.career ? [{ id: "career", label: d.tab_career, keywords: "career job work profession 10th business", content: <Reveal className="space-y-10">{facts && <Indications rules={mergedRules("career")} d={d} />}<CareerBlock s={sections.career} d={d} /></Reveal> }] : []),
@@ -171,7 +177,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
           <Section id="remedies" title={d.sec_remedies}>
             <Reveal stagger={0.07} as="ul" className="grid gap-3 sm:grid-cols-2">
               {core.remedies.map((r, i) => (
-                <RevealItem key={i} as="li"><HoverLift className="flex h-full gap-3 rounded-xl bg-surface p-4">
+                <RevealItem key={i} as="li" className="print-avoid"><HoverLift className="flex h-full gap-3 rounded-xl bg-surface p-4">
                   <span className="text-xl leading-none" aria-hidden>{r.icon}</span>
                   <div><p className="font-medium">{r.title}</p><p className="mt-1 text-sm leading-relaxed text-muted">{r.desc}</p></div>
                 </HoverLift></RevealItem>

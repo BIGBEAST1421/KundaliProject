@@ -10,12 +10,12 @@ export function TransitsView({ f, d, lang = "en" }: { f: ReportFacts; d: Dict; l
   return (
     <div className="space-y-8">
       {t.intersections.length > 0 && (
-        <div className="rounded-[var(--radius-card)] bg-accent-soft/50 p-5">
+        <div className="print-avoid rounded-[var(--radius-card)] bg-accent-soft/50 p-5">
           <h3 className="font-sans text-sm font-semibold">{d.intersections}</h3>
           <div className="mt-3"><InsightList items={t.intersections} /></div>
         </div>
       )}
-      <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line">
+      <div className="print-avoid overflow-x-auto rounded-[var(--radius-card)] border border-line">
         <table className="w-full min-w-[520px] text-sm">
           <thead className="bg-surface text-left text-xs text-muted">
             <tr>

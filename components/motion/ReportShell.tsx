@@ -174,12 +174,18 @@ export function ReportShell({ groups, jumpPlaceholder, jumpEmpty, className = ""
         </AnimatePresence>
       </div>
 
-      {/* Print: everything */}
+      {/* Print: everything. No print-avoid on the whole section -- a tab's content (e.g. ten
+          Yoga cards) can be taller than a page, and forcing an unsplittable block that large
+          makes the print engine strand the heading alone and leave the rest of the page blank.
+          Only the heading is kept from being orphaned; the content below flows across pages
+          normally, breaking only at the atomic cards/rows that declare their own print-avoid. */}
       <div className="hidden print:block lg:col-span-2">
         {groups.map((g) => g.tabs.map((t) => (
-          <section key={`${g.id}/${t.id}`} className="print-avoid mt-12 first:mt-0">
-            <p className="text-xs text-muted">{g.label}</p>
-            <h2 className="mb-6 text-2xl">{t.label}</h2>
+          <section key={`${g.id}/${t.id}`} className="mt-12 first:mt-0">
+            <div className="print-keep">
+              <p className="text-xs text-muted">{g.label}</p>
+              <h2 className="mb-6 text-2xl">{t.label}</h2>
+            </div>
             {t.content}
           </section>
         )))}

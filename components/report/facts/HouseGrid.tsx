@@ -16,7 +16,7 @@ export function HouseGrid({ f, d, lagna, lang }: { f: ReportFacts; d: Dict; lagn
         const sign = SIGNS[(li + h - 1) % 12];
         const occ = f.planetsInHouses[String(h)] ?? [];
         return (
-          <li key={h} className="rounded-[var(--radius-card)] border border-line p-4">
+          <li key={h} className="print-avoid rounded-[var(--radius-card)] border border-line p-4">
             <div className="flex items-baseline justify-between">
               <span className="font-display text-2xl">{h}</span>
               <span className="text-xs text-muted">{meanings[h - 1]}</span>

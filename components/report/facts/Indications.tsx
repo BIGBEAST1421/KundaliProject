@@ -8,12 +8,14 @@ const CONF_LABEL = { direct: "●●●", moderate: "●●○", soft: "●○�
 export function Indications({ rules, d }: { rules: ReportFacts["rules"]["marriage"]; d: Dict }) {
   if (rules.length === 0) return null;
   return (
-    <section className="print-avoid rounded-[var(--radius-card)] border border-line bg-surface/60 p-5">
-      <h3 className="font-sans text-base font-semibold">{d.indications}</h3>
-      <p className="mt-1 text-sm text-muted">{d.indications_sub}</p>
+    <section className="rounded-[var(--radius-card)] border border-line bg-surface/60 p-5">
+      <div className="print-keep">
+        <h3 className="font-sans text-base font-semibold">{d.indications}</h3>
+        <p className="mt-1 text-sm text-muted">{d.indications_sub}</p>
+      </div>
       <ul className="mt-4 space-y-4">
         {rules.map((r) => (
-          <li key={r.id} className="flex gap-3">
+          <li key={r.id} className="print-avoid flex gap-3">
             <span className={`mt-1.5 size-2 shrink-0 rounded-full ${r.positive ? "bg-strength" : "bg-concern"}`} aria-hidden />
             <div>
               <div className="flex flex-wrap items-center gap-2">

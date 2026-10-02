@@ -12,7 +12,7 @@ export function PlanetTable({ f, d, lang = "en" }: { f: ReportFacts; d: Dict; la
   const dignityLabel = (dig: Dignity) => (lang === "hi" ? dignityLabelHi(dig) : DIGNITY_LABEL[dig]);
   const retroLabel = (r: string) => r === "direct" ? d.retro_direct : r === "retrograde" ? d.retro_retro : r === "always-retrograde" ? d.retro_always : d.retro_never;
   return (
-    <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line">
+    <div className="print-avoid overflow-x-auto rounded-[var(--radius-card)] border border-line">
       <table className="w-full min-w-[760px] text-sm">
         <thead className="bg-surface text-left text-xs text-muted">
           <tr>

@@ -58,15 +58,17 @@ export function LalKitabView({ f, d, lang, synthesis }: Props) {
         </div>
       </section>
 
-      <section className="print-avoid">
-        <h3 className="font-sans text-base font-semibold">{d.lk_debts_title}</h3>
-        <p className="mt-1 text-sm text-muted">{d.lk_debts_sub}</p>
+      <section>
+        <div className="print-keep">
+          <h3 className="font-sans text-base font-semibold">{d.lk_debts_title}</h3>
+          <p className="mt-1 text-sm text-muted">{d.lk_debts_sub}</p>
+        </div>
         {presentDebts.length === 0 ? (
           <p className="mt-4 rounded-[var(--radius-card)] border border-line bg-surface p-5 text-sm text-muted">{d.lk_no_debts}</p>
         ) : (
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {lalKitab.debts.map((debt) => (
-              <li key={debt.key} className="rounded-[var(--radius-card)] border border-line p-5">
+              <li key={debt.key} className="print-avoid rounded-[var(--radius-card)] border border-line p-5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-sans text-base font-semibold">{debtNameLabel(debt.key, lang)}</p>
                   <Badge tone={debt.present ? "concern" : "muted"}>{debt.present ? d.yoga_present : d.yoga_absent}</Badge>

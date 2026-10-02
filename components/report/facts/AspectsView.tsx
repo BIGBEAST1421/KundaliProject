@@ -10,7 +10,7 @@ export function AspectsView({ f, d, lang = "en" }: { f: ReportFacts; d: Dict; la
   return (
     <ul className="grid gap-3 sm:grid-cols-2">
       {[...byPlanet.entries()].map(([p, list]) => (
-        <li key={p} className="rounded-[var(--radius-card)] border border-line p-4">
+        <li key={p} className="print-avoid rounded-[var(--radius-card)] border border-line p-4">
           <p className="font-semibold">{planetLabel(p, lang)} <span className="text-xs text-muted">· {d.col_house} {list[0].fromHouse}</span></p>
           <ul className="mt-2 space-y-1.5 text-sm">
             {list.map((a) => (

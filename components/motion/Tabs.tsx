@@ -110,11 +110,13 @@ export function Tabs({ panels, syncHash = true, className = "" }: TabsProps) {
         </AnimatePresence>
       </div>
 
-      {/* Print: every panel with its heading, so the PDF is the complete report. */}
+      {/* Print: every panel with its heading, so the PDF is the complete report. No print-avoid
+          on the whole panel -- see ReportShell.tsx for why that strands headings and wastes
+          pages once a panel's content is taller than one page. */}
       <div className="hidden print:block">
         {panels.map((p) => (
-          <section key={p.id} className="mt-12 first:mt-0 print-avoid">
-            <h2 className="mb-6 text-2xl">{p.label}</h2>
+          <section key={p.id} className="mt-12 first:mt-0">
+            <h2 className="mb-6 text-2xl print-keep">{p.label}</h2>
             {p.content}
           </section>
         ))}
