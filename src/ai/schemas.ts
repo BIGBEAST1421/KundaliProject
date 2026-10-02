@@ -15,7 +15,7 @@ const TIMELINE_ITEM = obj({ period: S("Exact Mahadasha/Antardasha label from the
 const REMEDY = obj({ icon: S("single emoji"), title: S(), desc: S() });
 
 /** The ask-a-question chat: one grounded answer to one free-form question. */
-export const ASK_SCHEMA = obj({ answer: S("3-5 warm sentences answering the question, grounded strictly in the given facts") });
+export const ASK_SCHEMA = obj({ answer: S("3-5 warm, plain-language sentences answering the question, grounded strictly in the given facts -- lead with what it means for their life, not a list of placements") });
 
 const BALANCE = {
   summary: S("2-3 plain, warm sentences"),
