@@ -74,8 +74,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uid
       throw new AiError("parse", "The translation lost track of the classical indications.");
     }
 
-    const { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis, career, love, health, wealth, indications } = parsed;
-    const core = { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis };
+    const { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis, bhriguSynthesis, career, love, health, wealth, indications } = parsed;
+    const core = { soulPurpose, overview, dashaAnalysis, remedies, lalKitabSynthesis, bhriguSynthesis };
     const sections = { career, love, health, wealth };
 
     try {

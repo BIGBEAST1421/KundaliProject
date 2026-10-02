@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import type { Chart } from "@/src/astro/chart";
 import { buildChartSummary } from "@/src/astro/summary";
+import { bhriguPredictions } from "@/src/astro/bhrigu";
 import type { Language, Pillar, RelationshipStatus } from "@/src/reports/types";
 import { VOICE_RULES, languageNote } from "./shared";
 
@@ -53,6 +54,13 @@ export function personPrompt(i: PersonPromptInput): { prompt: string; system: st
   const today = DateTime.now();
   const adultDate = DateTime.fromISO(i.dob).plus({ years: 18 }).toFormat("MMM yyyy");
 
+  const bhrigu = bhriguPredictions(chart, "en");
+  const bhriguBlock = bhrigu.length
+    ? `BHRIGU SAMHITA READINGS (classical, verified text — ground "bhriguSynthesis" in these only, naming the current dasha lord's reading specifically since it's most relevant right now):
+${bhrigu.map((p) => `  ${p.planet} in house ${p.house}${p.planet === dasha.mahadasha ? " [current Mahadasha lord]" : ""}: ${p.text}`).join("\n")}
+`
+    : "";
+
   const timeCaveat = i.timeKnown ? "" : `
 IMPORTANT: The exact birth time is NOT known — the chart uses an approximate time, so the Lagna, house placements and D10 may shift. Base insights primarily on the Moon sign, Nakshatra and Sun sign; phrase any Lagna/house-based point as a tendency, never a certainty.`;
 
@@ -82,6 +90,7 @@ LIFE-STAGE ACCURACY (critical): never describe any date range, or any part of on
 ${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground EVERY statement in these. Do not mention any placement, yoga or period that is not listed here. Where a classical rule fired, weave its meaning into the matching section and respect its confidence level (direct: state it; moderate: "suggests"; soft: "may"). If a yoga is marked CANCELLED, say so and explain what that changes.
 ${i.factsBlock}
 ` : ""}
+${bhriguBlock}
 Nakshatra deity: ${chart.nakshatra.deity}
 Sections requested: ${i.pillars.join(", ")} (generate ONLY these, plus the core fields).
 
@@ -91,6 +100,7 @@ CORE:
 - "dashaAnalysis": 3-4 sentences on how the current ${dasha.mahadasha} Mahadasha and ${dasha.antardasha} Antardasha interact — are the two lords friends, neutral or enemies; which houses they own/occupy here; so does this period lean favourable, mixed or challenging, and in which area of life.
 - "remedies": four (mantra, gemstone, practice, moon remedy), each naming the specific planet/dasha lord it addresses and WHY it fits this chart.
 - "lalKitabSynthesis": 2-3 sentences synthesising the LAL KITAB DEBTS and PLANET STATUS facts and fired "lalkitab" rules above. Ground this strictly in what is listed there — if no debt is present and nothing notable fired, say so plainly rather than inventing one.
+- "bhriguSynthesis": 2-3 sentences weaving together the BHRIGU SAMHITA READINGS above for THIS person by name — lead with the current Mahadasha lord's reading (marked above), then connect it to one or two other readings that stand out or echo it. Ground this strictly in the readings listed; never invent anything beyond them. If no readings are listed, say so plainly in one sentence.
 
 ${i.pillars.map((p) => PILLAR_GUIDES[p]).join("\n")}
 ${i.pillars.includes("love") ? LOVE_INSTRUCTIONS[i.relationshipStatus] : ""}

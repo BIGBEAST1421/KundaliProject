@@ -72,6 +72,8 @@ export const CoreInsightsSchema = z.object({
   remedies: z.array(RemedySchema).default([]),
   /** Short synthesis of the Lal Kitab facts (debts, planet status, fired rules). Absent on reports created before that module shipped. */
   lalKitabSynthesis: str.default(""),
+  /** Short synthesis of the Bhrigu Samhita readings. Absent on reports created before that module shipped. */
+  bhriguSynthesis: str.default(""),
 });
 export type CoreInsights = z.infer<typeof CoreInsightsSchema>;
 

@@ -146,7 +146,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
     },
     {
       id: "bhrigu", label: d.grp_bhrigu, icon: <Icon d={ICONS.bhrigu} />,
-      tabs: [{ id: "bhrigu-readings", label: d.grp_bhrigu, keywords: "bhrigu samhita phalit darpan ascendant planet house reading", content: <Reveal><BhriguView chart={chart} d={d} lang={lang} /></Reveal> }],
+      tabs: [{ id: "bhrigu-readings", label: d.grp_bhrigu, keywords: "bhrigu samhita phalit darpan ascendant planet house reading", content: <Reveal><BhriguView chart={chart} d={d} lang={lang} synthesis={core.bhriguSynthesis} /></Reveal> }],
     },
     {
       id: "insights", label: d.grp_insights, icon: <Icon d={ICONS.insights} />,

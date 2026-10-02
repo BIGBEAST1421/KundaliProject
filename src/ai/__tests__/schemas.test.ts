@@ -4,7 +4,7 @@ import { buildPersonSchema, MATCH_SCHEMA } from "../schemas";
 describe("buildPersonSchema", () => {
   it("includes only the selected pillars", () => {
     const s = buildPersonSchema(["career"], "unmarried");
-    expect(Object.keys(s.properties!)).toEqual(["soulPurpose", "overview", "dashaAnalysis", "remedies", "lalKitabSynthesis", "career"]);
+    expect(Object.keys(s.properties!)).toEqual(["soulPurpose", "overview", "dashaAnalysis", "remedies", "lalKitabSynthesis", "bhriguSynthesis", "career"]);
     expect(s.required).not.toContain("love");
   });
   it("includes all four when all selected", () => {
