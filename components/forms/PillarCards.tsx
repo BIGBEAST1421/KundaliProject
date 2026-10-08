@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { useI18n } from "@/src/i18n";
-import { ALL_PILLARS, PILLAR_LABELS, isAllPillars } from "@/src/reports/pillars";
+import { ALL_PILLARS, PILLAR_LABELS, isMinorDob } from "@/src/reports/pillars";
 import type { Pillar } from "@/src/reports/types";
 
 const ICON: Record<Pillar | "all", string> = {
@@ -13,34 +13,40 @@ const ICON: Record<Pillar | "all", string> = {
   wealth: "M4 6h16v12H4zM8 6V4h8v2M12 10v4",
 };
 
-/** Selectable cards for focus areas. "Everything" selects all; picking a single card narrows. */
-export function PillarCards({ value, onChange }: { value: Pillar[]; onChange: (v: Pillar[]) => void }) {
+/** Selectable cards for focus areas. "Everything" selects all; picking a single card narrows.
+ * When `dob` belongs to a minor, Love & Relationships (marriage predictions) is unavailable --
+ * a report for a child should never generate marriage-timing content. */
+export function PillarCards({ value, onChange, dob }: { value: Pillar[]; onChange: (v: Pillar[]) => void; dob?: string }) {
   const { t, lang } = useI18n();
   const reduce = useReducedMotion();
-  const all = isAllPillars(value);
+  const isMinor = !!dob && isMinorDob(dob);
+  const available = isMinor ? ALL_PILLARS.filter((p) => p !== "love") : ALL_PILLARS;
+  const all = available.every((p) => value.includes(p)) && value.every((p) => available.includes(p));
   const toggle = (p: Pillar) => {
     if (all) return onChange([p]);
     const next = value.includes(p) ? value.filter((x) => x !== p) : [...value, p];
-    onChange(next.length === 0 ? [p] : ALL_PILLARS.filter((x) => next.includes(x)));
+    onChange(next.length === 0 ? [p] : available.filter((x) => next.includes(x)));
   };
-  const card = (key: Pillar | "all", label: string, desc: string, selected: boolean, onClick: () => void) => (
-    <motion.button key={key} type="button" role="checkbox" aria-checked={selected} onClick={onClick}
-      whileTap={reduce ? undefined : { scale: 0.985 }}
-      className={`relative flex items-start gap-3 rounded-[var(--radius-card)] border p-4 text-left transition-colors ${selected ? "border-accent bg-accent-soft/60" : "border-line bg-surface/50 hover:border-line-strong"}`}>
-      <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${selected ? "bg-accent text-accent-ink" : "bg-surface-2 text-muted"}`}>
+  const card = (key: Pillar | "all", label: string, desc: string, selected: boolean, onClick: () => void, disabled = false) => (
+    <motion.button key={key} type="button" role="checkbox" aria-checked={selected} aria-disabled={disabled} disabled={disabled} onClick={onClick}
+      whileTap={reduce || disabled ? undefined : { scale: 0.985 }}
+      className={`relative flex items-start gap-3 rounded-[var(--radius-card)] border p-4 text-left transition-colors ${disabled ? "cursor-not-allowed border-line bg-surface/30 opacity-60" : selected ? "border-accent bg-accent-soft/60" : "border-line bg-surface/50 hover:border-line-strong"}`}>
+      <span className={`grid size-9 shrink-0 place-items-center rounded-lg ${selected && !disabled ? "bg-accent text-accent-ink" : "bg-surface-2 text-muted"}`}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d={ICON[key]} /></svg>
       </span>
       <span>
         <span className="block font-semibold">{label}</span>
         <span className="mt-0.5 block text-sm text-muted">{desc}</span>
       </span>
-      <span className={`absolute right-3 top-3 size-2.5 rounded-full ${selected ? "bg-accent" : "bg-line"}`} aria-hidden />
+      {!disabled && <span className={`absolute right-3 top-3 size-2.5 rounded-full ${selected ? "bg-accent" : "bg-line"}`} aria-hidden />}
     </motion.button>
   );
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      <div className="sm:col-span-2">{card("all", t("pillar_all"), t("pillar_all_d"), all, () => onChange([...ALL_PILLARS]))}</div>
-      {ALL_PILLARS.map((p) => card(p, PILLAR_LABELS[p][lang], t(`pillar_${p}_d`), !all && value.includes(p), () => toggle(p)))}
+      <div className="sm:col-span-2">{card("all", t("pillar_all"), t("pillar_all_d"), all, () => onChange([...available]))}</div>
+      {ALL_PILLARS.map((p) => p === "love" && isMinor
+        ? card(p, PILLAR_LABELS[p][lang], t("pillar_love_minor_d"), false, () => {}, true)
+        : card(p, PILLAR_LABELS[p][lang], t(`pillar_${p}_d`), !all && value.includes(p), () => toggle(p)))}
     </div>
   );
 }

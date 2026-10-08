@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useI18n } from "@/src/i18n";
-import { ALL_PILLARS } from "@/src/reports/pillars";
+import { ALL_PILLARS, isMinorDob } from "@/src/reports/pillars";
 import { OCCUPATIONS, occupationLabel } from "@/src/reports/occupations";
 import type { Pillar } from "@/src/reports/types";
 import { postJson, ClientApiError } from "@/src/lib/api-client";
@@ -34,6 +34,15 @@ export function ReportForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // A report for a child should never generate marriage-timing content: drop "love" the moment
+  // the entered DOB indicates a minor, so it can't slip through from the default "all" selection.
+  useEffect(() => {
+    if (isMinorDob(person.dob) && pillars.includes("love")) {
+      setPillars(pillars.filter((p) => p !== "love"));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [person.dob]);
+
   const steps = [t("step_who"), t("step_birth"), t("step_focus")];
 
   const go = (n: number) => { setDir(n > step ? 1 : -1); setStep(n); };
@@ -55,12 +64,13 @@ export function ReportForm() {
     const errs = validatePerson(person, t);
     if (Object.keys(errs).length) { setErrors(errs); go(errs.name ? 0 : 1); return; }
     setStatus("loading");
+    const safePillars = isMinorDob(person.dob) ? pillars.filter((p) => p !== "love") : pillars;
     try {
       const { slug } = await postJson<{ uid: string; slug: string }>("/api/reports", {
         name: person.name, dob: person.dob, time: person.time, timeKnown: person.timeKnown && !!person.time,
         city: person.place.city, state: person.place.state, country: person.place.country,
         lat: person.place.lat, lon: person.place.lon,
-        gender, occupation, maritalStatus: marital, pillars, language: lang,
+        gender, occupation, maritalStatus: marital, pillars: safePillars, language: lang,
       }, t("err_generic"), t("err_network"));
       router.push(`/${encodeURIComponent(slug)}`);
     } catch (err) {
@@ -139,7 +149,7 @@ export function ReportForm() {
           <div className="rounded-[var(--radius-card)] border border-line bg-bg/60 p-6 shadow-card md:p-8">
             <h2 className="text-2xl md:text-3xl">{t("focus_title")}</h2>
             <p className="mt-1 text-muted">{t("focus_sub")}</p>
-            <div className="mt-6"><PillarCards value={pillars} onChange={setPillars} /></div>
+            <div className="mt-6"><PillarCards value={pillars} onChange={setPillars} dob={person.dob} /></div>
             <p className="mt-6 text-sm text-muted">{t("review_line", { name: person.name, dob: person.dob, place: person.place.city })}</p>
             {status === "error" && <div className="mt-6"><ErrorState title={t("err_title")} message={errorMsg} retryLabel={t("err_retry")} onRetry={submit} /></div>}
           </div>

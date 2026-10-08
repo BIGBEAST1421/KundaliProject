@@ -38,10 +38,36 @@ export function dashaTimelineBlock(dasha: DashaLike): string {
 
 /** Guards every AI prompt against describing a pre-adult period (child/student years) as a
  * career, marriage, business or financial-timing period. */
-export function lifeStageAccuracy(dob: string, currentMahadashaLord: string): { adultDate: string; todayLine: string; guard: string } {
+export function lifeStageAccuracy(dob: string, currentMahadashaLord: string): { adultDate: string; todayLine: string; guard: string; ageYears: number; isMinor: boolean } {
   const today = DateTime.now();
-  const adultDate = DateTime.fromISO(dob).plus({ years: 18 }).toFormat("MMM yyyy");
-  const todayLine = `TODAY: ${today.toFormat("MMM yyyy")}. This person turned 18 in ${adultDate}.`;
-  const guard = `LIFE-STAGE ACCURACY (critical): never describe any date range, or any part of one, before ${adultDate} as a career, marriage, business or financial-timing period — the person was a child or student then, not an adult making those decisions. If a Mahadasha or Antardasha you want to reference started before ${adultDate}, either narrow it to the portion from ${adultDate} onward (state it as a sub-range, e.g. "${currentMahadashaLord} Mahadasha, from ${adultDate}") or pick a different period from the scaffold that falls entirely after it. This applies to every "timeline", "switchTiming", "marriageWindows" and "muhurta" entry in any section — not just the current one.`;
-  return { adultDate, todayLine, guard };
+  const birth = DateTime.fromISO(dob);
+  const ageYears = Math.floor(today.diff(birth, "years").years);
+  const isMinor = ageYears < 18;
+  const adultDate = birth.plus({ years: 18 }).toFormat("MMM yyyy");
+  const turnedPhrase = isMinor ? `will turn 18 in ${adultDate}` : `turned 18 in ${adultDate}`;
+  const todayLine = `TODAY: ${today.toFormat("MMM yyyy")}. This person is currently ${ageYears} years old and ${turnedPhrase}.`;
+  const guard = `LIFE-STAGE ACCURACY (critical): never describe any date range, or any part of one, before ${adultDate} as a career, marriage, business or financial-timing period — the person was a child or student then, not an adult making those decisions. If a Mahadasha or Antardasha you want to reference started before ${adultDate}, either narrow it to the portion from ${adultDate} onward (state it as a sub-range, e.g. "${currentMahadashaLord} Mahadasha, from ${adultDate}") or pick a different period from the scaffold that falls entirely after it. This applies to every "timeline", "switchTiming", "marriageWindows" and "muhurta" entry in any section — not just the current one.
+
+FORWARD-LOOKING ONLY (critical): "timeline", "marriageWindows" and "muhurta" entries are guidance for what's ahead, not a historical record — every one of them must be the CURRENT period or a period that starts after TODAY. Never present a Mahadasha or Antardasha that has already fully ended as if it were upcoming (this matters most for someone unmarried whose earlier dasha periods have already passed without a marriage happening — do not cite those as "windows"). If every period in the scaffold that would otherwise fit has already ended, say plainly that the chart doesn't point to a clear near-term window rather than citing a stale one.`;
+  return { adultDate, todayLine, guard, ageYears, isMinor };
+}
+
+/**
+ * Adapts tone and content for the person's actual current life stage, beyond just the
+ * timing guard above. Without this, a report for an 8-year-old or a 70-year-old reads
+ * identically to one for a 28-year-old -- same "job sectors", same "marriage windows" -- which
+ * is exactly the complaint this exists to fix. Returns "" for the broad working-age-adult
+ * range where the existing occupation/relationship-status instructions already suffice.
+ */
+export function lifeStageFraming(ageYears: number): string {
+  if (ageYears < 13) {
+    return `LIFE STAGE (critical, overrides generic section guidance below): this person is a CHILD, currently ${ageYears} years old. Every section must be written for a child, regardless of which sections were requested. "career": natural aptitudes, learning style, the kind of environment that brings out their strengths -- never job sectors, switch timing or the working world. "wealth": family resources and habits worth encouraging -- never personal investment, muhurta or business timing; if "muhurta" windows are requested, relabel the three "type" values in child-appropriate terms (e.g. "Learning a new skill", "Starting a savings habit", "A big expense like schooling") instead of "Career Switch" / "Investment" / "Business Launch". "love": their social and emotional temperament -- friendships, family bonds, how they connect with others -- never romance, dating or marriage in any form. "health": a child's constitution and what supports healthy growth. Remedies, if any, must be gentle and family-appropriate. Do not use adult framing anywhere just because a section schema uses adult field names.`;
+  }
+  if (ageYears < 18) {
+    return `LIFE STAGE (critical, overrides generic section guidance below): this person is a TEENAGER, currently ${ageYears} years old, still years of school/college ahead. "career": academic strengths, subject aptitude and the kind of path suited to them -- never job sectors or switch timing framed as imminent. "wealth": habits and family context, not personal investment or business timing; if "muhurta" windows are requested, relabel the three "type" values for a teenager (e.g. "A first job or internship", "Starting a savings or investment habit", "A big purchase like a laptop for studies") instead of "Career Switch" / "Investment" / "Business Launch". "love": do not predict marriage or discuss romance/dating in any section -- if requested, frame it around their social and emotional temperament instead. "health": age-appropriate, nothing adult-specific.`;
+  }
+  if (ageYears >= 60) {
+    return `LIFE STAGE: this person is ${ageYears} years old. "career" (if requested): frame around legacy, mentorship, or how this life stage's work feels -- not job-hunting, switching roles or early-career growth. "wealth": frame around preserving and enjoying what's been built -- not aggressive investment growth or launching a new business; if "muhurta" windows are requested, relabel the three "type" values for this life stage (e.g. "Passing on responsibilities", "Preserving savings", "A major purchase or gift to family") instead of "Career Switch" / "Investment" / "Business Launch", and keep the "reason" text consistent with that relabeled type. Do not assume they are job-hunting or building a career from scratch.`;
+  }
+  return "";
 }

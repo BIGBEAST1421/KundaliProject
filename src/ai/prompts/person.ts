@@ -2,7 +2,7 @@ import type { Chart } from "@/src/astro/chart";
 import { buildChartSummary } from "@/src/astro/summary";
 import { bhriguPredictions } from "@/src/astro/bhrigu";
 import type { Language, Pillar, RelationshipStatus } from "@/src/reports/types";
-import { VOICE_RULES, languageNote, dashaTimelineBlock, lifeStageAccuracy } from "./shared";
+import { VOICE_RULES, languageNote, dashaTimelineBlock, lifeStageAccuracy, lifeStageFraming } from "./shared";
 
 export interface PersonPromptInput {
   name: string;
@@ -36,6 +36,11 @@ const LOVE_INSTRUCTIONS: Record<RelationshipStatus, string> = {
   widowed: `They have LOST THEIR SPOUSE. Handle with genuine warmth. Add two notes: "Grief and healing" (2-3 gentle sentences tied to the current dasha on honouring the bond) and "Companionship ahead" (2-3 sentences that GENTLY and OPTIONALLY note whether the chart suggests openness to companionship someday — entirely their own choice and timeline; it is fine to say this is not something to think about now). Leave marriageWindows empty.`,
 };
 
+/** Overrides LOVE_INSTRUCTIONS entirely for a minor -- no marriage/romance content regardless
+ * of relationshipStatus, which defaults to "unmarried" and would otherwise trigger marriage
+ * window predictions for a child. */
+const MINOR_LOVE_OVERRIDE = `This person is a MINOR (under 18). Do not predict marriage, dating or romance in any form, and leave "marriageWindows" empty. For "summary", "positives" and "concerns", describe their social and emotional temperament instead -- how they bond with family and friends -- grounded in the 7th house and Venus placements but framed for a child's social world, never romantic partnership. For "partner" (25-30 words), describe the kind of close, trusted friendship or companionship that suits their temperament as they grow -- not a romantic partner.`;
+
 const PILLAR_GUIDES: Record<Pillar, string> = {
   career: `CAREER: "summary" from the 10th house and D10 lagna. "sectors": 2-3 sectors/roles justified by the 10th house sign/lord, D10 lagna and planets there — never generic "Technology, Finance". "switchTiming": adapt to their life stage (student → exams/streams; unemployed → when doors open; government/army → postings and promotions; employed/business → growth or switch timing). "timeline": 2 items.`,
   love: `LOVE: "summary" from the 7th house and Venus. "partner": 25-30 words.`,
@@ -46,7 +51,8 @@ const PILLAR_GUIDES: Record<Pillar, string> = {
 export function personPrompt(i: PersonPromptInput): { prompt: string; system: string } {
   const { chart } = i;
   const dasha = chart.dasha;
-  const { adultDate, todayLine, guard } = lifeStageAccuracy(i.dob, dasha.mahadasha);
+  const { adultDate, todayLine, guard, ageYears, isMinor } = lifeStageAccuracy(i.dob, dasha.mahadasha);
+  const framing = lifeStageFraming(ageYears);
 
   const bhrigu = bhriguPredictions(chart, "en");
   const bhriguBlock = bhrigu.length
@@ -77,7 +83,7 @@ EXACT DASHA PERIODS (ephemeris-based; every date range you mention anywhere MUST
 ${dashaTimelineBlock(dasha)}
 
 ${guard}
-
+${framing ? `\n${framing}\n` : ""}
 ${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground EVERY statement in these. Do not mention any placement, yoga or period that is not listed here. Where a classical rule fired, weave its meaning into the matching section and respect its confidence level (direct: state it; moderate: "suggests"; soft: "may"). If a yoga is marked CANCELLED, say so and explain what that changes.
 ${i.factsBlock}
 ` : ""}
@@ -94,7 +100,7 @@ CORE:
 - "bhriguSynthesis": 2-3 sentences weaving together the BHRIGU SAMHITA READINGS above for THIS person by name — lead with the current Mahadasha lord's reading (marked above), then connect it to one or two other readings that stand out or echo it. Ground this strictly in the readings listed; never invent anything beyond them. If no readings are listed, say so plainly in one sentence.
 
 ${i.pillars.map((p) => PILLAR_GUIDES[p]).join("\n")}
-${i.pillars.includes("love") ? LOVE_INSTRUCTIONS[i.relationshipStatus] : ""}
+${i.pillars.includes("love") ? (isMinor ? MINOR_LOVE_OVERRIDE : LOVE_INSTRUCTIONS[i.relationshipStatus]) : ""}
 ${i.pillars.includes("career") || i.pillars.includes("wealth") ? `Reminder: in "timeline" and "muhurta", no window's start may be before ${adultDate} — this includes picking a whole Mahadasha as the window. If the natural choice started earlier, use only its portion from ${adultDate} onward and label it as such (e.g. "Jupiter Mahadasha, from ${adultDate}"), or pick a later Antardasha within it instead.` : ""}
 
 Return ONLY the JSON object described by the schema.`;

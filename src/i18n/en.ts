@@ -151,6 +151,7 @@ export const en = {
   preview_waiting: "Enter a date and place to see the chart",
   pillar_career_d: "Work, growth, the right fields and when to move.",
   pillar_love_d: "Partnership style, marriage windows, what to nurture.",
+  pillar_love_minor_d: "Available once they turn 18.",
   pillar_health_d: "Constitution, strengths, what to watch in this period.",
   pillar_wealth_d: "Earning pattern, money timeline, good windows for decisions.",
   pillar_all_d: "All four areas plus yogas, chart details and timing.",

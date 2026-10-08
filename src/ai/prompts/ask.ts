@@ -1,6 +1,6 @@
 import { bhriguPredictions } from "@/src/astro/bhrigu";
 import type { Language } from "@/src/reports/types";
-import { VOICE_RULES, languageNote, dashaTimelineBlock, lifeStageAccuracy, type DashaLike } from "./shared";
+import { VOICE_RULES, languageNote, dashaTimelineBlock, lifeStageAccuracy, lifeStageFraming, type DashaLike } from "./shared";
 
 export interface AskPromptInput {
   name: string;
@@ -20,7 +20,8 @@ export interface AskPromptInput {
  * and never invents a placement, yoga or date the facts don't support.
  */
 export function askPrompt(i: AskPromptInput): { prompt: string; system: string } {
-  const { todayLine, guard } = lifeStageAccuracy(i.dob, i.chart.dasha.mahadasha);
+  const { todayLine, guard, ageYears, isMinor } = lifeStageAccuracy(i.dob, i.chart.dasha.mahadasha);
+  const framing = lifeStageFraming(ageYears);
 
   const bhrigu = bhriguPredictions(i.chart, "en");
   const bhriguBlock = bhrigu.length
@@ -42,7 +43,7 @@ EXACT DASHA PERIODS (ephemeris-based; every date range you mention MUST be one o
 ${dashaTimelineBlock(i.chart.dasha)}
 
 ${guard}
-
+${framing ? `\n${framing}\n` : ""}
 ${i.factsBlock ? `COMPUTED FACTS (deterministic, verified). Ground your answer in these. Do not state any placement, yoga, debt or period that is not listed here.\n${i.factsBlock}\n` : ""}
 ${bhriguBlock}
 ${historyBlock}THEIR QUESTION: "${i.question}"
@@ -57,6 +58,7 @@ Answer in 2-3 SHORT sentences, maximum 50 words total. Speak to them as "you", p
 - If the question has nothing to do with astrology or this chart, gently decline in one sentence and invite an on-topic question.
 - Never give medical, legal or financial directives — frame things as classical tendencies, not guarantees or instructions.
 - Respect LIFE-STAGE ACCURACY exactly as above if the question touches timing.
+${isMinor ? `- This person is a minor. If asked about marriage, dating or romance in any form, gently decline and say that's not something to look at yet -- redirect to something age-appropriate (school, friendships, aptitudes) instead of answering the question as asked.` : ""}
 - Never use em dashes or en dashes.
 
 Return ONLY the JSON object described by the schema.`;

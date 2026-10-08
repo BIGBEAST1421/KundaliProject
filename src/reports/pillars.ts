@@ -27,3 +27,15 @@ export function normalizePillars(input: unknown): Pillar[] {
 export function isAllPillars(pillars: readonly Pillar[]): boolean {
   return ALL_PILLARS.every((p) => pillars.includes(p));
 }
+
+/** Whether a "YYYY-MM-DD" date of birth belongs to someone currently under 18 -- used to keep
+ * the Love & Relationships pillar (marriage predictions) off the table for a child's report. */
+export function isMinorDob(dob: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return false;
+  const birth = new Date(dob + "T00:00:00");
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  const beforeBirthdayThisYear = now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate());
+  if (beforeBirthdayThisYear) age--;
+  return age < 18;
+}
