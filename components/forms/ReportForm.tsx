@@ -74,6 +74,12 @@ export function ReportForm() {
       }, t("err_generic"), t("err_network"));
       router.push(`/${encodeURIComponent(slug)}`);
     } catch (err) {
+      if (err instanceof ClientApiError && err.code.startsWith("place_")) {
+        setErrors({ city: t(err.code === "place_not_found" ? "err_place_not_found" : "err_place_unavailable") });
+        setStatus("idle");
+        go(1);
+        return;
+      }
       setErrorMsg(err instanceof ClientApiError ? err.message : t("err_generic"));
       setStatus("error");
     }

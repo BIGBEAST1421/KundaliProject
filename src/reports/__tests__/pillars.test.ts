@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizePillars, isAllPillars } from "../pillars";
+import { normalizePillars, isAllPillars, pillarsForDob } from "../pillars";
 
 describe("normalizePillars", () => {
   it("keeps a single valid pillar", () => expect(normalizePillars(["career"])).toEqual(["career"]));
@@ -14,4 +14,12 @@ describe("isAllPillars", () => {
     expect(isAllPillars(["career", "love", "health", "wealth"])).toBe(true);
     expect(isAllPillars(["career"])).toBe(false);
   });
+});
+
+describe("pillarsForDob", () => {
+  const minor = `${new Date().getFullYear() - 10}-01-01`;
+  it("leaves adults alone", () => expect(pillarsForDob([], "1990-05-05")).toEqual(["career", "love", "health", "wealth"]));
+  it("drops love for a minor", () => expect(pillarsForDob(["love", "career"], minor)).toEqual(["career"]));
+  it("never lets love back in via the empty default", () => expect(pillarsForDob([], minor)).toEqual(["career", "health", "wealth"]));
+  it("falls back to the other pillars when love was the only pick", () => expect(pillarsForDob(["love"], minor)).toEqual(["career", "health", "wealth"]));
 });

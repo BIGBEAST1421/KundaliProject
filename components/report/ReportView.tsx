@@ -48,6 +48,8 @@ interface Props {
   report: PersonReport;
   /** "owner": actions shown. "share": view-only, no actions, footer CTA. */
   mode?: "owner" | "share";
+  /** Show the Ask chat — only for the report's creator. Defaults to true in owner mode. */
+  canAsk?: boolean;
 }
 
 /**
@@ -56,7 +58,7 @@ interface Props {
  * route (view-only). Only the AI-generated prose (soul purpose, section text, …) stays in
  * whichever language the report was created in — it isn't retranslated on the fly.
  */
-export function ReportView({ report, mode = "owner" }: Props) {
+export function ReportView({ report, mode = "owner", canAsk = mode === "owner" }: Props) {
   const { lang } = useI18n();
   const d = dict(lang);
   const { chart, birth, profile, facts } = report;
@@ -213,7 +215,7 @@ export function ReportView({ report, mode = "owner" }: Props) {
 
       {translating && <CosmicLoader message={d.translating} size="sm" className="mt-6" />}
       <ReportShell groups={groups} jumpPlaceholder={d.jump_placeholder} jumpEmpty={d.jump_none} className="mt-10" />
-      <AskChat report={report} d={d} lang={lang} />
+      {canAsk && <AskChat report={report} d={d} lang={lang} />}
 
       <footer className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-xs text-muted">
         <span>{d.report_created} {created}</span>

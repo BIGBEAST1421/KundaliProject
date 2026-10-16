@@ -10,7 +10,7 @@ User input → chart (TS) → Gemini (JSON schema) → structured report → Sup
 
 ## Requirements
 
-- Node 22+, pnpm 9+
+- Node 20.9+, pnpm 9+
 - A Supabase project (free tier is fine)
 - A Google Gemini API key
 
@@ -25,13 +25,15 @@ cp .env.example .env         # then fill in the values below
 
 ```
 GEMINI_API_KEY=...                       # https://aistudio.google.com/apikey
-GEMINI_MODEL=gemini-2.5-flash            # optional
+GEMINI_MODEL=gemini-3.5-flash-lite       # optional (this is the default)
 SUPABASE_URL=https://xxxx.supabase.co    # Project Settings → API
 SUPABASE_SERVICE_ROLE_KEY=...            # service_role key — server-side only
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-Create the tables once: open the Supabase **SQL Editor**, paste `supabase/migrations/001_init.sql`, run.
+Create the tables once: open the Supabase **SQL Editor** and run every file in `supabase/migrations/`
+in order (`001_init.sql` → `004_questions.sql`). Later migrations add columns the app writes to, so
+skipping them makes saving a report fail.
 Row-level security is on with no policies, so the anon key cannot read reports; only the server can.
 
 ## Run
@@ -49,13 +51,20 @@ pnpm build && pnpm start
 |---|---|
 | `/` | Landing page |
 | `/app` | Birth report form |
-| `/<name-slug>` | A person's report, e.g. `/rahul-sharma` (duplicates get `-2`, `-3`…) |
-| `/report/<uid>` | Public share link for the same report (UID is the real identity) |
+| `/<name-slug>` | A person's report, e.g. `/rahul-sharma` (duplicates get `-2`, `-3`…) — **creator's browser only** |
+| `/report/<uid>` | Public, view-only share link for the same report (UID is the real identity) |
 | `/match` | Kundali matching form |
 | `/match/<uid>` | Compatibility report |
 | `POST /api/reports` | Create a report → `{ uid, slug }` |
 | `POST /api/match` | Create a match → `{ uid }` |
 | `GET /api/geocode?q=` | City suggestions |
+
+Name slugs are guessable, so `/<name-slug>` and the Ask chat only work in the browser that created the
+report: creating one sets an httpOnly, HMAC-signed `astro_owned` cookie (`src/lib/owner.ts`). Anyone
+else gets a 404 on the name route and a view-only page on the share link.
+
+Birthplaces that can't be geocoded are rejected with a field error rather than guessed, since a wrong
+place means a wrong timezone and Lagna.
 
 Reports are never regenerated when a URL is opened — pages read the stored structured report.
 "Download PDF" uses the browser's print dialog with a dedicated print stylesheet.

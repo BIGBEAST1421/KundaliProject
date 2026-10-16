@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { AiError } from "@/src/ai/client";
 import { ReportBuildError } from "@/src/reports/buildPerson";
 import { RepoError } from "@/src/db/repo";
+import { GeocodeError } from "@/src/lib/geocode";
 
 export interface ApiErrorBody {
   error: string;
@@ -18,6 +19,10 @@ export function errorResponse(err: unknown): NextResponse<ApiErrorBody> {
       { error: "Some details look incomplete. Please check the form and try again.", code: "invalid_input", details: err.flatten().fieldErrors },
       { status: 400 },
     );
+  }
+  if (err instanceof GeocodeError) {
+    const status = err.code === "not_found" ? 400 : 503;
+    return NextResponse.json({ error: err.message, code: `place_${err.code}`, details: { field: err.field } }, { status });
   }
   if (err instanceof AiError) {
     console.error("[ai]", err.code, err.cause);

@@ -44,6 +44,13 @@ export function MatchForm() {
       const { uid } = await postJson<{ uid: string }>("/api/match", { boy: toPayload(boy), girl: toPayload(girl), language: lang }, t("err_generic"), t("err_network"));
       router.push(`/match/${uid}`);
     } catch (err) {
+      if (err instanceof ClientApiError && err.code.startsWith("place_")) {
+        const who = (err.details as { field?: string } | undefined)?.field === "girl" ? "girl" : "boy";
+        setErrors((s) => ({ ...s, [who]: { city: t(err.code === "place_not_found" ? "err_place_not_found" : "err_place_unavailable") } }));
+        setStatus("idle");
+        go(who === "girl" ? 1 : 0);
+        return;
+      }
       setErrorMsg(err instanceof ClientApiError ? err.message : t("err_generic"));
       setStatus("error");
     }

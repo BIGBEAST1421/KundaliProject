@@ -7,6 +7,7 @@ import { factsForPrompt } from "@/src/reports/facts";
 import { LanguageSchema } from "@/src/reports/types";
 import { repo } from "@/src/db/repo";
 import { errorResponse } from "@/src/lib/errors";
+import { isOwner } from "@/src/lib/owner";
 
 const BodySchema = z.object({ question: z.string().trim().min(3).max(300), lang: LanguageSchema });
 const AnswerSchema = z.object({ answer: z.string() });
@@ -17,13 +18,17 @@ export const maxDuration = 30;
 /**
  * Answers one free-form question about a report, grounded strictly in that report's own
  * deterministic facts (same data the report itself was generated from) so the chat can never
- * contradict the report or invent a fact. Capped at MAX_QUESTIONS per report, enforced here
- * since nothing in this app rate-limits anything yet.
+ * contradict the report or invent a fact. Only the report's creator may ask (the log is
+ * private to them, and share-link viewers mustn't burn the quota). Capped at MAX_QUESTIONS per
+ * report, enforced here since nothing in this app rate-limits anything yet.
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ uid: string }> }) {
   try {
     const { question, lang } = BodySchema.parse(await req.json());
     const { uid } = await params;
+    if (!(await isOwner(uid))) {
+      return NextResponse.json({ error: "Only the person who created this report can ask questions about it.", code: "forbidden" }, { status: 403 });
+    }
     const report = await repo.getPersonByUid(uid);
     if (!report) return NextResponse.json({ error: "Report not found", code: "not_found" }, { status: 404 });
 

@@ -1,6 +1,6 @@
 /** Browser-side fetch helper: JSON in/out, friendly error text, no retries. */
 export class ClientApiError extends Error {
-  constructor(message: string, readonly status: number, readonly code: string) {
+  constructor(message: string, readonly status: number, readonly code: string, readonly details?: unknown) {
     super(message);
     this.name = "ClientApiError";
   }
@@ -13,7 +13,7 @@ export async function postJson<T>(url: string, body: unknown, fallbackMessage: s
   } catch {
     throw new ClientApiError(networkMessage, 0, "network");
   }
-  const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string } & T;
-  if (!res.ok) throw new ClientApiError(data.error || fallbackMessage, res.status, data.code || "unknown");
+  const data = (await res.json().catch(() => ({}))) as { error?: string; code?: string; details?: unknown } & T;
+  if (!res.ok) throw new ClientApiError(data.error || fallbackMessage, res.status, data.code || "unknown", data.details);
   return data;
 }

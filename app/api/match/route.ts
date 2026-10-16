@@ -9,13 +9,18 @@ import { buildMatchReport, mangalSummary, toMatchPerson } from "@/src/reports/bu
 import { CreateMatchSchema, type PersonInput } from "@/src/reports/input";
 import type { Birth } from "@/src/reports/types";
 import { repo } from "@/src/db/repo";
-import { geocode } from "@/src/lib/geocode";
+import { geocode, GeocodeError } from "@/src/lib/geocode";
 import { errorResponse } from "@/src/lib/errors";
 
 export const maxDuration = 60;
 
-async function resolveBirth(p: PersonInput): Promise<Birth> {
-  const coords = p.lat != null && p.lon != null ? { lat: p.lat, lon: p.lon } : await geocode(p.city, p.state, p.country);
+async function resolveBirth(p: PersonInput, field: "boy" | "girl"): Promise<Birth> {
+  let coords;
+  try {
+    coords = p.lat != null && p.lon != null ? { lat: p.lat, lon: p.lon } : await geocode(p.city, p.state, p.country);
+  } catch (err) {
+    throw err instanceof GeocodeError ? new GeocodeError(err.code, err.message, field) : err;
+  }
   return {
     dob: p.dob, time: p.timeKnown ? p.time : "", timeKnown: p.timeKnown,
     city: p.city, state: p.state, country: p.country, lat: coords.lat, lon: coords.lon,
@@ -26,7 +31,7 @@ async function resolveBirth(p: PersonInput): Promise<Birth> {
 export async function POST(req: NextRequest) {
   try {
     const input = CreateMatchSchema.parse(await req.json());
-    const [boyBirth, girlBirth] = await Promise.all([resolveBirth(input.boy), resolveBirth(input.girl)]);
+    const [boyBirth, girlBirth] = await Promise.all([resolveBirth(input.boy, "boy"), resolveBirth(input.girl, "girl")]);
 
     const boyChart = computeChart(boyBirth.dob, boyBirth.time, boyBirth.lat, boyBirth.lon);
     const girlChart = computeChart(girlBirth.dob, girlBirth.time, girlBirth.lat, girlBirth.lon);

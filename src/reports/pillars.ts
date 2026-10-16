@@ -39,3 +39,12 @@ export function isMinorDob(dob: string): boolean {
   if (beforeBirthdayThisYear) age--;
   return age < 18;
 }
+
+/** normalizePillars for a report about someone born on `dob`: a minor never gets Love &
+ * Relationships, even when it arrives via the empty-means-all default. Never returns empty. */
+export function pillarsForDob(input: unknown, dob: string): Pillar[] {
+  const pillars = normalizePillars(input);
+  if (!isMinorDob(dob)) return pillars;
+  const allowed = pillars.filter((p) => p !== "love");
+  return allowed.length ? allowed : ALL_PILLARS.filter((p) => p !== "love");
+}

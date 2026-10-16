@@ -12,6 +12,10 @@ export class RepoError extends Error {
   }
 }
 
+/** Postgres unique-constraint violation, e.g. two same-name reports racing for one slug. */
+export const isUniqueViolation = (err: unknown) =>
+  err instanceof RepoError && (err.cause as { code?: string } | undefined)?.code === "23505";
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const isUuid = (s: string) => UUID_RE.test(s);
 
