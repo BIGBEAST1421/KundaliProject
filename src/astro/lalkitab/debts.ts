@@ -1,19 +1,13 @@
 /**
- * Lal Kitab planetary debts (rinanubandhan). Each debt is a bespoke boolean check — like
- * `src/astro/yogas.ts` — rather than the generic AND-only `Condition[]` rule DSL, because the
- * classical conditions for a debt are naturally an OR of a few affliction patterns.
- *
- * REVIEW FLAG: as with the sleeping/awake table in `status.ts`, the exact classical conditions
- * for each debt vary somewhat between Lal Kitab sources. The versions below are a commonly
- * cited, conservative synthesis — kept here, one function per debt, specifically so they can be
- * reviewed and adjusted independently of everything else in this feature.
+ * Lal Kitab planetary debts (rin). Lal Kitab reads planets by house ("khana") from the Lagna, and
+ * each debt is a fixed placement pattern — the same nine checks classical patrika software prints
+ * under "लाल किताब के अनुसार ऋण भार". Keys `pitra`, `matri`, `deva` and `stri` predate the full set
+ * and are kept so stored reports still parse; `deva` is the Ishwariya (divine) debt.
  */
 import type { Chart } from "../chart";
 import type { Planet } from "../signs";
-import { getDignity } from "../dignity";
-import { conjunct, aspects } from "../aspects";
 
-export type DebtKey = "pitra" | "matri" | "deva" | "stri";
+export type DebtKey = "swa" | "matri" | "parivarik" | "behan" | "pitra" | "stri" | "nirdayi" | "ajanma" | "deva";
 
 export interface LalKitabDebt {
   key: DebtKey;
@@ -25,59 +19,45 @@ export interface LalKitabDebt {
   reason: string;
 }
 
-function activeInDasha(chart: Chart, planets: Planet[]): boolean {
+interface DebtDef {
+  key: DebtKey;
+  name: string;
+  planets: Planet[];
+  houses: number[];
+}
+
+/** Any of `planets` in any of `houses` (from the Lagna) makes the debt present. */
+const DEBTS: readonly DebtDef[] = [
+  { key: "swa", name: "Swa Rin", planets: ["Venus", "Saturn", "Rahu"], houses: [5] },
+  { key: "matri", name: "Matri Rin", planets: ["Ketu"], houses: [4] },
+  { key: "parivarik", name: "Parivarik Rin", planets: ["Mercury", "Ketu"], houses: [1, 8] },
+  { key: "behan", name: "Behan/Kanya Rin", planets: ["Moon"], houses: [3, 6] },
+  { key: "pitra", name: "Pitra Rin", planets: ["Venus", "Mercury", "Rahu"], houses: [2, 5, 9, 12] },
+  { key: "stri", name: "Stri Rin", planets: ["Sun", "Rahu", "Ketu"], houses: [2, 7] },
+  { key: "nirdayi", name: "Nirdayi Rin", planets: ["Sun", "Moon", "Mars"], houses: [10, 11] },
+  { key: "ajanma", name: "Ajanma Rin", planets: ["Sun", "Venus"], houses: [12] },
+  { key: "deva", name: "Ishwariya Rin", planets: ["Moon"], houses: [6] },
+];
+
+const ord = (n: number) => `${n}${n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th"}`;
+
+function detect(chart: Chart, d: DebtDef): LalKitabDebt {
+  const participants = d.planets.filter((p) => d.houses.includes(chart.houseOf[p]));
+  const present = participants.length > 0;
   const md = chart.dasha.mahadasha as Planet, ad = chart.dasha.antardasha as Planet;
-  return planets.includes(md) || planets.includes(ad);
-}
-
-function dignityOf(chart: Chart, p: Planet) {
-  return getDignity(p, chart.d1[p], chart.degreesInSign[p]);
-}
-
-/** Pitra Rin — ancestral/paternal debt. Classically tied to an afflicted Sun. */
-function pitraRin(chart: Chart): LalKitabDebt {
-  const sunSaturn = conjunct(chart, "Sun", "Saturn");
-  const sunRahu = conjunct(chart, "Sun", "Rahu");
-  const saturnAspectsSun = aspects(chart, "Saturn", "Sun");
-  const present = sunSaturn || sunRahu || saturnAspectsSun;
-  const participants: Planet[] = present ? ["Sun", ...(sunSaturn || saturnAspectsSun ? (["Saturn"] as Planet[]) : []), ...(sunRahu ? (["Rahu"] as Planet[]) : [])] : [];
-  const reason = sunSaturn ? "Sun and Saturn sit together" : sunRahu ? "Sun and Rahu sit together" : saturnAspectsSun ? "Saturn aspects the Sun" : "no Sun-Saturn/Rahu affliction found";
-  return { key: "pitra", name: "Pitra Rin", present, participants, houses: present ? [chart.houseOf.Sun] : [], activeInDasha: activeInDasha(chart, participants), reason };
-}
-
-/** Matri Rin — maternal debt. Classically tied to an afflicted Moon. */
-function matriRin(chart: Chart): LalKitabDebt {
-  const moonRahu = conjunct(chart, "Moon", "Rahu");
-  const moonKetu = conjunct(chart, "Moon", "Ketu");
-  const saturnAspectsMoon = aspects(chart, "Saturn", "Moon");
-  const present = moonRahu || moonKetu || saturnAspectsMoon;
-  const participants: Planet[] = present ? ["Moon", ...(moonRahu ? (["Rahu"] as Planet[]) : []), ...(moonKetu ? (["Ketu"] as Planet[]) : []), ...(saturnAspectsMoon ? (["Saturn"] as Planet[]) : [])] : [];
-  const reason = moonRahu ? "Moon and Rahu sit together" : moonKetu ? "Moon and Ketu sit together" : saturnAspectsMoon ? "Saturn aspects the Moon" : "no Moon-node/Saturn affliction found";
-  return { key: "matri", name: "Matri Rin", present, participants, houses: present ? [chart.houseOf.Moon] : [], activeInDasha: activeInDasha(chart, participants), reason };
-}
-
-/** Deva Rin — debt to the divine/teachers. Classically tied to an afflicted Jupiter. */
-function devaRin(chart: Chart): LalKitabDebt {
-  const jupiterRahu = conjunct(chart, "Jupiter", "Rahu");
-  const jupiterKetu = conjunct(chart, "Jupiter", "Ketu");
-  const jupiterDebilitated = dignityOf(chart, "Jupiter") === "debilitated";
-  const present = jupiterRahu || jupiterKetu || jupiterDebilitated;
-  const participants: Planet[] = present ? ["Jupiter", ...(jupiterRahu ? (["Rahu"] as Planet[]) : []), ...(jupiterKetu ? (["Ketu"] as Planet[]) : [])] : [];
-  const reason = jupiterRahu ? "Jupiter and Rahu sit together" : jupiterKetu ? "Jupiter and Ketu sit together" : jupiterDebilitated ? "Jupiter is debilitated" : "no Jupiter-node affliction or debilitation found";
-  return { key: "deva", name: "Deva Rin", present, participants, houses: present ? [chart.houseOf.Jupiter] : [], activeInDasha: activeInDasha(chart, participants), reason };
-}
-
-/** Stri Rin — debt connected to women, from past-life conduct. Classically tied to an afflicted Venus. */
-function striRin(chart: Chart): LalKitabDebt {
-  const venusMars = conjunct(chart, "Venus", "Mars");
-  const venusRahu = conjunct(chart, "Venus", "Rahu");
-  const venusWeak = (["debilitated", "enemy"] as const).includes(dignityOf(chart, "Venus") as "debilitated" | "enemy");
-  const present = venusMars || venusRahu || venusWeak;
-  const participants: Planet[] = present ? ["Venus", ...(venusMars ? (["Mars"] as Planet[]) : []), ...(venusRahu ? (["Rahu"] as Planet[]) : [])] : [];
-  const reason = venusMars ? "Venus and Mars sit together" : venusRahu ? "Venus and Rahu sit together" : venusWeak ? "Venus is in a weak dignity" : "no Venus affliction found";
-  return { key: "stri", name: "Stri Rin", present, participants, houses: present ? [chart.houseOf.Venus] : [], activeInDasha: activeInDasha(chart, participants), reason };
+  return {
+    key: d.key,
+    name: d.name,
+    present,
+    participants,
+    houses: [...new Set(participants.map((p) => chart.houseOf[p]))],
+    activeInDasha: participants.includes(md) || participants.includes(ad),
+    reason: present
+      ? participants.map((p) => `${p} in the ${ord(chart.houseOf[p])} house`).join(", ")
+      : `none of ${d.planets.join("/")} in house ${d.houses.join(", ")}`,
+  };
 }
 
 export function detectDebts(chart: Chart): LalKitabDebt[] {
-  return [pitraRin(chart), matriRin(chart), devaRin(chart), striRin(chart)];
+  return DEBTS.map((d) => detect(chart, d));
 }

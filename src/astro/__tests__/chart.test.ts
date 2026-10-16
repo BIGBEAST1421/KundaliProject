@@ -6,6 +6,10 @@ import { localToUtc } from "../timezone";
 const TODAY = new Date("2026-09-18T00:00:00Z");
 const cases = [ref.delhi_1990, ref.mumbai_1985, ref.london_2000, ref.noon_fallback];
 
+/** The Python reference used the mean node; we use the true node, so Rahu/Ketu are compared separately. */
+const NODES = new Set(["Rahu", "Ketu"]);
+const withoutNodes = <T,>(m: Record<string, T>) => Object.fromEntries(Object.entries(m).filter(([k]) => !NODES.has(k)));
+
 describe("localToUtc", () => {
   it("converts Delhi local time to UTC", () => {
     expect(localToUtc("1990-05-15", "10:30", 28.6139, 77.209).toFormat("yyyy-MM-dd HH:mm 'UTC'")).toBe("1990-05-15 05:00 UTC");
@@ -29,16 +33,19 @@ describe("computeChart", () => {
       expect(c.nakshatra.name).toBe(p.nakshatra.name);
       expect(c.nakshatra.pada).toBe(p.nakshatra.pada);
       expect(c.lagnaNakshatra.name).toBe(p.lagna_nakshatra.name);
-      expect(c.d1).toEqual(p.d1);
-      expect(c.d10).toEqual(p.d10);
-      expect(c.houseOf).toEqual(p.house_of);
-      expect(c.d10HouseOf).toEqual(p.d10_house_of);
+      expect(withoutNodes(c.d1)).toEqual(withoutNodes(p.d1));
+      expect(withoutNodes(c.d10)).toEqual(withoutNodes(p.d10));
+      expect(withoutNodes(c.houseOf)).toEqual(withoutNodes(p.house_of));
+      expect(withoutNodes(c.d10HouseOf)).toEqual(withoutNodes(p.d10_house_of));
       expect(c.d10Lagna).toBe(p.d10_lagna);
       expect(c.dasha.mahadasha).toBe(p.dasha.mahadasha);
       expect(c.dasha.antardasha).toBe(p.dasha.antardasha);
-      for (const [body, lon] of Object.entries(p.longitudes)) {
+      for (const [body, lon] of Object.entries(withoutNodes(p.longitudes))) {
         expect(c.longitudes[body as keyof typeof c.longitudes], body).toBeCloseTo(lon, 2);
       }
+      // True and mean node never differ by more than ~1.8°.
+      expect(Math.abs(((c.longitudes.Rahu - p.longitudes.Rahu + 540) % 360) - 180)).toBeLessThan(2);
+      expect(c.longitudes.Ketu).toBeCloseTo((c.longitudes.Rahu + 180) % 360, 6);
     });
   }
 });

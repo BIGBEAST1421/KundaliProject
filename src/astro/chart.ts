@@ -10,13 +10,15 @@ import { localToUtc } from "./timezone";
 
 const { constants: C } = sweph;
 
-// Lahiri ayanamsa — standard for Indian Jyotish. Moshier ephemeris needs no data files.
+// Lahiri (Chitrapaksha) ayanamsa — standard for Indian Jyotish. Moshier ephemeris needs no data files.
+// Rahu is the TRUE node ("राहु : स्पष्ट"), as printed by the classical Parashari patrika software
+// people compare against; the mean node sits up to ~1.5° away and can land in a different sign.
 sweph.set_sid_mode(C.SE_SIDM_LAHIRI, 0, 0);
 const FLAG = C.SEFLG_SIDEREAL | C.SEFLG_MOSEPH;
 
 const PLANET_IDS: Record<Exclude<Planet, "Ketu">, number> = {
   Sun: C.SE_SUN, Moon: C.SE_MOON, Mars: C.SE_MARS, Mercury: C.SE_MERCURY,
-  Jupiter: C.SE_JUPITER, Venus: C.SE_VENUS, Saturn: C.SE_SATURN, Rahu: C.SE_MEAN_NODE,
+  Jupiter: C.SE_JUPITER, Venus: C.SE_VENUS, Saturn: C.SE_SATURN, Rahu: C.SE_TRUE_NODE,
 };
 
 export type BodyMap<T> = Record<Body, T>;

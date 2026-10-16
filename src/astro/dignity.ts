@@ -21,10 +21,14 @@ const T: Record<Exclude<Planet, "Rahu" | "Ketu">, DignityRow> = {
   Saturn: { exaltation: { sign: "Libra", degree: 20 }, debilitation: { sign: "Aries", degree: 20 }, own: ["Capricorn", "Aquarius"], moolatrikona: { sign: "Aquarius", from: 0, to: 20 }, friends: ["Mercury", "Venus"], enemies: ["Sun", "Moon", "Mars"] },
 };
 
-/** Nodes: commonly treated as exalted in Taurus/Scorpio (Rahu/Ketu), strong in Gemini/Virgo, debilitated opposite. Simplified. */
-const NODE: Record<"Rahu" | "Ketu", { exalted: Sign[]; debilitated: Sign[]; friendly: Sign[] }> = {
-  Rahu: { exalted: ["Taurus", "Gemini"], debilitated: ["Scorpio", "Sagittarius"], friendly: ["Virgo", "Aquarius", "Libra", "Capricorn"] },
-  Ketu: { exalted: ["Scorpio", "Sagittarius"], debilitated: ["Taurus", "Gemini"], friendly: ["Pisces", "Aries", "Leo", "Cancer"] },
+/**
+ * Nodes: exalted/debilitated signs as commonly listed; otherwise judged by the sign lord using the
+ * natural friendships classical patrika software prints for the nodes (Rahu behaves like Saturn,
+ * Ketu like Mars) — so e.g. Rahu in Cancer is an enemy sign, Ketu in Capricorn too.
+ */
+const NODE: Record<"Rahu" | "Ketu", { exalted: Sign[]; debilitated: Sign[]; friends: Planet[]; enemies: Planet[] }> = {
+  Rahu: { exalted: ["Taurus", "Gemini"], debilitated: ["Scorpio", "Sagittarius"], friends: ["Venus", "Saturn"], enemies: ["Sun", "Moon", "Mars"] },
+  Ketu: { exalted: ["Scorpio", "Sagittarius"], debilitated: ["Taurus", "Gemini"], friends: ["Mars", "Venus"], enemies: ["Sun", "Moon", "Saturn"] },
 };
 
 import { SIGN_LORDS } from "./signs";
@@ -34,7 +38,8 @@ export function getDignity(planet: Planet, sign: Sign, degInSign = 15): Dignity 
     const n = NODE[planet];
     if (n.exalted.includes(sign)) return "exalted";
     if (n.debilitated.includes(sign)) return "debilitated";
-    return n.friendly.includes(sign) ? "friendly" : "neutral";
+    const lord = SIGN_LORDS[sign];
+    return n.friends.includes(lord) ? "friendly" : n.enemies.includes(lord) ? "enemy" : "neutral";
   }
   const row = T[planet];
   if (row.exaltation.sign === sign) return "exalted";

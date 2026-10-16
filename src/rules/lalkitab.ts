@@ -5,58 +5,39 @@
  * rules supply the chart-specific narrative, not the remedy text itself.
  */
 import type { Rule } from "./types";
+import type { Planet } from "@/src/astro/signs";
+import type { DebtKey } from "@/src/astro/lalkitab/debts";
+
+/** One entry per debt: who causes it (for "active in the current period") and its chart-specific gist. */
+const DEBT_RULES: { key: DebtKey; title: string; planets: Planet[]; gist: string }[] = [
+  { key: "swa", title: "Swa Rin (self-debt)", planets: ["Venus", "Saturn", "Rahu"], gist: "setbacks or blame that land on you without clear fault, which Lal Kitab ties to drifting from family faith and custom" },
+  { key: "matri", title: "Matri Rin (maternal debt)", planets: ["Ketu"], gist: "effort that doesn't bear fruit and unease around your mother or home, which Lal Kitab traces to this maternal debt" },
+  { key: "parivarik", title: "Parivarik Rin (debt to relatives)", planets: ["Mercury", "Ketu"], gist: "strained ties with relatives and being let down by people close to you" },
+  { key: "behan", title: "Behan/Kanya Rin (debt to a sister or daughter)", planets: ["Moon"], gist: "sudden reversals in money and family happiness" },
+  { key: "pitra", title: "Pitra Rin (ancestral debt)", planets: ["Venus", "Mercury", "Rahu"], gist: "obstacles that seem to come from the family line rather than your own actions" },
+  { key: "stri", title: "Stri Rin (debt connected to women)", planets: ["Sun", "Rahu", "Ketu"], gist: "friction in family harmony and upsets around joyful occasions" },
+  { key: "nirdayi", title: "Nirdayi Rin (debt of cruelty)", planets: ["Sun", "Moon", "Mars"], gist: "disputes, litigation and setbacks around property" },
+  { key: "ajanma", title: "Ajanma Rin (debt of the unborn)", planets: ["Sun", "Venus"], gist: "sudden losses and being deceived despite careful effort" },
+  { key: "deva", title: "Ishwariya Rin (divine debt)", planets: ["Moon"], gist: "misplaced trust and setbacks around children and travel" },
+];
 
 export const LALKITAB_RULES: Rule[] = [
-  // ── Debts: one catch-all per debt so every fired debt always has translatable narrative text ──
-  {
-    id: "lk-pitra-present", domain: "lalkitab", weight: 2, positive: false,
-    title: "Pitra Rin (ancestral debt)",
-    conditions: [{ type: "lalKitabDebt", key: "pitra", present: true }],
-    text: "unresolved ancestral responsibility surfacing as recurring friction around your father or senior family figures, easing once the classical remedy is taken up.",
-    keyPlanets: ["Sun"],
-  },
-  {
-    id: "lk-pitra-active-dasha", domain: "lalkitab", weight: 3, positive: false,
-    title: "Pitra Rin active in the current period",
-    conditions: [{ type: "lalKitabDebt", key: "pitra", present: true }, { type: "dashaLord", level: "any", planets: ["Sun", "Saturn"] }],
-    text: "that this ancestral debt is directly active right now, since the current dasha lord is tied to it, so the remedy is worth prioritising during this period.",
-    keyPlanets: ["Sun", "Saturn"],
-  },
-  {
-    id: "lk-matri-present", domain: "lalkitab", weight: 2, positive: false,
-    title: "Matri Rin (maternal debt)",
-    conditions: [{ type: "lalKitabDebt", key: "matri", present: true }],
-    text: "an emotional unease tied to your mother or home life that Lal Kitab traces to this maternal debt, worth addressing with the matching remedy.",
-    keyPlanets: ["Moon"],
-  },
-  {
-    id: "lk-matri-moon-sleeping", domain: "lalkitab", weight: 3, positive: false,
-    title: "Matri Rin compounded by a sleeping Moon",
-    conditions: [{ type: "lalKitabDebt", key: "matri", present: true }, { type: "planetStatus", planet: "Moon", status: ["sleeping"] }],
-    text: "a maternal-debt pattern that is currently dormant rather than active. Lal Kitab treats a sleeping significator as more stubborn, needing a deliberate remedy to wake it.",
-    keyPlanets: ["Moon"],
-  },
-  {
-    id: "lk-deva-present", domain: "lalkitab", weight: 2, positive: false,
-    title: "Deva Rin (debt to the divine/teachers)",
-    conditions: [{ type: "lalKitabDebt", key: "deva", present: true }],
-    text: "blocked wisdom, guidance or growth in wealth that Lal Kitab ties to this debt toward teachers or the divine, until the matching remedy is taken up.",
-    keyPlanets: ["Jupiter"],
-  },
-  {
-    id: "lk-deva-active-dasha", domain: "lalkitab", weight: 3, positive: false,
-    title: "Deva Rin active in the current period",
-    conditions: [{ type: "lalKitabDebt", key: "deva", present: true }, { type: "dashaLord", level: "any", planets: ["Jupiter", "Rahu", "Ketu"] }],
-    text: "that this debt is live right now, since the current dasha lord is directly tied to it.",
-    keyPlanets: ["Jupiter"],
-  },
-  {
-    id: "lk-stri-present", domain: "lalkitab", weight: 2, positive: false,
-    title: "Stri Rin (debt connected to women)",
-    conditions: [{ type: "lalKitabDebt", key: "stri", present: true }],
-    text: "friction in relationship harmony that Lal Kitab traces to this debt, easing with consistent attention to the matching remedy.",
-    keyPlanets: ["Venus"],
-  },
+  // ── Debts: a catch-all per debt so every fired debt always has narrative text, plus a stronger
+  // version when the current dasha lord is one of the planets forming it ──
+  ...DEBT_RULES.flatMap(({ key, title, planets, gist }): Rule[] => [
+    {
+      id: `lk-${key}-present`, domain: "lalkitab", weight: 2, positive: false, title,
+      conditions: [{ type: "lalKitabDebt", key, present: true }],
+      text: `${gist}, easing once the classical remedy is taken up.`,
+      keyPlanets: planets,
+    },
+    {
+      id: `lk-${key}-active-dasha`, domain: "lalkitab", weight: 3, positive: false, title: `${title.split(" (")[0]} active in the current period`,
+      conditions: [{ type: "lalKitabDebt", key, present: true }, { type: "dashaLord", level: "any", planets }],
+      text: "that this debt is live right now, since the current dasha lord is one of the planets forming it, so the remedy is worth prioritising during this period.",
+      keyPlanets: planets,
+    },
+  ]),
 
   // ── Planet status + house: career (10th), wealth (2nd/11th), marriage (7th), health (6th), home (4th), children/wisdom (5th) ──
   {

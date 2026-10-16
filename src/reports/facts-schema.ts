@@ -38,7 +38,7 @@ export const FiredRuleSchema = z.object({
 
 export const PlanetStatusSchema = z.enum(["awake", "sleeping", "static"]);
 export const LalKitabDebtSchema = z.object({
-  key: z.enum(["pitra", "matri", "deva", "stri"]), name: str, present: z.boolean(),
+  key: z.enum(["swa", "matri", "parivarik", "behan", "pitra", "stri", "nirdayi", "ajanma", "deva"]), name: str, present: z.boolean(),
   participants: z.array(planet), houses: z.array(num), activeInDasha: z.boolean(), reason: str,
 });
 export const LalKitabFactsSchema = z.object({

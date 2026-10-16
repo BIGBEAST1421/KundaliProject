@@ -7,6 +7,11 @@ describe("gajakesari", () => {
     const c = syntheticChart("Aries", { Moon: "Cancer", Jupiter: "Libra" }); // 4th from Moon
     expect(gajakesari(c).present).toBe(true);
   });
+  it("fires when Jupiter aspects the Moon (BPHS)", () => {
+    const y = gajakesari(syntheticChart("Aries", { Moon: "Capricorn", Jupiter: "Taurus" })); // 9th aspect onto the Moon
+    expect(y.present).toBe(true);
+    expect(y.reason).toMatch(/aspects the Moon/);
+  });
   it("does not fire otherwise", () => {
     expect(gajakesari(syntheticChart("Aries", { Moon: "Cancer", Jupiter: "Leo" })).present).toBe(false);
   });
@@ -31,8 +36,16 @@ describe("manglik", () => {
     expect(own.cancelled).toBe(true);
     expect(own.cancellationReasons[0]).toMatch(/own or exalted/);
   });
-  it("is absent for Mars in the 3rd", () => {
-    expect(manglik(syntheticChart("Aries", { Mars: "Gemini" })).present).toBe(false);
+  it("is absent for Mars in the 3rd from the Lagna and the 11th from the Moon", () => {
+    expect(manglik(syntheticChart("Aries", { Mars: "Gemini", Moon: "Leo" })).present).toBe(false);
+  });
+  it("does not count the 2nd house (North Indian convention)", () => {
+    expect(manglik(syntheticChart("Aries", { Mars: "Taurus", Moon: "Pisces" })).present).toBe(false); // 2nd from Lagna, 3rd from Moon
+  });
+  it("counts Mars in a Manglik house from the Moon", () => {
+    const y = manglik(syntheticChart("Aries", { Mars: "Gemini", Moon: "Sagittarius" })); // 3rd from Lagna, 7th from Moon
+    expect(y.present).toBe(true);
+    expect(y.reason).toMatch(/from the Moon/);
   });
 });
 

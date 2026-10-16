@@ -60,10 +60,29 @@ const YONI: readonly [string, "M" | "F"][] = [
   ["Mongoose", "F"], ["Monkey", "M"], ["Lion", "F"], ["Horse", "F"], ["Lion", "M"],
   ["Cow", "M"], ["Elephant", "F"],
 ];
-const YONI_ENEMIES = new Set([
-  pairKey("Horse", "Buffalo"), pairKey("Elephant", "Lion"), pairKey("Sheep", "Monkey"),
-  pairKey("Dog", "Deer"), pairKey("Rat", "Cat"), pairKey("Cow", "Tiger"), pairKey("Serpent", "Mongoose"),
-]);
+/**
+ * Standard Yoni points (4 same · 3 friendly · 2 neutral · 1 enemy · 0 sworn enemy), symmetric, in
+ * the order below — the grid most Indian matching software prints. The seven 0-point sworn-enemy
+ * pairs are fixed by Muhurta Chintamani; the 1–3 values in between vary slightly by commentary.
+ */
+const YONI_ORDER = ["Horse", "Elephant", "Sheep", "Serpent", "Dog", "Cat", "Rat", "Cow", "Buffalo", "Tiger", "Deer", "Monkey", "Mongoose", "Lion"];
+const YONI_POINTS: readonly (readonly number[])[] = [
+  [4, 2, 2, 3, 2, 2, 2, 1, 0, 1, 3, 3, 2, 1],
+  [2, 4, 3, 3, 2, 2, 2, 2, 3, 1, 2, 3, 2, 0],
+  [2, 3, 4, 2, 1, 2, 1, 3, 3, 1, 2, 0, 3, 1],
+  [3, 3, 2, 4, 2, 1, 1, 1, 1, 2, 2, 2, 0, 2],
+  [2, 2, 1, 2, 4, 2, 1, 2, 2, 1, 0, 2, 1, 1],
+  [2, 2, 2, 1, 2, 4, 0, 2, 2, 1, 3, 3, 2, 1],
+  [2, 2, 1, 1, 1, 0, 4, 2, 2, 2, 2, 2, 1, 2],
+  [1, 2, 3, 1, 2, 2, 2, 4, 3, 0, 3, 2, 2, 1],
+  [0, 3, 3, 1, 2, 2, 2, 3, 4, 1, 2, 2, 2, 1],
+  [1, 1, 1, 2, 1, 1, 2, 0, 1, 4, 1, 1, 2, 1],
+  [3, 2, 2, 2, 0, 3, 2, 3, 2, 1, 4, 2, 2, 1],
+  [3, 3, 0, 2, 2, 3, 2, 2, 2, 1, 2, 4, 3, 2],
+  [2, 2, 3, 0, 1, 2, 1, 2, 2, 2, 2, 3, 4, 2],
+  [1, 0, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 2, 4],
+];
+const yoniPoints = (a: string, b: string) => YONI_POINTS[YONI_ORDER.indexOf(a)][YONI_ORDER.indexOf(b)];
 
 // 5. Graha Maitri
 const FRIENDS: Partial<Record<Planet, Planet[]>> = {
@@ -75,8 +94,11 @@ const ENEMIES: Partial<Record<Planet, Planet[]>> = {
   Sun: ["Venus", "Saturn"], Moon: [], Mars: ["Mercury"], Mercury: ["Moon"],
   Jupiter: ["Mercury", "Venus"], Venus: ["Sun", "Moon"], Saturn: ["Sun", "Moon", "Mars"],
 };
-const leaning = (a: Planet, b: Planet) => (FRIENDS[a]?.includes(b) ? 1 : ENEMIES[a]?.includes(b) ? -1 : 0);
-const MAITRI_POINTS: Record<number, number> = { 2: 5, 1: 4, 0: 3, [-1]: 1, [-2]: 0 };
+type Relation = "F" | "N" | "E";
+const relation = (a: Planet, b: Planet): Relation => (FRIENDS[a]?.includes(b) ? "F" : ENEMIES[a]?.includes(b) ? "E" : "N");
+/** Standard Graha Maitri table, keyed by the two lords' attitudes to each other (order-free). */
+const MAITRI_POINTS: Record<string, number> = { FF: 5, FN: 4, NN: 3, EF: 1, EN: 0.5, EE: 0 };
+const maitriPoints = (a: Planet, b: Planet) => MAITRI_POINTS[[relation(a, b), relation(b, a)].sort().join("")];
 
 // 6. Gana
 const GANA: Record<string, "Deva" | "Manushya" | "Rakshasa"> = {
@@ -142,9 +164,9 @@ export function computeGunaMilan(boy: Chart, girl: Chart): Guna {
   });
 
   // 4. Yoni
-  const [bAnimal, bSex] = YONI[bNakIdx];
-  const [gAnimal, gSex] = YONI[gNakIdx];
-  const yoniPts = bAnimal === gAnimal ? (bSex === gSex ? 4 : 3) : YONI_ENEMIES.has(pairKey(bAnimal, gAnimal)) ? 0 : 2;
+  const [bAnimal] = YONI[bNakIdx];
+  const [gAnimal] = YONI[gNakIdx];
+  const yoniPts = yoniPoints(bAnimal, gAnimal);
   kootas.push({
     name: "Yoni", max: 4, points: yoniPts, dosha: false,
     boy: bAnimal, girl: gAnimal, note: `Groom: ${bAnimal} · Bride: ${gAnimal}`,
@@ -152,7 +174,7 @@ export function computeGunaMilan(boy: Chart, girl: Chart): Guna {
 
   // 5. Graha Maitri
   const bLord = SIGN_LORDS[bRashi], gLord = SIGN_LORDS[gRashi];
-  const maitriPts = bLord === gLord ? 5 : MAITRI_POINTS[leaning(bLord, gLord) + leaning(gLord, bLord)];
+  const maitriPts = bLord === gLord ? 5 : maitriPoints(bLord, gLord);
   kootas.push({
     name: "Graha Maitri", max: 5, points: maitriPts, dosha: false,
     boy: bLord, girl: gLord, note: `Groom's Moon lord: ${bLord} · Bride's Moon lord: ${gLord}`,
@@ -197,15 +219,4 @@ export function computeGunaMilan(boy: Chart, girl: Chart): Guna {
   return { total, max: 36, verdict, kootas, doshas };
 }
 
-const MANGAL_HOUSES = new Set([1, 2, 4, 7, 8, 12]);
-
-export interface MangalDosha {
-  isManglik: boolean;
-  marsHouse: number;
-}
-
-/** Basic Mangal (Manglik) Dosha: Mars in houses 1, 2, 4, 7, 8 or 12 from the Lagna. */
-export function checkMangalDosha(chart: Chart): MangalDosha {
-  const marsHouse = chart.houseOf.Mars;
-  return { isManglik: MANGAL_HOUSES.has(marsHouse), marsHouse };
-}
+export { checkMangalDosha, type MangalDosha } from "./mangal";

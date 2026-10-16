@@ -8,7 +8,7 @@ import { angularDistance } from "./dignity";
 const { constants: C } = sweph;
 const FLAG = C.SEFLG_SIDEREAL | C.SEFLG_MOSEPH | C.SEFLG_SPEED;
 const IDS: Record<Exclude<Planet, "Ketu">, number> = {
-  Sun: C.SE_SUN, Moon: C.SE_MOON, Mars: C.SE_MARS, Mercury: C.SE_MERCURY, Jupiter: C.SE_JUPITER, Venus: C.SE_VENUS, Saturn: C.SE_SATURN, Rahu: C.SE_MEAN_NODE,
+  Sun: C.SE_SUN, Moon: C.SE_MOON, Mars: C.SE_MARS, Mercury: C.SE_MERCURY, Jupiter: C.SE_JUPITER, Venus: C.SE_VENUS, Saturn: C.SE_SATURN, Rahu: C.SE_TRUE_NODE,
 };
 
 export interface TransitPlanet {

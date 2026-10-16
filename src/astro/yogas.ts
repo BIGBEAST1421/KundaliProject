@@ -4,10 +4,11 @@
  */
 import type { Chart } from "./chart";
 import { SIGN_LORDS, type Planet } from "./signs";
-import { getDignity, type Dignity } from "./dignity";
+import { getDignity, isCombust, type Dignity } from "./dignity";
 import { houseLord, housesRuledBy } from "./precise";
 import { aspects, conjunct, mutualAspect } from "./aspects";
 import { KENDRA, TRIKONA, DUSTHANA } from "./strength";
+import { checkMangalDosha } from "./mangal";
 
 export type YogaKind = "yoga" | "dosha" | "rajayoga";
 
@@ -62,14 +63,20 @@ function make(chart: Chart, base: Omit<Yoga, "grade" | "activeInDasha">): Yoga {
 
 export function gajakesari(chart: Chart): Yoga {
   const d = houseDistance(chart.houseOf.Moon, chart.houseOf.Jupiter);
-  const present = KENDRA.has(d);
-  const cancelled = present && (dignityOf(chart, "Jupiter") === "debilitated" || DUSTHANA.has(chart.houseOf.Jupiter));
+  const inKendra = KENDRA.has(d);
+  // BPHS also counts the Moon aspected by a Jupiter that is neither debilitated nor combust.
+  const jupiterSound = dignityOf(chart, "Jupiter") !== "debilitated" && !isCombust("Jupiter", chart.longitudes.Jupiter, chart.longitudes.Sun);
+  const aspectsMoon = !inKendra && jupiterSound && aspects(chart, "Jupiter", "Moon");
+  const present = inKendra || aspectsMoon;
+  const cancelled = inKendra && (dignityOf(chart, "Jupiter") === "debilitated" || DUSTHANA.has(chart.houseOf.Jupiter));
   return make(chart, {
     key: "gajakesari", name: "Gajakesari Yoga", kind: "yoga", present, cancelled,
     cancellationReasons: cancelled ? ["Jupiter is weak (debilitated or in a difficult house), so the yoga gives less"] : [],
     participants: ["Moon", "Jupiter"], houses: [chart.houseOf.Moon, chart.houseOf.Jupiter],
-    summary: "Jupiter in a kendra from the Moon. Classically linked to a good name, wisdom and support from respected people.",
-    reason: present ? `Jupiter sits ${d === 1 ? "with" : `${d} houses from`} the Moon (a kendra position).` : "Jupiter is not in a kendra from the Moon.",
+    summary: "Jupiter in a kendra from the Moon, or aspecting the Moon. Classically linked to a good name, wisdom and support from respected people.",
+    reason: inKendra ? `Jupiter sits ${d === 1 ? "with" : `${d} houses from`} the Moon (a kendra position).`
+      : aspectsMoon ? `Jupiter aspects the Moon from ${d} houses away.`
+      : "Jupiter is neither in a kendra from the Moon nor aspecting it.",
   });
 }
 
@@ -138,27 +145,13 @@ function exchanged(chart: Chart, a: Planet, b: Planet): boolean {
 }
 
 export function manglik(chart: Chart): Yoga {
-  const h = chart.houseOf.Mars, sign = chart.d1.Mars;
-  const present = [1, 2, 4, 7, 8, 12].includes(h);
-  const reasons: string[] = [];
-  if (present) {
-    const dig = dignityOf(chart, "Mars");
-    if (dig === "own" || dig === "exalted" || dig === "moolatrikona") reasons.push(`Mars is in its own or exalted sign (${sign})`);
-    if (conjunct(chart, "Mars", "Jupiter") || aspects(chart, "Jupiter", "Mars")) reasons.push("Jupiter joins or aspects Mars");
-    if (conjunct(chart, "Mars", "Moon")) reasons.push("the Moon is with Mars");
-    if (h === 2 && (sign === "Gemini" || sign === "Virgo")) reasons.push("Mars in the 2nd in a Mercury sign");
-    if (h === 4 && (sign === "Aries" || sign === "Scorpio")) reasons.push("Mars in the 4th in its own sign");
-    if (h === 7 && (sign === "Cancer" || sign === "Capricorn")) reasons.push("Mars in the 7th in Cancer or Capricorn");
-    if (h === 8 && (sign === "Sagittarius" || sign === "Pisces")) reasons.push("Mars in the 8th in a Jupiter sign");
-    if (h === 12 && (sign === "Taurus" || sign === "Libra")) reasons.push("Mars in the 12th in a Venus sign");
-    if (h === 1 && sign === "Aries") reasons.push("Mars in the 1st in Aries");
-    if ((sign === "Leo" || sign === "Aquarius")) reasons.push("Mars in Leo or Aquarius, traditionally exempt");
-  }
+  const m = checkMangalDosha(chart);
+  const where = [m.fromLagna ? `house ${m.marsHouse} from the Lagna` : "", m.fromMoon ? `house ${m.marsHouseFromMoon} from the Moon` : ""].filter(Boolean).join(" and ");
   return make(chart, {
-    key: "manglik", name: "Mangal Dosha", kind: "dosha", present, cancelled: present && reasons.length > 0,
-    cancellationReasons: reasons, participants: ["Mars"], houses: [h],
-    summary: "Mars in house 1, 2, 4, 7, 8 or 12. Traditionally checked before marriage; many classical conditions soften or cancel it.",
-    reason: present ? `Mars is in house ${h} (${sign}).` : `Mars is in house ${h}, not a Manglik house.`,
+    key: "manglik", name: "Mangal Dosha", kind: "dosha", present: m.present, cancelled: m.cancelled,
+    cancellationReasons: m.cancelled ? m.reasons : [], participants: ["Mars"], houses: [m.marsHouse],
+    summary: "Mars in house 1, 4, 7, 8 or 12 counted from the Lagna or the Moon. Traditionally checked before marriage; many classical conditions soften or cancel it.",
+    reason: m.present ? `Mars (${chart.d1.Mars}) is in ${where}.` : `Mars is in house ${m.marsHouse} from the Lagna and ${m.marsHouseFromMoon} from the Moon, neither a Manglik house.`,
   });
 }
 
